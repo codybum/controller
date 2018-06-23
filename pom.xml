@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+
+<groupId>io.cresco</groupId>
+<artifactId>controller</artifactId>
+<version>1.0-SNAPSHOT</version>
+
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jdk>1.8</jdk>
+    <cresco.plugin.library.version>0.5.3</cresco.plugin.library.version>
+    <logback.version>1.1.7</logback.version>
+    <mojo.buildnumber.version>1.4</mojo.buildnumber.version>
+    <maven.compiler.version>3.5.1</maven.compiler.version>
+    <activemq.version>5.15.4</activemq.version>
+</properties>
+
+    <repositories>
+        <repository>
+            <id>localrepository</id>
+            <url>file:///Users/cody/IdeaProjects/repo</url>
+        </repository>
+    </repositories>
+
+<dependencies>
+
+    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.core -->
+
+    <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.core</artifactId>
+        <version>6.0.0</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.annotation</artifactId>
+        <version>6.0.0</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.component.annotations -->
+    <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.service.component.annotations</artifactId>
+        <version>1.4.0</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.metatype.annotations -->
+    <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.service.metatype.annotations</artifactId>
+        <version>1.4.0</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.cm -->
+    <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.service.cm</artifactId>
+        <version>1.6.0</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>io.cresco</groupId>
+        <artifactId>library</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>commons-configuration</groupId>
+        <artifactId>commons-configuration</artifactId>
+        <version>1.10</version>
+    </dependency>
+
+
+</dependencies>
+
+<build>
+    <plugins>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>${maven.compiler.version}</version>
+            <configuration>
+                <source>${jdk}</source>
+                <target>${jdk}</target>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-bundle-plugin</artifactId>
+            <version>3.5.0</version>
+            <extensions>true</extensions>
+            <configuration>
+                <instructions>
+                    <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                    <Bundle-Name>Cresco Controller</Bundle-Name>
+                    <Bundle-Description>Controller for Cresco</Bundle-Description>
+                    <Bundle-Vendor>Apache Felix</Bundle-Vendor>
+                    <Bundle-Version>1.0.0</Bundle-Version>
+                    <Bundle-Activator>io.cresco.agent.core.Activator</Bundle-Activator>
+                    <Import-Package>*;resolution:=optional</Import-Package>
+                    <Embed-Dependency>!org.osgi.*;!osgi.cmpn.*;!library;!activemq*;*</Embed-Dependency>
+                    <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
+                </instructions>
+            </configuration>
+        </plugin>
+
+    </plugins>
+</build>
+
+</project>
