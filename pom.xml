@@ -21,7 +21,7 @@
     <repositories>
         <repository>
             <id>localrepository</id>
-            <url>file:///Users/cody/IdeaProjects/repo</url>
+            <url>file:///Users/vcbumg2/ResearchWorx/repo</url>
         </repository>
     </repositories>
 
@@ -108,7 +108,7 @@
                     <Bundle-Vendor>Apache Felix</Bundle-Vendor>
                     <Bundle-Version>1.0.0</Bundle-Version>
                     <Bundle-Activator>io.cresco.agent.core.Activator</Bundle-Activator>
-                    <Import-Package>*;resolution:=optional</Import-Package>
+                    <Import-Package>org.osgi.service.cm.ConfigurationAdmin;*;resolution:=optional</Import-Package>
                     <Embed-Dependency>!org.osgi.*;!osgi.cmpn.*;!library;!activemq*;*</Embed-Dependency>
                     <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
                 </instructions>
