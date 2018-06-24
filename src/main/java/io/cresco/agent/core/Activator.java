@@ -1,19 +1,11 @@
 package io.cresco.agent.core;
 
 
-import io.cresco.agent.communications.ActiveBroker;
-import io.cresco.agent.communications.JMXConsumer;
-import io.cresco.agent.metrics.CrescoMeterRegistry;
-import io.cresco.library.agent.AgentService;
-import io.micrometer.core.instrument.Timer;
 import org.osgi.framework.*;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.log.LogReaderService;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 
 /**

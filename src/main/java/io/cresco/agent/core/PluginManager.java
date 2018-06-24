@@ -2,8 +2,6 @@ package io.cresco.agent.core;
 
 import io.cody.task.Task;
 import io.cody.task.TaskService;
-import io.cresco.agent.metrics.CrescoConfig;
-import io.cresco.library.agent.AgentService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
