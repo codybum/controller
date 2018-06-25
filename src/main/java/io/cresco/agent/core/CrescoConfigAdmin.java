@@ -55,7 +55,7 @@ public class CrescoConfigAdmin {
 
             //Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.configuration.factory", null);
 
-            Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.skeleton.PluginServiceImpl", null);
+            Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.skeleton.Plugin", null);
 
 
 
