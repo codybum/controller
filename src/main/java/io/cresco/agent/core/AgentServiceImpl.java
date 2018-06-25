@@ -3,6 +3,8 @@ package io.cresco.agent.core;
 
 import io.cresco.library.agent.AgentService;
 import io.cresco.library.agent.AgentState;
+import io.cresco.library.plugin.PluginBuilder;
+import jdk.nashorn.internal.runtime.ECMAException;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
@@ -38,8 +40,14 @@ public class AgentServiceImpl implements AgentService {
         agentState = new AgentState();
         agentState.setId("0");
         //context.registerService(TaskService.class,this,null);
-        new Thread(new PluginManager(context)).start();
 
+        try {
+            PluginBuilder plugin = new PluginBuilder(context, map);
+
+            new Thread(new PluginManager(context)).start();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
