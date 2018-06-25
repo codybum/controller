@@ -1,7 +1,6 @@
 package io.cresco.agent.core;
 
-import io.cody.task.Task;
-import io.cody.task.TaskService;
+import io.cresco.library.plugin.PluginService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -52,7 +51,7 @@ public class PluginManager implements Runnable {
 
                     //ServiceReference<?>[] servRefs = context.getServiceReferences(TaskService.class.getName(), null);
 
-                    servRefs = context.getServiceReferences(TaskService.class.getName(), null);
+                    servRefs = context.getServiceReferences(PluginService.class.getName(), null);
 
                     if (servRefs == null || servRefs.length == 0) {
                         System.out.println("NULL FOUND NOTHING!");
@@ -60,19 +59,24 @@ public class PluginManager implements Runnable {
                         System.out.println("Running Service Count: " + servRefs.length);
 
                         for (ServiceReference sr : servRefs) {
-                            boolean assign = servRefs[0].isAssignableTo(context.getBundle(), TaskService.class.getName());
+                            boolean assign = servRefs[0].isAssignableTo(context.getBundle(), PluginService.class.getName());
                             System.out.println("Can Assign Service : " + assign);
 
-                            TaskService ts = (TaskService) context.getService(sr);
+                            //TaskService ts = (TaskService) context.getService(sr);
+                            PluginService ps = (PluginService) context.getService(sr);
 
+                            /*
                         for(Task t : ts.getTasks()) {
                             System.out.println(t.getTitle());
                         }
+                        */
 
                         }
                     }
                     Thread.sleep(1000);
                 }
+
+
 
 
 

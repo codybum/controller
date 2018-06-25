@@ -4,7 +4,6 @@ package io.cresco.agent.core;
 import io.cresco.library.agent.AgentService;
 import io.cresco.library.agent.AgentState;
 import io.cresco.library.plugin.PluginBuilder;
-import jdk.nashorn.internal.runtime.ECMAException;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
@@ -14,7 +13,6 @@ import org.osgi.service.component.annotations.Reference;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 @Component(
         service = { AgentService.class} ,

@@ -21,7 +21,7 @@
     <repositories>
         <repository>
             <id>localrepository</id>
-            <url>file:///Users/vcbumg2/ResearchWorx/repo</url>
+            <url>file:///Users/cody/IdeaProjects/repo</url>
         </repository>
     </repositories>
 

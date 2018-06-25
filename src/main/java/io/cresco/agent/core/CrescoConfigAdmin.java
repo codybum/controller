@@ -1,6 +1,5 @@
 package io.cresco.agent.core;
 
-import io.cresco.library.agent.AgentService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -42,7 +41,7 @@ public class CrescoConfigAdmin {
 
     public void addBundle() {
         try {
-            Bundle bundle = context.installBundle("file:/Users/vcbumg2/ResearchWorx/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
+            Bundle bundle = context.installBundle("file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
             bundle.start();
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -53,24 +52,30 @@ public class CrescoConfigAdmin {
 
         try {
 
-            Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.configuration.factory", null);
+
+            //Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.configuration.factory", null);
+
+            Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.skeleton.PluginServiceImpl", null);
+
 
 
             Dictionary properties = new Hashtable();
-            //properties.put("service.pid", "io.cresco.configuration.factory");
             properties.put("pluginID", "plugin/0");
 
             configuration.update(properties);
 
-                /*
-                Configuration configuration2 = confAdmin.createFactoryConfiguration("io.cresco.configuration.factory", null);
+
+
+
+/*
+                Configuration configuration2 = confAdmin.createFactoryConfiguration("io.cresco.skeleton.TaskServiceImpl", null);
                 Dictionary properties2 = new Hashtable();
                 //properties2.put("service.pid", "io.cresco.configuration.factory");
                 properties2.put("pluginID", "plugin/1");
 
                 configuration2.update(properties2);
-                */
-            //onfigurationList.add(configuration);
+*/
+            //ConfigurationList.add(configuration);
             //configurationList.add(configuration2);
 
 
