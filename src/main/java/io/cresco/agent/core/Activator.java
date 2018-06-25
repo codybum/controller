@@ -1,17 +1,11 @@
 package io.cresco.agent.core;
 
 
-import io.cresco.agent.communications.ActiveBroker;
-import io.cresco.agent.communications.JMXConsumer;
-import io.cresco.agent.metrics.CrescoMeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import org.osgi.framework.*;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
+import org.osgi.service.log.LogReaderService;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -39,6 +33,15 @@ public class Activator implements BundleActivator
 
         try {
 
+            ServiceReference ref = context.getServiceReference(LogReaderService.class.getName());
+            if (ref != null)
+            {
+                LogReaderService reader = (LogReaderService) context.getService(ref);
+                reader.addLogListener(new LogWriter());
+            }
+
+
+
             //crescoMeterRegistry = new CrescoMeterRegistry("cresco");
             //crescoMeterRegistry.start();
 
@@ -62,53 +65,10 @@ public class Activator implements BundleActivator
             //JMXProducer mp = new JMXProducer();
             //Post Init
 
-            Bundle bundle = context.installBundle("file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
-            bundle.start();
-
-
-            ServiceReference configurationAdminReference =
-                    context.getServiceReference(ConfigurationAdmin.class.getName());
-
-
-            if (configurationAdminReference != null) {
-                ConfigurationAdmin confAdmin = (ConfigurationAdmin) context.getService(configurationAdminReference);
-
-
-                Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.configuration.factory", null);
-
-
-                Dictionary properties = new Hashtable();
-                //properties.put("service.pid", "io.cresco.configuration.factory");
-                properties.put("pluginID", "plugin/0");
-
-                configuration.update(properties);
-
-                /*
-                Configuration configuration2 = confAdmin.createFactoryConfiguration("io.cresco.configuration.factory", null);
-                Dictionary properties2 = new Hashtable();
-                //properties2.put("service.pid", "io.cresco.configuration.factory");
-                properties2.put("pluginID", "plugin/1");
-
-                configuration2.update(properties2);
-                */
-                configurationList.add(configuration);
-                //configurationList.add(configuration2);
-
-
-
-                for(Configuration conf : confAdmin.listConfigurations(null)) {
-                    System.out.println("CONFIG:" + conf.getPid());
-                }
-
-                for(Configuration conf : configurationList) {
-                    System.out.println("CONFIG2:" + conf.getPid());
-                }
+            //Bundle bundle = context.installBundle("file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
 
                 //MessageReporter rep = new MessageReporter(context);
-                new Thread(new MessageReporter(context)).start();
-
-            }
-
+                //new Thread(new PluginManager(context)).start();
 
 
         } catch(Exception ex) {
@@ -134,4 +94,6 @@ public class Activator implements BundleActivator
                 context.getServiceReference(ConfigurationAdmin.class.getName());
         */
     }
+
+
 }
