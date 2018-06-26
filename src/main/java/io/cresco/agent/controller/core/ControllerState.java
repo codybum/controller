@@ -1,23 +1,27 @@
-package io.cresco.agent.core;
+package io.cresco.agent.controller.core;
 
 
 import io.cresco.library.plugin.PluginBuilder;
+import io.cresco.library.utilities.CLogger;
 
-public class PluginState {
+public class ControllerState {
 
 	private Mode currentMode  = Mode.PRE_INIT;
 	private String currentDesc;
-	private PluginBuilder plugin;
+	private CLogger logger;
+
 	private String globalAgent;
 	private String globalRegion;
 	private String regionalAgent;
 	private String regionalRegion;
+	private PluginBuilder mainPlugin;
+	private ControllerEngine controllerEngine;
 
-
-	public PluginState(PluginBuilder plugin)
+	public ControllerState(ControllerEngine controllerEngine)
 	{
-		this.plugin = plugin;
-		//this.logger = new CLogger(ControllerState.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID());
+		this.controllerEngine = controllerEngine;
+		this.mainPlugin = controllerEngine.getPluginBuilder();
+		this.logger = mainPlugin.getLogger(ControllerState.class.getName(),CLogger.Level.Info);
 	}
 
 	public boolean isActive() {
@@ -93,7 +97,7 @@ public class PluginState {
 	//private String agentpath;
 
 	public String getAgentPath() {
-		return plugin.getRegion() + "_" + plugin.getAgent();
+		return mainPlugin.getRegion() + "_" + mainPlugin.getAgent();
 	}
 
 	/*
@@ -163,8 +167,8 @@ public class PluginState {
 		currentDesc = desc;
 		this.globalAgent = null;
 		this.globalRegion = null;
-		this.regionalAgent = plugin.getAgent();
-		this.regionalRegion = plugin.getRegion();
+		this.regionalAgent = mainPlugin.getAgent();
+		this.regionalRegion = mainPlugin.getRegion();
 	}
 
 	public void setRegionFailed(String desc) {
@@ -179,10 +183,10 @@ public class PluginState {
 	public void setGlobalSuccess(String desc) {
 		currentMode = Mode.GLOBAL;
 		currentDesc = desc;
-		this.globalAgent = plugin.getAgent();
-		this.globalRegion = plugin.getRegion();
-		this.regionalAgent = plugin.getAgent();
-		this.regionalRegion = plugin.getRegion();
+		this.globalAgent = mainPlugin.getAgent();
+		this.globalRegion = mainPlugin.getRegion();
+		this.regionalAgent = mainPlugin.getAgent();
+		this.regionalRegion = mainPlugin.getRegion();
 	}
 
 	public void setRegionalGlobalSuccess(String globalRegion, String globalAgent, String desc) {

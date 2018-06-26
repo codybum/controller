@@ -52,29 +52,19 @@ public class CrescoConfigAdmin {
 
         try {
 
-
-            //Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.configuration.factory", null);
-
             Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.skeleton.Plugin", null);
-
-
-
             Dictionary properties = new Hashtable();
             properties.put("pluginID", "plugin/0");
-
             configuration.update(properties);
 
+            /*
+            Configuration configuration2 = confAdmin.createFactoryConfiguration("io.cresco.skeleton.Plugin", null);
+            Dictionary properties2 = new Hashtable();
+            properties2.put("pluginID", "plugin/1");
+            configuration2.update(properties2);
+            */
 
 
-
-/*
-                Configuration configuration2 = confAdmin.createFactoryConfiguration("io.cresco.skeleton.TaskServiceImpl", null);
-                Dictionary properties2 = new Hashtable();
-                //properties2.put("service.pid", "io.cresco.configuration.factory");
-                properties2.put("pluginID", "plugin/1");
-
-                configuration2.update(properties2);
-*/
             //ConfigurationList.add(configuration);
             //configurationList.add(configuration2);
 

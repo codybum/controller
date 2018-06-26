@@ -33,15 +33,6 @@ public class Activator implements BundleActivator
 
         try {
 
-            ServiceReference ref = context.getServiceReference(LogReaderService.class.getName());
-            if (ref != null)
-            {
-                LogReaderService reader = (LogReaderService) context.getService(ref);
-                reader.addLogListener(new LogWriter());
-            }
-
-
-
             //crescoMeterRegistry = new CrescoMeterRegistry("cresco");
             //crescoMeterRegistry.start();
 
