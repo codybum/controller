@@ -1,21 +1,23 @@
 package io.cresco.agent.controller.core;
 
 import io.cresco.agent.controller.app.gPayload;
-import io.cresco.agent.controller.communication.ActiveBroker;
-import io.cresco.agent.controller.communication.BrokeredAgent;
-import io.cresco.agent.controller.communication.CertificateManager;
+import io.cresco.agent.controller.communication.*;
+import io.cresco.agent.controller.db.DBInterface;
 import io.cresco.agent.core.AgentStateEngine;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
 import org.apache.activemq.command.ActiveMQDestination;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.Inet6Address;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -35,6 +37,7 @@ public class ControllerEngine {
     private BlockingQueue<MsgEvent> outgoingMessages;
     private BlockingQueue<MsgEvent> resourceScheduleQueue;
     private BlockingQueue<gPayload> appScheduleQueue;
+    private Map<String, Long> discoveryMap;
 
 
     public AtomicInteger responds = new AtomicInteger(0);
@@ -46,6 +49,12 @@ public class ControllerEngine {
     private boolean DiscoveryActive = false;
     private boolean UDPDiscoveryActive = false;
     private boolean TCPDiscoveryActive = false;
+    private boolean DBManagerActive = false;
+    private boolean GlobalControllerManagerActive = false;
+    private boolean restartOnShutdown = false;
+
+
+
 
     private String region = "init";
 
@@ -56,6 +65,13 @@ public class ControllerEngine {
 
     public ControllerState cstate;
     private ActiveBroker broker;
+    private DBInterface gdb;
+    private KPIProducer kpip;
+    private ActiveProducer ap;
+
+    private Thread consumerAgentThread;
+    private Thread activeBrokerManagerThread;
+
 
 
     //public ControllerEngine(PluginBuilder pluginBuilder, AgentStateEngine agentStateEngine){
@@ -286,6 +302,109 @@ public class ControllerEngine {
 
     public void setUDPDiscoveryActive(boolean discoveryActive) {
         UDPDiscoveryActive = discoveryActive;
+    }
+
+    public String getStringFromError(Exception ex) {
+        StringWriter errors = new StringWriter();
+        ex.printStackTrace(new PrintWriter(errors));
+        return errors.toString();
+    }
+
+    public BlockingQueue<gPayload> getAppScheduleQueue() {
+        return appScheduleQueue;
+    }
+    public void setAppScheduleQueue(BlockingQueue<gPayload> appScheduleQueue) {
+        this.appScheduleQueue = appScheduleQueue;
+    }
+
+    public DBInterface getGDB() {
+        return gdb;
+    }
+    public void setGDB(DBInterface gdb) {
+        this.gdb = gdb;
+    }
+
+    public KPIProducer getKPIProducer() { return this.kpip; }
+
+    public boolean isDBManagerActive() {
+        return DBManagerActive;
+    }
+    public void setDBManagerActive(boolean DBManagerActive) {
+        this.DBManagerActive = DBManagerActive;
+    }
+
+    public BlockingQueue<MsgEvent> getResourceScheduleQueue() {
+        return resourceScheduleQueue;
+    }
+    public void setResourceScheduleQueue(BlockingQueue<MsgEvent> appScheduleQueue) {
+        this.resourceScheduleQueue = appScheduleQueue;
+    }
+
+    public boolean hasActiveProducter() {
+        boolean hasAP = false;
+        try {
+            if(ap != null) {
+                hasAP = true;
+            }
+        }
+        catch(Exception ex) {
+            logger.error(ex.getMessage());
+        }
+        return hasAP;
+    }
+
+    public boolean isGlobalControllerManagerActive() {
+        return GlobalControllerManagerActive;
+    }
+    public void setGlobalControllerManagerActive(boolean activeBrokerManagerActive) {
+        GlobalControllerManagerActive = activeBrokerManagerActive;
+    }
+
+    public void sendAPMessage(MsgEvent msg) {
+        if ((this.ap == null) && (!region.equals("init"))) {
+            logger.error("AP is null");
+            logger.error("Message: " + msg.getParams());
+            return;
+        }
+        else if(this.ap == null) {
+            logger.trace("AP is null");
+            return;
+        }
+        this.ap.sendMessage(msg);
+    }
+
+    public Map<String, Long> getDiscoveryMap() {
+        return discoveryMap;
+    }
+
+    public Thread getConsumerAgentThread() {
+        return consumerAgentThread;
+    }
+
+    public boolean isDiscoveryActive() {
+        return DiscoveryActive;
+    }
+
+    public Thread getActiveBrokerManagerThread() {
+        return activeBrokerManagerThread;
+    }
+    public void setActiveBrokerManagerThread(Thread activeBrokerManagerThread) {
+        this.activeBrokerManagerThread = activeBrokerManagerThread;
+    }
+
+    public void removeGDBNode(String region, String agent, String pluginID) {
+        if (this.gdb != null)
+            this.gdb.removeNode(region, agent, pluginID);
+    }
+
+    public void setRestartOnShutdown(boolean restartOnShutdown) {
+        this.restartOnShutdown = restartOnShutdown;
+    }
+
+
+    public void closeCommunications() {
+
+
     }
 
 
