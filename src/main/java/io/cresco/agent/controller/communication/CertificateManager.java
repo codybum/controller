@@ -5,13 +5,17 @@ import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
 import org.apache.commons.net.util.Base64;
+
 import sun.security.tools.keytool.CertAndKeyGen;
 import sun.security.x509.*;
 
 import javax.net.ssl.*;
+import javax.security.auth.x500.X500PrivateCredential;
 import java.io.*;
+import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.UUID;
@@ -481,6 +485,7 @@ public class CertificateManager {
                 //info.set( X509CertInfo.SUBJECT, owner );
                 info.set( X509CertInfo.ISSUER, issuer );
             }
+
 
             //info.set(X509CertInfo.ISSUER, new CertificateIssuerName((X500Name) issuer));
 

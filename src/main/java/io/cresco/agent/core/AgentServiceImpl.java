@@ -4,6 +4,7 @@ package io.cresco.agent.core;
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.library.agent.AgentService;
 import io.cresco.library.agent.AgentState;
+import io.cresco.library.agent.AgentStateEngine;
 import io.cresco.library.plugin.PluginBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -14,6 +15,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.log.LogReaderService;
 import org.osgi.service.log.LogService;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +33,7 @@ import java.util.concurrent.Executors;
 )
 public class AgentServiceImpl implements AgentService {
 
+    private AgentStateEngine agentStateEngine;
     private AgentState agentState;
 
     private ExecutorService msgInProcessQueue;
@@ -40,10 +45,15 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Activate
-    void activate(BundleContext context, Map<String,Object> map) {
+    void activate(BundleContext context) {
 
-        agentState = new AgentState();
+        agentStateEngine = new AgentStateEngine();
+        agentState = new AgentState(agentStateEngine);
         agentState.setId("0");
+
+
+        agentState.sendMessage("sddssd");
+
         //context.registerService(TaskService.class,this,null);
 
         try {
@@ -54,13 +64,24 @@ public class AgentServiceImpl implements AgentService {
                 reader.addLogListener(new LogWriter());
             }
 
-            PluginBuilder plugin = new PluginBuilder(this, this.getClass().getName(),context, map);
 
-            ControllerEngine controllerEngine = new ControllerEngine(plugin);
+            File configFile  = new File("conf/agent.properties");
+            if(configFile.isFile()) {
 
-            /*
+                Config config = config = new Config(configFile.getAbsolutePath());
+
+                Map<String,Object> map = config.getConfigMap();
+
+                PluginBuilder plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
+
+                ControllerEngine controllerEngine = new ControllerEngine(agentStateEngine, plugin);
+
+            } else {
+                System.out.println("NO CONFIG FILE!!");
+            }
+
             new Thread(new PluginManager(context)).start();
-            */
+
 
 
 

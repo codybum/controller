@@ -16,7 +16,7 @@
     <mojo.buildnumber.version>1.4</mojo.buildnumber.version>
     <maven.compiler.version>3.5.1</maven.compiler.version>
     <activemq.version>5.15.4</activemq.version>
-    <orientdb.version>2.2.35</orientdb.version>
+    <orientdb.version>2.2.36</orientdb.version>
 
 </properties>
 
@@ -81,29 +81,10 @@
         <version>1.10</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
     <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>25.1-jre</version>
-    </dependency>
-
-
-    <!-- OrientDB -->
-
-    <!-- Embedded: 1. core 2. graphdb -->
-    <!-- Stand Alone: 1. graphdb 2. core -->
-
-    <dependency>
-        <groupId>com.orientechnologies</groupId>
-        <artifactId>orientdb-core</artifactId>
-        <version>${orientdb.version}</version>
-    </dependency>
-
-    <dependency>
-        <groupId>com.orientechnologies</groupId>
-        <artifactId>orientdb-graphdb</artifactId>
-        <version>${orientdb.version}</version>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
     </dependency>
 
 
@@ -141,6 +122,7 @@
                     <Bundle-Activator>io.cresco.agent.core.Activator</Bundle-Activator>
                     <Import-Package>org.osgi.service.cm.ConfigurationAdmin;*;resolution:=optional</Import-Package>
                     <Embed-Dependency>!org.osgi.*;!osgi.cmpn.*;!library;!activemq*;*</Embed-Dependency>
+                    <Export-Package>com.googlecode.concurrentlinkedhashmap</Export-Package>
                     <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
                 </instructions>
             </configuration>
