@@ -32,7 +32,7 @@ public class AgentDiscovery {
             if(!controllerEngine.cstate.isGlobalController()) {
                     ge.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
                     ge.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
-                    ge.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
+                    //ge.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
                     ge.setParam("globalcmd", Boolean.TRUE.toString());
                     controllerEngine.sendAPMessage(ge);
 

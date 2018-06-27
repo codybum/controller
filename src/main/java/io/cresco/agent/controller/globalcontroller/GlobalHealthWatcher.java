@@ -40,6 +40,7 @@ public class GlobalHealthWatcher implements Runnable {
         global_host_map = new HashMap<>();
         regionalUpdateTimer = new Timer();
         regionalUpdateTimer.scheduleAtFixedRate(new GlobalHealthWatcher.GlobalNodeStatusWatchDog(controllerEngine, logger), 500, 15000);//remote
+        logger.error("GET WATCH DOG! " + plugin.getConfig().getStringParam("watchdogtimer"));
         gCheckInterval = plugin.getConfig().getLongParam("watchdogtimer",5000L);
         SchedulerActive = false;
         AppSchedulerActive = false;
@@ -50,15 +51,15 @@ public class GlobalHealthWatcher implements Runnable {
 
         if(!controllerEngine.cstate.isGlobalController()) {
             if (controllerEngine.isReachableAgent(controllerEngine.cstate.getGlobalControllerPath())) {
-                MsgEvent le = new MsgEvent(MsgEvent.Type.CONFIG, controllerEngine.cstate.getGlobalRegion(), controllerEngine.cstate.getGlobalAgent(), controllerEngine.cstate.getControllerId(), "disabled");
+                MsgEvent le = new MsgEvent(MsgEvent.Type.CONFIG, controllerEngine.cstate.getGlobalRegion(), controllerEngine.cstate.getGlobalAgent(), null, "disabled");
 
                 le.setParam("src_region", plugin.getRegion());
                 le.setParam("src_agent", plugin.getAgent());
-                le.setParam("src_plugin", controllerEngine.cstate.getControllerId());
+                //le.setParam("src_plugin", controllerEngine.cstate.getControllerId());
 
                 le.setParam("dst_region", controllerEngine.cstate.getGlobalRegion());
                 le.setParam("dst_agent", controllerEngine.cstate.getGlobalAgent());
-                le.setParam("dst_plugin", controllerEngine.cstate.getControllerId());
+                //le.setParam("dst_plugin", controllerEngine.cstate.getControllerId());
 
                 le.setParam("is_regional", Boolean.TRUE.toString());
                 le.setParam("is_global", Boolean.TRUE.toString());
@@ -93,6 +94,8 @@ public class GlobalHealthWatcher implements Runnable {
                 gCheck(); //do initial check
                 controllerEngine.setGlobalControllerManagerActive(true);
                 logger.trace("GlobalControllerManager is Active");
+                controllerEngine.cstate.setGlobalSuccess("GlobalControllerManager is Active");
+                logger.info("CSTATE : " + controllerEngine.cstate.getControllerState() + " Region:" + controllerEngine.cstate.getRegion() + " Agent:" + controllerEngine.cstate.getAgent());
 
                 while (controllerEngine.isGlobalControllerManagerActive()) {
                     Thread.sleep(gCheckInterval);
@@ -119,11 +122,11 @@ public class GlobalHealthWatcher implements Runnable {
                     MsgEvent tick = new MsgEvent(MsgEvent.Type.WATCHDOG, plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), "WatchDog timer tick. 0");
                     tick.setParam("src_region", this.plugin.getRegion());
                     tick.setParam("src_agent", this.plugin.getAgent());
-                    tick.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
+                    //tick.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
 
                     tick.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
                     tick.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
-                    tick.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
+                    //tick.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
 
                     tick.setParam("region_name",controllerEngine.cstate.getRegionalRegion());
 
@@ -150,11 +153,11 @@ public class GlobalHealthWatcher implements Runnable {
                 MsgEvent tick = new MsgEvent(MsgEvent.Type.WATCHDOG, plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), "WatchDog timer tick. 1");
                 tick.setParam("src_region", this.plugin.getRegion());
                 tick.setParam("src_agent", this.plugin.getAgent());
-                tick.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
+                //tick.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
 
                 tick.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
                 tick.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
-                tick.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
+                //tick.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
 
                 tick.setParam("is_regional", Boolean.TRUE.toString());
                 tick.setParam("is_global", Boolean.TRUE.toString());
@@ -372,11 +375,11 @@ public class GlobalHealthWatcher implements Runnable {
                     MsgEvent le = new MsgEvent(MsgEvent.Type.CONFIG, plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), "enabled");
                     le.setParam("src_region", plugin.getRegion());
                     le.setParam("src_agent", plugin.getAgent());
-                    le.setParam("src_plugin", controllerEngine.cstate.getControllerId());
+                    //le.setParam("src_plugin", controllerEngine.cstate.getControllerId());
 
                     le.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
                     le.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
-                    le.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
+                    //le.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
 
                     le.setParam("is_regional", Boolean.TRUE.toString());
                     le.setParam("is_global", Boolean.TRUE.toString());
@@ -478,11 +481,11 @@ public class GlobalHealthWatcher implements Runnable {
                     me.setParam("action", "regionalimport");
                     me.setParam("src_region", this.plugin.getRegion());
                     me.setParam("src_agent", this.plugin.getAgent());
-                    me.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
+                    //me.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
 
                     me.setParam("dst_region", controllerEngine.cstate.getGlobalRegion());
                     me.setParam("dst_agent", controllerEngine.cstate.getGlobalAgent());
-                    me.setParam("dst_plugin", controllerEngine.cstate.getControllerId());
+                    //me.setParam("dst_plugin", controllerEngine.cstate.getControllerId());
 
                     me.setParam("is_regional", Boolean.TRUE.toString());
                     me.setParam("is_global", Boolean.TRUE.toString());

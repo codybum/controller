@@ -77,10 +77,6 @@ public class PluginManager implements Runnable {
                 }
 
 
-
-
-
-
             } catch(Exception ex) {
                 ex.printStackTrace();
             }

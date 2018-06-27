@@ -6,7 +6,7 @@ import io.cresco.agent.controller.db.DBInterface;
 import io.cresco.agent.controller.globalcontroller.GlobalHealthWatcher;
 import io.cresco.agent.controller.netdiscovery.*;
 import io.cresco.agent.controller.regionalcontroller.RegionHealthWatcher;
-import io.cresco.library.agent.AgentStateEngine;
+import io.cresco.library.agent.ControllerState;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
@@ -32,7 +32,7 @@ public class ControllerEngine {
 
 
     private PluginBuilder plugin;
-    private AgentStateEngine agentStateEngine;
+    public ControllerState cstate;
     private CLogger logger;
 
     //manager for all certificates
@@ -58,17 +58,18 @@ public class ControllerEngine {
     private boolean GlobalControllerManagerActive = false;
     private boolean restartOnShutdown = false;
 
+
+    /*
     private String region = "init";
     private String agent = "init";
     private String agentpath = "init";
-
+    */
 
     private String brokerAddressAgent;
     public String brokerUserNameAgent;
     public String brokerPasswordAgent;
 
 
-    public ControllerState cstate;
     private ActiveBroker broker;
     private KPIBroker kpiBroker;
     private DBInterface gdb;
@@ -83,12 +84,11 @@ public class ControllerEngine {
     private Thread discoveryTCPEngineThread;
 
 
-    public ControllerEngine(AgentStateEngine agentStateEngine, PluginBuilder pluginBuilder){
+    public ControllerEngine(ControllerState controllerState, PluginBuilder pluginBuilder){
 
         this.plugin = pluginBuilder;
-        this.agentStateEngine = agentStateEngine;
+        this.cstate = controllerState;
         this.logger = pluginBuilder.getLogger(ControllerEngine.class.getName(), CLogger.Level.Info);
-        this.cstate = new ControllerState(this);
         logger.info("Controller Init");
         if(commInit()) {
             logger.info("Controller is Init");
@@ -239,6 +239,7 @@ public class ControllerEngine {
             }
             */
 
+            logger.info("CSTATE : " + cstate.getControllerState() + " Region:" + cstate.getRegion() + " Agent:" + cstate.getAgent());
 
         } catch (Exception e) {
             System.out.println("ERROR : " + e.getMessage());
@@ -285,14 +286,15 @@ public class ControllerEngine {
         boolean isInit = false;
         try {
             if(plugin.getConfig().getStringParam("regional_controller_host") != null) {
-                this.cstate.setAgentInit("initAgent() Static Regional Host: " + plugin.getConfig().getStringParam("regional_controller_host"));
+                //this.cstate.setAgentInit("initAgent() Static Regional Host: " + plugin.getConfig().getStringParam("regional_controller_host"));
                 while(!isInit) {
 
                     String tmpRegion = discoveryList.get(0).getParam("dst_region");
-
-                    this.agent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
-                    this.agentpath = tmpRegion + "_" + this.agent;
-                    certificateManager = new CertificateManager(this, agentpath);
+                    String tmpAgent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
+                    cstate.setAgentInit(tmpRegion,tmpAgent,"initAgent() Static Regional Host: " + plugin.getConfig().getStringParam("regional_controller_host") + "TS : " + System.currentTimeMillis());
+                    //this.agent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
+                    //this.agentpath = tmpRegion + "_" + this.agent;
+                    certificateManager = new CertificateManager(this, cstate.getAgentPath());
 
                     TCPDiscoveryStatic ds = new TCPDiscoveryStatic(this);
                     List<MsgEvent> certDiscovery = ds.discover(DiscoveryType.AGENT, plugin.getConfig().getIntegerParam("discovery_static_agent_timeout", 10000), plugin.getConfig().getStringParam("regional_controller_host"), true);
@@ -306,7 +308,8 @@ public class ControllerEngine {
 
                         if((tmpRegion.equals(cRegion)) && (plugin.getConfig().getStringParam("regional_controller_host").equals(cbrokerAddress))) {
 
-                            this.region = certDiscovery.get(0).getParam("dst_region");
+                            tmpRegion = certDiscovery.get(0).getParam("dst_region");
+                            cstate.setAgentInit(tmpRegion,cstate.getAgent(),"initAgent() Static Regional Host: " + plugin.getConfig().getStringParam("regional_controller_host") + "TS : " + System.currentTimeMillis());
 
                             String[]tmpAuth = cbrokerValidatedAuthenication.split(",");
                             this.brokerUserNameAgent = tmpAuth[0];
@@ -324,8 +327,8 @@ public class ControllerEngine {
                             this.cstate.setAgentSuccess(cRegion,cAgent,"initAgent() Static Regional Host: " + plugin.getConfig().getStringParam("regional_controller_host") + " connected.");
                             isInit = true;
                             logger.info("Broker IP: " + cbrokerAddress);
-                            logger.info("Region: " + this.region);
-                            logger.info("Agent: " + this.agent);
+                            logger.info("Region: " + cstate.getRegion());
+                            logger.info("Agent: " + cstate.getAgent());
 
                         }
                     }
@@ -333,7 +336,6 @@ public class ControllerEngine {
             }
             //do discovery
             else {
-                this.cstate.setAgentInit("initAgent() : Dynamic Discovery");
 
                 while(!isInit || discoveryList.isEmpty()) {
 
@@ -343,7 +345,6 @@ public class ControllerEngine {
                     String pcbrokerValidatedAuthenication = null;
 
                     String pcRegion = null;
-                    //String cAgent = null;
 
                     int brokerCount = -1;
                     for (MsgEvent bm : discoveryList) {
@@ -354,16 +355,15 @@ public class ControllerEngine {
                             pcbrokerAddress = bm.getParam("dst_ip");
                             pcbrokerValidatedAuthenication = bm.getParam("validated_authenication");
                             pcRegion = bm.getParam("dst_region");
-                            //cAgent = bm.getParam("dst_agent");
                         }
                     }
 
                     if ((pcbrokerAddress != null) && (pcbrokerValidatedAuthenication != null)) {
 
-                        this.agent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
-                        this.region = pcRegion;
-                        this.agentpath = pcRegion + "_" + this.agent;
-                        certificateManager = new CertificateManager(this, agentpath);
+                        String tmpAgent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
+                        cstate.setAgentInit(pcRegion,tmpAgent,"initAgent() : Dynamic Discovery");
+
+                        certificateManager = new CertificateManager(this, cstate.getAgentPath());
 
                         TCPDiscoveryStatic ds = new TCPDiscoveryStatic(this);
                         List<MsgEvent> certDiscovery = ds.discover(DiscoveryType.AGENT, plugin.getConfig().getIntegerParam("discovery_static_agent_timeout", 10000), pcbrokerAddress, true);
@@ -392,21 +392,14 @@ public class ControllerEngine {
                             if (remoteAddress instanceof Inet6Address) {
                                 cbrokerAddress = "[" + cbrokerAddress + "]";
                             }
-                            //if ((this.region.equals("init")) && (this.agent.equals("init"))) {
-                            //RandomString rs = new RandomString(4);
-                            this.agent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
-                            //this.agent = "agent-" + java.util.UUID.randomUUID().toString();//rs.nextString();
-                            //logger.warn("Agent region changed from :" + oldRegion + " to " + region);
-                            //}
+
+                            tmpAgent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
 
                             this.brokerAddressAgent = cbrokerAddress;
 
-                            this.region = cRegion;
-
-                            logger.info("Assigned regionid=" + this.region);
-                            this.agentpath = this.region + "_" + this.agent;
-                            logger.debug("AgentPath=" + this.agentpath);
-                            this.cstate.setAgentSuccess(cRegion, cAgent, "initAgent() Dynamic Regional Host: " + cbrokerAddress + " connected.");
+                            logger.info("Assigned regionid=" + cstate.getRegion());
+                            logger.debug("AgentPath=" + cstate.getAgentPath());
+                            this.cstate.setAgentSuccess(cRegion, tmpAgent, "initAgent() Dynamic Regional Host: " + cbrokerAddress + " connected.");
                             isInit = true;
                         }
                     }
@@ -526,7 +519,7 @@ public class ControllerEngine {
                 try {
                     //consumer agent
                     int discoveryPort = plugin.getConfig().getIntegerParam("discovery_port",32010);
-                    this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, this.agentpath, "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
+                    this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
                     this.consumerAgentThread.start();
                     while (!this.ConsumerThreadActive) {
                         Thread.sleep(1000);
@@ -635,7 +628,7 @@ public class ControllerEngine {
             String kpiPort = plugin.getConfig().getStringParam("kpiport","32011");
             String kpiProtocol = plugin.getConfig().getStringParam("kpiprotocol","tcp");
             //init KPIBroker
-            this.kpiBroker = new KPIBroker(this, kpiProtocol, kpiPort,this.agentpath + "_KPI",brokerUserNameAgent,brokerPasswordAgent);
+            this.kpiBroker = new KPIBroker(this, kpiProtocol, kpiPort,cstate.getAgentPath() + "_KPI",brokerUserNameAgent,brokerPasswordAgent);
             //init KPIProducer
             this.kpip = new KPIProducer(this, "KPI", kpiProtocol + "://" + this.brokerAddressAgent + ":" + kpiPort, "bname", "bpass");
 
@@ -657,6 +650,7 @@ public class ControllerEngine {
 
         } catch (Exception ex) {
             logger.error("initGlobal() Error " + ex.getMessage());
+            logger.error(getStringFromError(ex));
         }
         return isInit;
     }
@@ -664,16 +658,14 @@ public class ControllerEngine {
     private Boolean initRegion() {
         boolean isInit = false;
         try {
-            region = plugin.getConfig().getStringParam("regionname", "region-" + java.util.UUID.randomUUID().toString());
-            agent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
-            logger.debug("Generated regionid=" + this.region);
+            String tmpRegion = plugin.getConfig().getStringParam("regionname", "region-" + java.util.UUID.randomUUID().toString());
+            String tmpAgent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
+            cstate.setRegionInit(tmpRegion,tmpAgent,"initRegion() TS :" + System.currentTimeMillis());
+            logger.debug("Generated regionid=" + cstate.getRegion());
 
-            this.cstate.setRegionInit("initRegion() Region:" + region + " agent:" + agent);
+            certificateManager = new CertificateManager(this,cstate.getAgentPath());
 
-            this.agentpath = this.region + "_" + this.agent;
-            certificateManager = new CertificateManager(this,agentpath);
-
-            logger.debug("AgentPath=" + this.agentpath);
+            logger.debug("AgentPath=" + cstate.getAgentPath());
             //Start controller services
 
             //logger.debug("IPv6 UDPDiscoveryEngine Started..");
@@ -687,7 +679,7 @@ public class ControllerEngine {
                 brokerUserNameAgent = java.util.UUID.randomUUID().toString();
                 brokerPasswordAgent = java.util.UUID.randomUUID().toString();
             }
-            this.broker = new ActiveBroker(this, this.agentpath,brokerUserNameAgent,brokerPasswordAgent);
+            this.broker = new ActiveBroker(this, cstate.getAgentPath(),brokerUserNameAgent,brokerPasswordAgent);
 
             //broker manager
             logger.debug("Starting Broker Manager");
@@ -939,7 +931,7 @@ public class ControllerEngine {
                     }
                 }
             } else {
-                rAgents.add(this.region); //just return regional controller
+                rAgents.add(cstate.getRegion()); //just return regional controller
             }
         } catch (Exception ex) {
             logger.error("isReachableAgent Error: {}", ex.getMessage());
@@ -1018,7 +1010,7 @@ public class ControllerEngine {
     }
 
     public void sendAPMessage(MsgEvent msg) {
-        if ((this.ap == null) && (!region.equals("init"))) {
+        if ((this.ap == null) && (!cstate.getRegion().equals("init"))) {
             logger.error("AP is null");
             logger.error("Message: " + msg.getParams());
             return;

@@ -4,7 +4,7 @@ package io.cresco.agent.core;
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.library.agent.AgentService;
 import io.cresco.library.agent.AgentState;
-import io.cresco.library.agent.AgentStateEngine;
+import io.cresco.library.agent.ControllerState;
 import io.cresco.library.plugin.PluginBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -33,7 +33,8 @@ import java.util.concurrent.Executors;
 )
 public class AgentServiceImpl implements AgentService {
 
-    private AgentStateEngine agentStateEngine;
+
+    private ControllerState controllerState;
     private AgentState agentState;
 
     private ExecutorService msgInProcessQueue;
@@ -47,14 +48,12 @@ public class AgentServiceImpl implements AgentService {
     @Activate
     void activate(BundleContext context) {
 
-        agentStateEngine = new AgentStateEngine();
-        agentState = new AgentState(agentStateEngine);
+        this.controllerState = new ControllerState();
+
+
+        agentState = new AgentState(controllerState);
         agentState.setId("0");
 
-
-        agentState.sendMessage("sddssd");
-
-        //context.registerService(TaskService.class,this,null);
 
         try {
             ServiceReference ref = context.getServiceReference(LogReaderService.class.getName());
@@ -74,7 +73,7 @@ public class AgentServiceImpl implements AgentService {
 
                 PluginBuilder plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
 
-                ControllerEngine controllerEngine = new ControllerEngine(agentStateEngine, plugin);
+                ControllerEngine controllerEngine = new ControllerEngine(controllerState, plugin);
 
             } else {
                 System.out.println("NO CONFIG FILE!!");
