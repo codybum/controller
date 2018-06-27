@@ -67,8 +67,8 @@ public class AgentServiceImpl implements AgentService {
             File configFile  = new File("conf/agent.properties");
             if(configFile.isFile()) {
 
+                //Agent Config
                 Config config = config = new Config(configFile.getAbsolutePath());
-
                 Map<String,Object> map = config.getConfigMap();
 
                 PluginBuilder plugin = new PluginBuilder(this, this.getClass().getName(), context, map);

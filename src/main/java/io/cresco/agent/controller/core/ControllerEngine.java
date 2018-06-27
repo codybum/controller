@@ -91,7 +91,7 @@ public class ControllerEngine {
         this.logger = pluginBuilder.getLogger(ControllerEngine.class.getName(), CLogger.Level.Info);
         logger.info("Controller Init");
         if(commInit()) {
-            logger.info("Controller is Init");
+            logger.info("Controller Completed Init");
         }
     }
 

@@ -40,7 +40,6 @@ public class GlobalHealthWatcher implements Runnable {
         global_host_map = new HashMap<>();
         regionalUpdateTimer = new Timer();
         regionalUpdateTimer.scheduleAtFixedRate(new GlobalHealthWatcher.GlobalNodeStatusWatchDog(controllerEngine, logger), 500, 15000);//remote
-        logger.error("GET WATCH DOG! " + plugin.getConfig().getStringParam("watchdogtimer"));
         gCheckInterval = plugin.getConfig().getLongParam("watchdogtimer",5000L);
         SchedulerActive = false;
         AppSchedulerActive = false;
