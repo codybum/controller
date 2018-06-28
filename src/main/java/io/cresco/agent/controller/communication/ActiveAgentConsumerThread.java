@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.SecureRandom;
 
-public class ActiveAgentConsumer implements Runnable {
+public class ActiveAgentConsumerThread implements Runnable {
 	private PluginBuilder plugin;
 	private CLogger logger;
 	private Queue RXqueue;
@@ -22,10 +22,10 @@ public class ActiveAgentConsumer implements Runnable {
 	private ActiveMQSslConnectionFactory connf;
 	private ControllerEngine controllerEngine;
 
-	public ActiveAgentConsumer(ControllerEngine controllerEngine, String RXQueueName, String URI, String brokerUserNameAgent, String brokerPasswordAgent) throws JMSException {
+	public ActiveAgentConsumerThread(ControllerEngine controllerEngine, String RXQueueName, String URI, String brokerUserNameAgent, String brokerPasswordAgent) throws JMSException {
 		this.controllerEngine = controllerEngine;
 		this.plugin = controllerEngine.getPluginBuilder();
-		this.logger = plugin.getLogger(ActiveAgentConsumer.class.getName(),CLogger.Level.Info);
+		this.logger = plugin.getLogger(ActiveAgentConsumerThread.class.getName(),CLogger.Level.Info);
 
 		logger.debug("Queue: {}", RXQueueName);
 		logger.trace("RXQueue=" + RXQueueName + " URI=" + URI + " brokerUserNameAgent=" + brokerUserNameAgent + " brokerPasswordAgent=" + brokerPasswordAgent);

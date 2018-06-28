@@ -39,6 +39,10 @@ public class ActiveProducerWorker {
 			gson = new Gson();
 			//conn = (ActiveMQConnection)new ActiveMQConnectionFactory(brokerUserNameAgent, brokerPasswordAgent, URI).createConnection();
 			connf = new ActiveMQSslConnectionFactory(URI);
+			//Don't serialize VM connections
+			if(URI.startsWith("vm://")) {
+				connf.setObjectMessageSerializationDefered(true);
+			}
 			connf.setKeyAndTrustManagers(controllerEngine.getCertificateManager().getKeyManagers(),controllerEngine.getCertificateManager().getTrustManagers(), new SecureRandom());
 			conn = (ActiveMQConnection) connf.createConnection();
 			conn.start();

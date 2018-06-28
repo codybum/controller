@@ -122,7 +122,7 @@
                     <Bundle-Activator>io.cresco.agent.core.Activator</Bundle-Activator>
                     <Import-Package>org.osgi.service.cm.ConfigurationAdmin;*;resolution:=optional</Import-Package>
                     <Embed-Dependency>!org.osgi.*;!osgi.cmpn.*;!library;!activemq*;*</Embed-Dependency>
-                    <Export-Package>com.googlecode.concurrentlinkedhashmap</Export-Package>
+                    <Export-Package></Export-Package>
                     <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
                 </instructions>
             </configuration>

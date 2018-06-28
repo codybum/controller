@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ControllerEngine {
@@ -76,6 +74,8 @@ public class ControllerEngine {
     private KPIProducer kpip;
     private ActiveProducer ap;
     private RegionHealthWatcher regionHealthWatcher;
+    private ExecutorService msgInProcessQueue;
+
 
     private Thread consumerAgentThread;
     private Thread activeBrokerManagerThread;
@@ -89,6 +89,11 @@ public class ControllerEngine {
         this.plugin = pluginBuilder;
         this.cstate = controllerState;
         this.logger = pluginBuilder.getLogger(ControllerEngine.class.getName(), CLogger.Level.Info);
+
+        //this.msgInProcessQueue = Executors.newFixedThreadPool(4);
+        this.msgInProcessQueue = Executors.newCachedThreadPool();
+        //this.msgInProcessQueue = Executors.newSingleThreadExecutor();
+
         logger.info("Controller Init");
         if(commInit()) {
             logger.info("Controller Completed Init");
@@ -519,7 +524,11 @@ public class ControllerEngine {
                 try {
                     //consumer agent
                     int discoveryPort = plugin.getConfig().getIntegerParam("discovery_port",32010);
-                    this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
+                    if(isLocalBroker()) {
+                        this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "vm://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
+                    } else {
+                        this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
+                    }
                     this.consumerAgentThread.start();
                     while (!this.ConsumerThreadActive) {
                         Thread.sleep(1000);
@@ -541,8 +550,11 @@ public class ControllerEngine {
                 consumerAgentConnectCount++;
             }
             int discoveryPort = plugin.getConfig().getIntegerParam("discovery_port",32010);
-            this.ap = new ActiveProducer(this, "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent);
-
+            if(isLocalBroker()) {
+                this.ap = new ActiveProducer(this, "vm://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent);
+            } else {
+                this.ap = new ActiveProducer(this, "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent);
+            }
             logger.debug("Agent ProducerThread Started..");
             isInit = true;
         } catch (Exception ex) {
@@ -1104,6 +1116,22 @@ public class ControllerEngine {
         return isStarted;
     }
 
+    public boolean isLocalBroker() {
+
+        if(this.brokerAddressAgent != null) {
+            if((this.brokerAddressAgent.equals("[::1]")) || ((this.brokerAddressAgent.equals("localhost")))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public RegionHealthWatcher getRegionHealthWatcher() {return this.regionHealthWatcher;}
+
+    public void msgIn(MsgEvent msg) {
+        logger.trace("msgIn : " + msg.getParams().toString());
+        msgInProcessQueue.submit(new MsgRoute(this, msg));
+    }
 
 
 }

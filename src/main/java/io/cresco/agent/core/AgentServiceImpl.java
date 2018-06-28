@@ -5,6 +5,7 @@ import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.library.agent.AgentService;
 import io.cresco.library.agent.AgentState;
 import io.cresco.library.agent.ControllerState;
+import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -33,16 +34,12 @@ import java.util.concurrent.Executors;
 )
 public class AgentServiceImpl implements AgentService {
 
-
+    private ControllerEngine controllerEngine;
     private ControllerState controllerState;
     private AgentState agentState;
 
-    private ExecutorService msgInProcessQueue;
     public AgentServiceImpl() {
 
-        //this.msgInProcessQueue = Executors.newFixedThreadPool(4);
-        this.msgInProcessQueue = Executors.newCachedThreadPool();
-        //this.msgInProcessQueue = Executors.newSingleThreadExecutor();
     }
 
     @Activate
@@ -73,7 +70,7 @@ public class AgentServiceImpl implements AgentService {
 
                 PluginBuilder plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
 
-                ControllerEngine controllerEngine = new ControllerEngine(controllerState, plugin);
+                controllerEngine = new ControllerEngine(controllerState, plugin);
 
             } else {
                 System.out.println("NO CONFIG FILE!!");
@@ -97,8 +94,9 @@ public class AgentServiceImpl implements AgentService {
 
 
     @Override
-    public void msgIn(String id, String msg) {
-        long startTime = Long.parseLong(msg);
+    public void msgIn(String id, MsgEvent msg) {
+        System.out.println(msg.getParams());
+        //long startTime = Long.parseLong(msg);
         //t.record(System.nanoTime() - startTime,TimeUnit.NANOSECONDS);
         //System.out.println("SEND MESSAGE!!!");
         //System.out.println("SEND MESSAGE!!!");
