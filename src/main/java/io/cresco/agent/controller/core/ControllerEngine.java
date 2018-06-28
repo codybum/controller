@@ -1129,7 +1129,7 @@ public class ControllerEngine {
     public RegionHealthWatcher getRegionHealthWatcher() {return this.regionHealthWatcher;}
 
     public void msgIn(MsgEvent msg) {
-        logger.trace("msgIn : " + msg.getParams().toString());
+        //logger.info("msgIn : " + msg.getParams().toString());
         msgInProcessQueue.submit(new MsgRoute(this, msg));
     }
 

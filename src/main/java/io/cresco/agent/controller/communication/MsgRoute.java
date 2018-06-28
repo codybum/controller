@@ -23,8 +23,60 @@ public class MsgRoute implements Runnable {
 
     }
 
-    public void exit() {
+    private MsgEvent getExec() {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-agent")) {
+                isOk = true;
+            }
+        }
 
+        if(!isOk) {
+            System.out.println("BAD MESSAGE : " + rm.getParams());
+        }
+        return null;
+    }
+
+    private MsgEvent getPlugin() {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-plugin")) {
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("BAD MESSAGE : " + rm.getParams());
+        }
+        return null;
+    }
+
+    private MsgEvent getRegional() {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-region")) {
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("BAD MESSAGE : " + rm.getParams());
+        }
+        return null;
+    }
+
+    private MsgEvent getGlobal() {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-global")) {
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("BAD MESSAGE : " + rm.getParams());
+        }
+        return null;
     }
 
     public void run() {
@@ -52,7 +104,78 @@ public class MsgRoute implements Runnable {
                         }
                     }
                     break;
-                */  
+                */
+                case 655:
+                    logger.debug("Local agent sending message to external agent 655");
+                    logger.trace(rm.getParams().toString());
+                    re = getGlobal();
+                    break;
+
+                case 671:
+                    logger.debug("Local agent sending message to external plugin 671");
+                    logger.trace(rm.getParams().toString());
+                    re = getGlobal();
+                    break;
+
+                case 687:
+                    logger.debug("Local plugin sending message to external agent 687");
+                    logger.trace(rm.getParams().toString());
+                    re = getGlobal();
+                    break;
+
+                case 703:
+                    logger.debug("Local plugin sending message to external plugin 703");
+                    logger.trace(rm.getParams().toString());
+                    re = getGlobal();
+                    break;
+
+                case 719:
+                    logger.debug("Local agent sending message to regional agent 719");
+                    logger.trace(rm.getParams().toString());
+                    re = getRegional();
+                    break;
+
+                case 735:
+                    logger.debug("Local agent sending message to regional plugin 735");
+                    logger.trace(rm.getParams().toString());
+                    re = getRegional();
+                    break;
+
+                case 751:
+                    logger.debug("Local plugin sending message to regional agent 751");
+                    logger.trace(rm.getParams().toString());
+                    re = getRegional();
+                    break;
+
+                case 767:
+                    logger.debug("Local plugin sending message to regional plugin 767");
+                    logger.trace(rm.getParams().toString());
+                    re = getRegional();
+                    break;
+
+                case 975:
+                    logger.debug("Local controller sending message to self 975");
+                    logger.trace(rm.getParams().toString());
+                    re = getExec();
+                    break;
+
+                case 991:
+                    logger.debug("Local agent sending message to local plugin 991");
+                    logger.trace(rm.getParams().toString());
+                    re = getPlugin();
+                    break;
+                case 1007:
+                    logger.debug("Local plugin sending message to local agent 1007");
+                    logger.trace(rm.getParams().toString());
+                    re = getExec();
+                    break;
+
+                case 1023:
+                    logger.debug("Local plugin sending message to local plugin 1023");
+                    logger.trace(rm.getParams().toString());
+                    re = getPlugin();
+                    break;
+
                 default:
                     //System.out.println("CONTROLLER ROUTE CASE " + routePath + " " + rm.getParams());
                     logger.error("DEFAULT ROUTE CASE " + routePath + " " + rm.getParams());
@@ -239,53 +362,64 @@ public class MsgRoute implements Runnable {
         int routePath;
         try {
             //determine if local or controller
-            String RC = "0";
+            String RXre = "0";
             String RXr = "0";
+            String RXae = "0";
             String RXa = "0";
             String RXp = "0";
+            String RXpe = "0";
+
+
             String TXr = "0";
+            String TXre = "0";
             String TXa = "0";
+            String TXae = "0";
             String TXp = "0";
-
-
-            if(controllerEngine.cstate.isRegionalController()) {
-                RC = "1";
-            }
+            String TXpe = "0";
 
             if (rm.getParam("dst_region") != null) {
+                RXre = "1";
                 if (rm.getParam("dst_region").equals(/*PluginEngine.region*/plugin.getRegion())) {
                     RXr = "1";
-                    if (rm.getParam("dst_agent") != null) {
-                        if (rm.getParam("dst_agent").equals(/*PluginEngine.agent*/plugin.getAgent())) {
-                            RXa = "1";
-                            if (rm.getParam("dst_plugin") != null) {
-                                if (rm.getParam("dst_plugin").equals(/*PluginEngine.plugin*/plugin.getPluginID())) {
-                                    RXp = "1";
-                                }
-                            }
-                        }
-                    }
                 }
-
             }
+            if (rm.getParam("dst_agent") != null) {
+                RXae = "1";
+                if (rm.getParam("dst_agent").equals(/*PluginEngine.agent*/plugin.getAgent())) {
+                    RXa = "1";
+                }
+            }
+            if (rm.getParam("dst_plugin") != null) {
+                RXpe = "1";
+                if (rm.getParam("dst_plugin").equals(/*PluginEngine.plugin*/plugin.getPluginID())) {
+                    RXp = "1";
+                }
+            }
+
+
             if (rm.getParam("src_region") != null) {
+                TXre = "1";
                 if (rm.getParam("src_region").equals(/*PluginEngine.region*/plugin.getRegion())) {
                     TXr = "1";
-                    if (rm.getParam("src_agent") != null) {
-                        if (rm.getParam("src_agent").equals(/*PluginEngine.agent*/plugin.getAgent())) {
-                            TXa = "1";
-                            if (rm.getParam("src_plugin") != null) {
-                                if (rm.getParam("src_plugin").equals(/*PluginEngine.plugin*/plugin.getPluginID())) {
-                                    TXp = "1";
-                                }
-                            }
-                        }
-                    }
                 }
-
             }
-            String routeString = RC + RXr + TXr + RXa + TXa + RXp + TXp;
+            if (rm.getParam("src_agent") != null) {
+                TXae = "1";
+                if (rm.getParam("src_agent").equals(/*PluginEngine.agent*/plugin.getAgent())) {
+                    TXa = "1";
+                }
+            }
+            if (rm.getParam("src_plugin") != null) {
+                TXpe = "1";
+                if (rm.getParam("src_plugin").equals(/*PluginEngine.plugin*/plugin.getPluginID())) {
+                    TXp = "1";
+                }
+            }
+
+            // 001011 10 11 11
+            String routeString = TXp + RXp + TXa + RXa + TXr + RXr + TXpe + RXpe + TXae + RXae + TXre + RXre;
             routePath = Integer.parseInt(routeString, 2);
+            //System.out.println("desc:" + rm.getParam("desc") + "\nroutePath:" + routePath + " RouteString:\n" + routeString + "\n" + rm.getParams());
         } catch (Exception ex) {
             if(rm != null) {
                 logger.error("Controller : MsgRoute : getRoutePath Error: " + ex.getMessage() + " " + rm.getParams().toString());
@@ -298,65 +432,6 @@ public class MsgRoute implements Runnable {
         //System.out.println("REGIONAL CONTROLLER ROUTEPATH=" + routePath + " MsgType=" + rm.getMsgType() + " Params=" + rm.getParams());
 
         return routePath;
-    }
-
-    private int getRoutePath2() {
-        /*
-         * rE aE pE  rM aM pM   Logic                                             Values   Action
-         * -- -- --  -- -- --   ------------------------------------------------  -------  ---------------------------------------
-         *  0  X  X   X  X  X   Global Broadcast Message                          0 - 31   Broadcast to Global
-         *  1  0  0   0  X  X   Regional Broadcast Message (External Region)      32 - 35  Forward to Global
-         *  1  0  0   1  X  X   Regional Broadcast Message (Current Region)       36 - 39  Broadcast to Region
-         *  1  0  1   0  X  X   Regional Broadcast Message (External Region)      40 - 43  Forward to Global
-         *  1  0  1   1  X  0   Regional Broadcast Message (Current Region)       44 - 47  Broadcast to Region
-         *  1  0  1   1  X  1   Regional Broadcast Message (Current Region)       44 - 47  Broadcast to Region & Execute
-         *  1  1  0   0  X  X   Agent Message (External Agent / External Region)  48 - 51  Forward to Global
-         *  1  1  0   1  0  X   Agent Message (External Agent / Current Region)   52 - 53  Forward to Regional Controller or Agent
-         *  1  1  0   1  1  X   Agent Message                                     54 - 55  Forward to Agent
-         *  1  1  1   0  X  X   Plugin Message (External Region)                  56 - 59  Forward to Global
-         *  1  1  1   1  0  X   Plugin Message (External Agent / Current Region)  60 - 61  Forward to Regional Controller or Agent
-         *  1  1  1   1  1  0   Plugin Message (External Plugin / Current Agent)  62       Forward to Agent
-         *  1  1  1   1  1  1   Plugin Message (Current Plugin / Current Agent)   63       Execute
-         *
-         *  Results:
-         *  --------
-         *  GlobalForward & Broadcast       0-31
-         *  GlobalForward                   32-35, 40-43, 48-51, 56-59
-         *  RegionalForward & Broadcast     36-39
-         *  RegionalForward & Execute       44-47
-         *  RegionalForward                 52-53, 60-61
-         *  AgentForward                    54-55, 62
-         *  Execute                         63
-         */
-        try {
-            String rExists = "0";
-            String aExists = "0";
-            String pExists = "0";
-            String rMatches = "0";
-            String aMatches = "0";
-            String pMatches = "0";
-
-            if (rm.getParam("dst_region") != null) {
-                rExists = "1";
-                if (rm.getParam("dst_region").equals(plugin.getRegion()))
-                    rMatches = "1";
-            }
-            if (rm.getParam("dst_agent") != null) {
-                aExists = "1";
-                if (rm.getParam("dst_agent").equals(plugin.getAgent()))
-                    aMatches = "1";
-            }
-            if (rm.getParam("dst_plugin") != null) {
-                pExists = "1";
-                if (rm.getParam("dst_plugin").equals(plugin.getPluginID()))
-                    pMatches = "1";
-            }
-
-            return Integer.parseInt(rExists + aExists + pExists + rMatches + aMatches + pMatches);
-        } catch (Exception e) {
-            logger.error("getRoutePath2 Error : {}", e.getMessage());
-            return -1;
-        }
     }
 
     private boolean getTTL() {

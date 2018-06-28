@@ -37,6 +37,7 @@ public class AgentServiceImpl implements AgentService {
     private ControllerEngine controllerEngine;
     private ControllerState controllerState;
     private AgentState agentState;
+    private PluginBuilder plugin;
 
     public AgentServiceImpl() {
 
@@ -68,7 +69,7 @@ public class AgentServiceImpl implements AgentService {
                 Config config = config = new Config(configFile.getAbsolutePath());
                 Map<String,Object> map = config.getConfigMap();
 
-                PluginBuilder plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
+                plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
 
                 controllerEngine = new ControllerEngine(controllerState, plugin);
 
@@ -77,6 +78,10 @@ public class AgentServiceImpl implements AgentService {
             }
 
             new Thread(new PluginManager(context)).start();
+
+
+            MessageSender messageSender = new MessageSender(plugin);
+            new Thread(messageSender).start();
 
 
 
@@ -95,7 +100,8 @@ public class AgentServiceImpl implements AgentService {
 
     @Override
     public void msgIn(String id, MsgEvent msg) {
-        System.out.println(msg.getParams());
+        controllerEngine.msgIn(msg);
+        //System.out.println(msg.getParams());
         //long startTime = Long.parseLong(msg);
         //t.record(System.nanoTime() - startTime,TimeUnit.NANOSECONDS);
         //System.out.println("SEND MESSAGE!!!");
