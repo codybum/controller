@@ -23,25 +23,21 @@ public class MessageSender implements Runnable  {
                 //String timeStamp = String.valueOf(System.nanoTime());
                 //msg.setParam("ts",timeStamp);
 
-                //TO AGENT
                 MsgEvent msg = plugin.getAgentMsgEvent(MsgEvent.Type.INFO);
                 msg.setParam("desc","to-agent-exec");
                 plugin.msgIn(msg);
 
-
                 msg = plugin.getRegionalControllerMsgEvent(MsgEvent.Type.INFO);
-                msg.setParam("desc","to-agent-regional");
+                msg.setParam("desc","to-rc");
                 plugin.msgIn(msg);
 
                 msg = plugin.getGlobalControllerMsgEvent(MsgEvent.Type.INFO);
-                msg.setParam("desc","to-agent-global");
+                msg.setParam("desc","to-rc-global");
                 plugin.msgIn(msg);
-
 
                 msg = plugin.getPluginMsgEvent(MsgEvent.Type.INFO, "plugin/0");
-                msg.setParam("desc","to-plugin-agent");
+                msg.setParam("desc","to-plugin-plugin");
                 plugin.msgIn(msg);
-
 
 
                 //TO REGION
@@ -49,17 +45,14 @@ public class MessageSender implements Runnable  {
                 msg.setParam("desc","to-region-agent");
                 plugin.msgIn(msg);
 
-
                 msg = plugin.getRegionalPluginMsgEvent(MsgEvent.Type.INFO,"unknownagent","plugin/0");
                 msg.setParam("desc","to-region-plugin");
                 plugin.msgIn(msg);
-
 
                 //TO GLOBAL
                 msg = plugin.getGlobalAgentMsgEvent(MsgEvent.Type.INFO,"unknownregion","unknownagent");
                 msg.setParam("desc","to-global-agent");
                 plugin.msgIn(msg);
-
 
                 msg = plugin.getGlobalPluginMsgEvent(MsgEvent.Type.INFO,"unknownregion","unknownagent", "plugin/0");
                 msg.setParam("desc","to-global-plugin");
