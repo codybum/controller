@@ -2,6 +2,7 @@ package io.cresco.agent.core;
 
 
 import io.cresco.agent.controller.core.ControllerEngine;
+import io.cresco.agent.controller.plugin.PluginAdmin;
 import io.cresco.library.agent.AgentService;
 import io.cresco.library.agent.AgentState;
 import io.cresco.library.agent.ControllerState;
@@ -17,11 +18,7 @@ import org.osgi.service.log.LogReaderService;
 import org.osgi.service.log.LogService;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Component(
         service = { AgentService.class} ,

@@ -6,7 +6,7 @@ import io.cresco.agent.controller.db.DBInterface;
 import io.cresco.agent.controller.globalcontroller.GlobalHealthWatcher;
 import io.cresco.agent.controller.netdiscovery.*;
 import io.cresco.agent.controller.regionalcontroller.RegionHealthWatcher;
-import io.cresco.agent.core.PluginAdmin;
+import io.cresco.agent.controller.plugin.PluginAdmin;
 import io.cresco.library.agent.ControllerState;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;

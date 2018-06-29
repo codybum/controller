@@ -1,4 +1,4 @@
-package io.cresco.agent.core;
+package io.cresco.agent.controller.plugin;
 
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginService;
@@ -62,6 +62,22 @@ public class PluginAdmin {
     public void addBundle() {
         try {
             Bundle bundle = context.installBundle("file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
+            System.out.println("bundle location: " + bundle.getLocation());
+            System.out.println("bundle sname: " + bundle.getSymbolicName());
+            System.out.println("bundle state: " + bundle.getState());
+            System.out.println("bundle id: " + bundle.getBundleId());
+            System.out.println("bundle version: " + bundle.getVersion());
+
+
+            /*
+            bundle location: file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar
+            bundle sname: cresco.io.skeleton
+            bundle state: 2
+            bundle id: 17
+            bundle version: 1.0.0.SNAPSHOT-2018-06-29T201634Z
+            */
+
+
             bundle.start();
         } catch(Exception ex) {
             ex.printStackTrace();
