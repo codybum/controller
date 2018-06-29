@@ -70,6 +70,7 @@ public class ControllerEngine {
     private RegionHealthWatcher regionHealthWatcher;
     private ExecutorService msgInProcessQueue;
     private PluginAdmin pluginAdmin;
+    private ExecutorImpl executor;
 
 
     private Thread consumerAgentThread;
@@ -84,6 +85,8 @@ public class ControllerEngine {
         this.plugin = pluginBuilder;
         this.cstate = controllerState;
         this.logger = pluginBuilder.getLogger(ControllerEngine.class.getName(), CLogger.Level.Info);
+        this.executor = new ExecutorImpl(this);
+        this.plugin.setExecutor(this.executor);
         this.pluginAdmin = pluginAdmin;
 
         //this.msgInProcessQueue = Executors.newFixedThreadPool(4);
@@ -94,6 +97,11 @@ public class ControllerEngine {
         if(commInit()) {
             logger.info("Controller Completed Init");
         }
+
+        //new thread required to allow AgentServiceImpl to finish & become service
+        StaticPluginLoader staticPluginLoader = new StaticPluginLoader(this);
+        new Thread(staticPluginLoader).start();
+
     }
 
     //primary init
@@ -1129,5 +1137,6 @@ public class ControllerEngine {
         msgInProcessQueue.submit(new MsgRoute(this, msg));
     }
 
+    public PluginAdmin getPluginAdmin() { return pluginAdmin; }
 
 }

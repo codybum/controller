@@ -74,10 +74,6 @@ public class AgentServiceImpl implements AgentService {
 
                 controllerEngine = new ControllerEngine(controllerState, plugin, pluginAdmin);
 
-                pluginAdmin.addBundle();
-                pluginAdmin.addConfig("plugin/0");
-                pluginAdmin.startPlugin("plugin/0");
-
             } else {
                 System.out.println("NO CONFIG FILE!!");
             }

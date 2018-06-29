@@ -56,7 +56,10 @@ public class PluginAdmin {
         }
     }
 
-    public void msgOut(String pluginID, MsgEvent msg) {
+    public void msgOut(MsgEvent msg) {
+
+        String pluginID = msg.getDstPlugin();
+
         if(serviceMap.containsKey(pluginID)) {
             serviceMap.get(pluginID).inMsg(msg);
         }

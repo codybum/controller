@@ -27,7 +27,12 @@ public class MsgRoute implements Runnable {
         boolean isOk = false;
         if(rm.getParam("desc") != null) {
             if(rm.getParam("desc").startsWith("to-agent")) {
-                isOk = true;
+                try {
+                    controllerEngine.getPluginBuilder().msgIn(rm);
+                    isOk = true;
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -41,7 +46,12 @@ public class MsgRoute implements Runnable {
         boolean isOk = false;
         if(rm.getParam("desc") != null) {
             if(rm.getParam("desc").startsWith("to-plugin")) {
-                isOk = true;
+                try {
+                    controllerEngine.getPluginAdmin().msgOut(rm);
+                    isOk = true;
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -688,7 +698,6 @@ public class MsgRoute implements Runnable {
                 if (ttlCount > 10) {
                     System.out.println("**Controller : MsgRoute : High Loop Count**");
                     System.out.println("MsgType=" + rm.getMsgType().toString());
-                    System.out.println("Region=" + rm.getMsgRegion() + " Agent=" + rm.getMsgAgent() + " plugin=" + rm.getMsgPlugin());
                     System.out.println("params=" + rm.getParams());
                     isValid = false;
                 }
