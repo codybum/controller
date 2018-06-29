@@ -78,8 +78,8 @@ public class AgentServiceImpl implements AgentService {
                 System.out.println("NO CONFIG FILE!!");
             }
 
-            MessageSender messageSender = new MessageSender(plugin);
-            new Thread(messageSender).start();
+            //MessageSender messageSender = new MessageSender(plugin);
+            //new Thread(messageSender).start();
 
 
 

@@ -10,6 +10,7 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,14 +18,24 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PluginAdmin {
 
 
+    private final int PLUGINLIMIT = 900;
+
     private BundleContext context;
     private ConfigurationAdmin confAdmin;
     private Map<String,Configuration> configMap;
     private Map<String,PluginService> serviceMap;
 
+
+    public int pluginCount() {
+
+        synchronized (configMap) {
+            return configMap.size();
+        }
+    }
+
     public PluginAdmin(BundleContext context) {
 
-        configMap = new ConcurrentHashMap<>();
+        configMap = new HashMap<>();
         serviceMap = new ConcurrentHashMap<>();
         this.context = context;
 
@@ -66,22 +77,37 @@ public class PluginAdmin {
         }
     }
 
-    public void addConfig(String pluginID) {
+    public String addConfig() {
 
+
+        String pluginID = null;
         try {
 
+            if(pluginCount() < PLUGINLIMIT) {
+                boolean isEmpty = false;
+                int id = 0;
+                while (!isEmpty) {
 
-            Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.skeleton.Plugin", null);
-            Dictionary properties = new Hashtable();
-            properties.put("pluginID", pluginID);
-            configuration.update(properties);
-
-            configMap.put(pluginID,configuration);
-
+                    synchronized (configMap) {
+                        if (!configMap.containsKey("plugin/" + id)) {
+                            pluginID = "plugin/" + id;
+                            Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.skeleton.Plugin", null);
+                            Dictionary properties = new Hashtable();
+                            properties.put("pluginID", pluginID);
+                            configuration.update(properties);
+                            configMap.put(pluginID, configuration);
+                            isEmpty = true;
+                        }
+                    }
+                    id++;
+                }
+            }
 
         } catch(Exception ex) {
             ex.printStackTrace();
         }
+
+        return pluginID;
     }
 
     public void startPlugin(String pluginID) {
@@ -97,13 +123,15 @@ public class PluginAdmin {
                 servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
 
                 if (servRefs == null || servRefs.length == 0) {
-                    System.out.println("NULL FOUND NOTHING!");
+                    //System.out.println("NULL FOUND NOTHING!");
                 } else {
-                    System.out.println("Running Service Count: " + servRefs.length);
+                    //System.out.println("Running Service Count: " + servRefs.length);
 
                     for (ServiceReference sr : servRefs) {
                         boolean assign = servRefs[0].isAssignableTo(context.getBundle(), PluginService.class.getName());
-                        System.out.println("Can Assign Service : " + assign);
+                        //System.out.println("Can Assign Service : " + assign);
+
+                        PluginService ps = (PluginService) context.getService(sr);
 
                         serviceMap.put(pluginID,(PluginService) context.getService(sr));
 

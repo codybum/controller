@@ -24,8 +24,8 @@ public class StaticPluginLoader implements Runnable  {
             try {
 
                 controllerEngine.getPluginAdmin().addBundle();
-                controllerEngine.getPluginAdmin().addConfig("plugin/0");
-                controllerEngine.getPluginAdmin().startPlugin("plugin/0");
+                String pluginID = controllerEngine.getPluginAdmin().addConfig();
+                controllerEngine.getPluginAdmin().startPlugin(pluginID);
 
                 //logger.info("Sent Message : " + message + " agent:" + plugin.getAgent());
                 Thread.sleep(1000);
