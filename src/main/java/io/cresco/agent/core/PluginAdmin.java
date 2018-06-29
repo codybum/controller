@@ -4,6 +4,7 @@ import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -76,28 +77,6 @@ public class PluginAdmin {
             configuration.update(properties);
 
             configMap.put(pluginID,configuration);
-            /*
-            Configuration configuration2 = confAdmin.createFactoryConfiguration("io.cresco.skeleton.Plugin", null);
-            Dictionary properties2 = new Hashtable();
-            properties2.put("pluginID", "plugin/1");
-            configuration2.update(properties2);
-            */
-
-
-            //ConfigurationList.add(configuration);
-            //configurationList.add(configuration2);
-
-            /*
-            for (Configuration conf : confAdmin.listConfigurations(null)) {
-                System.out.println("CONFIG:" + conf.getPid());
-            }
-            */
-
-            /*
-            for (Configuration conf : configurationList) {
-                System.out.println("CONFIG2:" + conf.getPid());
-            }
-            */
 
 
         } catch(Exception ex) {
@@ -112,7 +91,10 @@ public class PluginAdmin {
 
             while (servRefs == null) {
 
-                servRefs = context.getServiceReferences(PluginService.class.getName(), null);
+                String filterString = "(pluginID=" + pluginID + ")";
+                Filter filter = context.createFilter(filterString);
+
+                servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
 
                 if (servRefs == null || servRefs.length == 0) {
                     System.out.println("NULL FOUND NOTHING!");
@@ -123,15 +105,7 @@ public class PluginAdmin {
                         boolean assign = servRefs[0].isAssignableTo(context.getBundle(), PluginService.class.getName());
                         System.out.println("Can Assign Service : " + assign);
 
-                        //TaskService ts = (TaskService) context.getService(sr);
-                        PluginService ps = (PluginService) context.getService(sr);
-                        serviceMap.put(pluginID,ps);
-
-                            /*
-                        for(Task t : ts.getTasks()) {
-                            System.out.println(t.getTitle());
-                        }
-                        */
+                        serviceMap.put(pluginID,(PluginService) context.getService(sr));
 
                     }
                 }
