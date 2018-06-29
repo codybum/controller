@@ -9,6 +9,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
+
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -32,6 +33,32 @@ public class PluginAdmin {
             return configMap.size();
         }
     }
+
+    /*
+    public void getRepo() {
+
+
+        Repository repo = null;
+        ServiceReference repoReference = null;
+
+        repoReference = context.getServiceReference(Repository.class.getName());
+        if (repoReference != null) {
+
+            boolean assign = repoReference.isAssignableTo(context.getBundle(), Repository.class.getName());
+
+            if (assign) {
+                repo = (Repository) context.getService(repoReference);
+            } else {
+                System.out.println("Could not Assign Configuration Admin!");
+            }
+
+        } else {
+            System.out.println("Admin Does Not Exist!");
+        }
+
+
+    }
+    */
 
     public PluginAdmin(BundleContext context) {
 
