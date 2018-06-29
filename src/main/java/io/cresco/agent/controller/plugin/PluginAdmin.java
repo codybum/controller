@@ -86,17 +86,20 @@ public class PluginAdmin {
 
     }
 
-    public void addBundle() {
+    public int addBundle(String fileLocation) {
+        int bundleID = -1;
         try {
-            Bundle bundle = context.installBundle("file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
+
+            Bundle bundle = context.installBundle("file:" + fileLocation);
+            //Bundle bundle = context.installBundle("file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
+            bundleID = bundleID;
+            /*
             System.out.println("bundle location: " + bundle.getLocation());
             System.out.println("bundle sname: " + bundle.getSymbolicName());
             System.out.println("bundle state: " + bundle.getState());
             System.out.println("bundle id: " + bundle.getBundleId());
             System.out.println("bundle version: " + bundle.getVersion());
 
-
-            /*
             bundle location: file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar
             bundle sname: cresco.io.skeleton
             bundle state: 2
@@ -104,11 +107,21 @@ public class PluginAdmin {
             bundle version: 1.0.0.SNAPSHOT-2018-06-29T201634Z
             */
 
-
-            bundle.start();
         } catch(Exception ex) {
             ex.printStackTrace();
         }
+        return bundleID;
+    }
+
+    public boolean startBundle(long bundleID) {
+        boolean isStarted = false;
+        try {
+            context.getBundle(bundleID).start();
+            isStarted = true;
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return  isStarted;
     }
 
     public void msgOut(MsgEvent msg) {
