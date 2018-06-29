@@ -38,6 +38,7 @@ public class AgentServiceImpl implements AgentService {
     private ControllerState controllerState;
     private AgentState agentState;
     private PluginBuilder plugin;
+    private PluginAdmin pluginAdmin;
 
     public AgentServiceImpl() {
 
@@ -47,7 +48,7 @@ public class AgentServiceImpl implements AgentService {
     void activate(BundleContext context) {
 
         this.controllerState = new ControllerState();
-
+        this.pluginAdmin = new PluginAdmin(context);
 
         agentState = new AgentState(controllerState);
         agentState.setId("0");
@@ -71,14 +72,15 @@ public class AgentServiceImpl implements AgentService {
 
                 plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
 
-                controllerEngine = new ControllerEngine(controllerState, plugin);
+                controllerEngine = new ControllerEngine(controllerState, plugin, pluginAdmin);
+
+                pluginAdmin.addBundle();
+                pluginAdmin.addConfig("plugin/0");
+                pluginAdmin.startPlugin("plugin/0");
 
             } else {
                 System.out.println("NO CONFIG FILE!!");
             }
-
-            new Thread(new PluginManager(context)).start();
-
 
             MessageSender messageSender = new MessageSender(plugin);
             new Thread(messageSender).start();
@@ -93,19 +95,13 @@ public class AgentServiceImpl implements AgentService {
 
     @Override
     public AgentState getAgentState() {
-        //return taskMap.get(id);
         return agentState;
     }
 
 
     @Override
-    public void msgIn(String id, MsgEvent msg) {
+    public void msgOut(String id, MsgEvent msg) {
         controllerEngine.msgIn(msg);
-        //System.out.println(msg.getParams());
-        //long startTime = Long.parseLong(msg);
-        //t.record(System.nanoTime() - startTime,TimeUnit.NANOSECONDS);
-        //System.out.println("SEND MESSAGE!!!");
-        //System.out.println("SEND MESSAGE!!!");
     }
 
 }

@@ -6,6 +6,7 @@ import io.cresco.agent.controller.db.DBInterface;
 import io.cresco.agent.controller.globalcontroller.GlobalHealthWatcher;
 import io.cresco.agent.controller.netdiscovery.*;
 import io.cresco.agent.controller.regionalcontroller.RegionHealthWatcher;
+import io.cresco.agent.core.PluginAdmin;
 import io.cresco.library.agent.ControllerState;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
@@ -56,13 +57,6 @@ public class ControllerEngine {
     private boolean GlobalControllerManagerActive = false;
     private boolean restartOnShutdown = false;
 
-
-    /*
-    private String region = "init";
-    private String agent = "init";
-    private String agentpath = "init";
-    */
-
     private String brokerAddressAgent;
     public String brokerUserNameAgent;
     public String brokerPasswordAgent;
@@ -75,6 +69,7 @@ public class ControllerEngine {
     private ActiveProducer ap;
     private RegionHealthWatcher regionHealthWatcher;
     private ExecutorService msgInProcessQueue;
+    private PluginAdmin pluginAdmin;
 
 
     private Thread consumerAgentThread;
@@ -84,11 +79,12 @@ public class ControllerEngine {
     private Thread discoveryTCPEngineThread;
 
 
-    public ControllerEngine(ControllerState controllerState, PluginBuilder pluginBuilder){
+    public ControllerEngine(ControllerState controllerState, PluginBuilder pluginBuilder, PluginAdmin pluginAdmin){
 
         this.plugin = pluginBuilder;
         this.cstate = controllerState;
         this.logger = pluginBuilder.getLogger(ControllerEngine.class.getName(), CLogger.Level.Info);
+        this.pluginAdmin = pluginAdmin;
 
         //this.msgInProcessQueue = Executors.newFixedThreadPool(4);
         this.msgInProcessQueue = Executors.newCachedThreadPool();
