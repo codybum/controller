@@ -42,6 +42,7 @@ public class StaticPluginLoader implements Runnable  {
 
                 if(config != null) {
 
+
                     for(String tmpPluginID : config.getPluginList(1)) {
 
 
@@ -59,7 +60,7 @@ public class StaticPluginLoader implements Runnable  {
                                         jarFile = pluginPath + "/" + jarFile;
                                     }
                                 }
-
+                                logger.info("STATIC LOADING : " + pluginName + " jar: " +jarFile);
                                 controllerEngine.getPluginAdmin().addPlugin(pluginName,jarFile,map);
 
                             }

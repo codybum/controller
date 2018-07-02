@@ -34,6 +34,7 @@ public class ControllerEngine {
     public ControllerState cstate;
     private CLogger logger;
 
+
     //manager for all certificates
     private CertificateManager certificateManager;
     private ConcurrentHashMap<String, BrokeredAgent> brokeredAgents;

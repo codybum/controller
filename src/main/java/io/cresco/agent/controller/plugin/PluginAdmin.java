@@ -1,5 +1,7 @@
 package io.cresco.agent.controller.plugin;
 
+import io.cresco.library.agent.AgentService;
+import io.cresco.library.agent.AgentState;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginService;
 import org.osgi.framework.Bundle;
@@ -28,6 +30,7 @@ public class PluginAdmin {
     //private Map<String,PluginService> serviceMap;
     private Map<String,PluginNode> pluginMap;
 
+    private AgentState agentState;
 
     public int pluginCount() {
 
@@ -62,12 +65,13 @@ public class PluginAdmin {
     }
     */
 
-    public PluginAdmin(BundleContext context) {
+    public PluginAdmin(AgentState agentState, BundleContext context) {
 
         configMap = new HashMap<>();
         //serviceMap = new ConcurrentHashMap<>();
         pluginMap = new ConcurrentHashMap<>();
         this.context = context;
+        this.agentState = agentState;
 
         ServiceReference configurationAdminReference = null;
 
@@ -205,6 +209,7 @@ public class PluginAdmin {
                             Dictionary properties = new Hashtable();
 
                             ((Hashtable) properties).putAll(map);
+
                             properties.put("pluginID", pluginID);
                             configuration.update(properties);
 
