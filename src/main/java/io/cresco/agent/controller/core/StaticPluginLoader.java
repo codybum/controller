@@ -23,7 +23,7 @@ public class StaticPluginLoader implements Runnable  {
         logger = plugin.getLogger(this.getClass().getName(), CLogger.Level.Info);
         try {
 
-            File pluginConfigFile  = new File("conf/plugin.ini");
+            File pluginConfigFile  = new File("conf/plugins.ini");
 
             if (pluginConfigFile.isFile()) {
                 this.config = new Config(pluginConfigFile.getAbsolutePath());
