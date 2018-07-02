@@ -25,7 +25,8 @@ public class PluginAdmin {
     private BundleContext context;
     private ConfigurationAdmin confAdmin;
     private Map<String,Configuration> configMap;
-    private Map<String,PluginService> serviceMap;
+    //private Map<String,PluginService> serviceMap;
+    private Map<String,PluginNode> pluginMap;
 
 
     public int pluginCount() {
@@ -64,7 +65,8 @@ public class PluginAdmin {
     public PluginAdmin(BundleContext context) {
 
         configMap = new HashMap<>();
-        serviceMap = new ConcurrentHashMap<>();
+        //serviceMap = new ConcurrentHashMap<>();
+        pluginMap = new ConcurrentHashMap<>();
         this.context = context;
 
         ServiceReference configurationAdminReference = null;
@@ -142,9 +144,47 @@ public class PluginAdmin {
 
         String pluginID = msg.getDstPlugin();
 
-        if(serviceMap.containsKey(pluginID)) {
-            serviceMap.get(pluginID).inMsg(msg);
+        if(pluginMap.containsKey(pluginID)) {
+            pluginMap.get(pluginID).getPluginService().inMsg(msg);
         }
+    }
+
+
+    public String addPlugin(String pluginName, String jarFile, Map<String,Object> map) {
+        String returnPluginID = null;
+        try {
+
+            long bundleID = addBundle(jarFile);
+            if(bundleID != -1) {
+                if(startBundle(bundleID)) {
+                    String pluginID = addConfig(pluginName, map);
+                    if(pluginID != null) {
+                        PluginNode pluginNode = new PluginNode(pluginID,pluginName,jarFile,map);
+                        pluginMap.put(pluginID,pluginNode);
+                        //create a config object here
+                        if(startPlugin(pluginID)) {
+                            returnPluginID = pluginID;
+                        } else {
+                            System.out.println("Could not start plugin " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
+                        }
+                    } else {
+                        System.out.println("Could not create config for " + " pluginName " + pluginName + " no bundle " + jarFile);
+                    }
+                } else {
+                    System.out.println("Could not start bundle Id " + bundleID + " pluginName " + pluginName + " no bundle " + jarFile);
+                }
+            //controllerEngine.getPluginAdmin().startBundle(bundleID);
+            //String pluginID = controllerEngine.getPluginAdmin().addConfig(pluginName,jarFile, map);
+            //controllerEngine.getPluginAdmin().startPlugin(pluginID);
+            } else {
+                System.out.println("Can't add " + pluginName + " no bundle " + jarFile);
+            }
+
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     public String addConfig(String pluginName, Map<String,Object> map) {
@@ -217,8 +257,8 @@ public class PluginAdmin {
         return pluginID;
     }
 
-    public void startPlugin(String pluginID) {
-
+    public boolean startPlugin(String pluginID) {
+        boolean isStarted = false;
         try {
             ServiceReference<?>[] servRefs = null;
 
@@ -241,7 +281,8 @@ public class PluginAdmin {
 
                         PluginService ps = (PluginService) context.getService(sr);
 
-                        serviceMap.put(pluginID,(PluginService) context.getService(sr));
+                        pluginMap.get(pluginID).setPluginService((PluginService) context.getService(sr));
+                        isStarted = true;
 
                     }
                 }
@@ -250,7 +291,7 @@ public class PluginAdmin {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
+        return isStarted;
     }
 
 }

@@ -1,26 +1,24 @@
 package io.cresco.agent.controller.plugin;
 
-import io.cresco.library.messaging.MsgEvent;
-import org.apache.commons.configuration.SubnodeConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import io.cresco.library.plugin.PluginService;
+
+import javax.security.auth.login.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.concurrent.BlockingQueue;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 public class PluginNode {
-    private static final Logger logger = LoggerFactory.getLogger("Plugins");
+    //private Logger logger =
     private String pluginID;
     private String jarPath;
+    private String pluginName;
     private String name;
     private String version;
     private boolean active = false;
@@ -29,6 +27,10 @@ public class PluginNode {
     private long watchdog_ts = 0;
     private long watchdogtimer = 0;
     private long runtime = 0;
+
+    private PluginService pluginService;
+    private Map<String,Object> configMap;
+
     //private String inode_id;
     //private String resource_id;
 
@@ -43,9 +45,13 @@ public class PluginNode {
     status_code = 92; //timeout on disable verification
      */
 
-    public PluginNode(String pluginID, String jarPath) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public PluginNode(String pluginID, String pluginName, String jarPath, Map<String,Object> configMap) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+
+
         this.pluginID = pluginID;
         this.jarPath = jarPath;
+        this.configMap = configMap;
+
         Manifest manifest = new JarInputStream(new FileInputStream(new File(this.jarPath))).getManifest();
         Attributes mainAttributess = manifest.getMainAttributes();
         name = mainAttributess.getValue("artifactId");
@@ -103,6 +109,13 @@ public class PluginNode {
 
     public String getStatus_desc() {return status_desc;}
 
+    public PluginService getPluginService() {
+        return pluginService;
+    }
+
+    public void setPluginService(PluginService pluginService) {
+        this.pluginService = pluginService;
+    }
 
     /*
     public String getInodeId() {return inode_id;}

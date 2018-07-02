@@ -60,12 +60,8 @@ public class StaticPluginLoader implements Runnable  {
                                     }
                                 }
 
-                                long bundleID = controllerEngine.getPluginAdmin().addBundle(jarFile);
-                                if(bundleID != -1) {
-                                    controllerEngine.getPluginAdmin().startBundle(bundleID);
-                                    String pluginID = controllerEngine.getPluginAdmin().addConfig(pluginName, map);
-                                    controllerEngine.getPluginAdmin().startPlugin(pluginID);
-                                }
+                                controllerEngine.getPluginAdmin().addPlugin(pluginName,jarFile,map);
+
                             }
 
 
