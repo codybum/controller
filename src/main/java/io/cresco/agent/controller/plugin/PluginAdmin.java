@@ -10,6 +10,7 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 
+import java.io.File;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -86,13 +87,25 @@ public class PluginAdmin {
 
     }
 
-    public int addBundle(String fileLocation) {
-        int bundleID = -1;
+    public long addBundle(String fileLocation) {
+        long bundleID = -1;
         try {
 
-            Bundle bundle = context.installBundle("file:" + fileLocation);
-            //Bundle bundle = context.installBundle("file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
-            bundleID = bundleID;
+            Bundle bundle = null;
+
+            File checkFile = new File(fileLocation);
+            if(checkFile.isFile()) {
+
+                bundle = context.getBundle(fileLocation);
+
+                if(bundle == null) {
+                    bundle = context.installBundle("file:" + fileLocation);
+                }
+
+                if(bundle != null) {
+                    bundleID = bundle.getBundleId();
+                }
+
             /*
             System.out.println("bundle location: " + bundle.getLocation());
             System.out.println("bundle sname: " + bundle.getSymbolicName());
@@ -106,6 +119,7 @@ public class PluginAdmin {
             bundle id: 17
             bundle version: 1.0.0.SNAPSHOT-2018-06-29T201634Z
             */
+            }
 
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -133,7 +147,43 @@ public class PluginAdmin {
         }
     }
 
-    public String addConfig() {
+    public String addConfig(String pluginName, Map<String,Object> map) {
+
+
+        String pluginID = null;
+        try {
+
+            if(pluginCount() < PLUGINLIMIT) {
+                boolean isEmpty = false;
+                int id = 0;
+                while (!isEmpty) {
+
+                    synchronized (configMap) {
+                        if (!configMap.containsKey("plugin/" + id)) {
+                            pluginID = "plugin/" + id;
+                            Configuration configuration = confAdmin.createFactoryConfiguration(pluginName + ".Plugin", null);
+                            Dictionary properties = new Hashtable();
+
+                            ((Hashtable) properties).putAll(map);
+                            properties.put("pluginID", pluginID);
+                            configuration.update(properties);
+
+                            configMap.put(pluginID, configuration);
+                            isEmpty = true;
+                        }
+                    }
+                    id++;
+                }
+            }
+
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return pluginID;
+    }
+
+    public String addConfig2() {
 
 
         String pluginID = null;
@@ -149,6 +199,7 @@ public class PluginAdmin {
                             pluginID = "plugin/" + id;
                             Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.skeleton.Plugin", null);
                             Dictionary properties = new Hashtable();
+
                             properties.put("pluginID", pluginID);
                             configuration.update(properties);
                             configMap.put(pluginID, configuration);
@@ -176,16 +227,17 @@ public class PluginAdmin {
                 String filterString = "(pluginID=" + pluginID + ")";
                 Filter filter = context.createFilter(filterString);
 
-                servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
+                //servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
+                servRefs = context.getServiceReferences(PluginService.class.getName(), null);
 
                 if (servRefs == null || servRefs.length == 0) {
-                    //System.out.println("NULL FOUND NOTHING!");
+                    System.out.println("NULL FOUND NOTHING!");
                 } else {
-                    //System.out.println("Running Service Count: " + servRefs.length);
+                    System.out.println("Running Service Count: " + servRefs.length);
 
                     for (ServiceReference sr : servRefs) {
                         boolean assign = servRefs[0].isAssignableTo(context.getBundle(), PluginService.class.getName());
-                        //System.out.println("Can Assign Service : " + assign);
+                        System.out.println("Can Assign Service : " + assign);
 
                         PluginService ps = (PluginService) context.getService(sr);
 

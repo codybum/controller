@@ -60,7 +60,7 @@ public class AgentServiceImpl implements AgentService {
             }
 
 
-            File configFile  = new File("conf/agent.properties");
+            File configFile  = new File("conf/agent.ini");
             if(configFile.isFile()) {
 
                 //Agent Config

@@ -5,9 +5,7 @@ import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class Config {
 
@@ -37,10 +35,14 @@ public class Config {
     }
 
     public Map<String,Object> getConfigMap() {
+    return getConfigMap("general");
+    }
+
+    public Map<String,Object> getConfigMap(String section) {
 
         Map<String,Object> configMap = new HashMap<>();
 
-        SubnodeConfiguration sObj = iniConfObj.getSection("general");
+        SubnodeConfiguration sObj = iniConfObj.getSection(section);
         //final Map<String,String> result=new TreeMap<String,String>();
         //StringBuilder sb = new StringBuilder();
         final Iterator it = sObj.getKeys();
@@ -57,6 +59,22 @@ public class Config {
         return  configMap;
     }
 
+    public List<String> getPluginList(int isEnabled) {
+        //isEnabled : 0=disabled , 1 enabled
+
+        List<String> enabledPlugins = new ArrayList<>();
+        SubnodeConfiguration sObj = iniConfObj.getSection("plugins");
+        Iterator it = sObj.getKeys();
+        while (it.hasNext()) {
+            Object key = it.next();
+            int value = 0;
+            value = Integer.parseInt(sObj.getString(key.toString()));
+            if (value == isEnabled) {
+                enabledPlugins.add(key.toString());
+            }
+        }
+        return enabledPlugins;
+    }
 
     public int getIntParams(String section, String param) {
         int return_param = -1;

@@ -31,12 +31,13 @@ public class ExecutorImpl implements Executor {
     }
     @Override
     public MsgEvent executeINFO(MsgEvent incoming) {
-        //System.out.println("INCOMING INFO MESSAGE FOR AGENT FROM " + incoming.getSrcPlugin());
-            String pluginId = controllerEngine.getPluginAdmin().addConfig();
+        System.out.println("INCOMING INFO MESSAGE FOR AGENT FROM " + incoming.getSrcPlugin());
+        /*
+        String pluginId = controllerEngine.getPluginAdmin().addConfig();
             if(pluginId != null) {
                 controllerEngine.getPluginAdmin().startPlugin(pluginId);
             }
-
+*/
         return null;
     }
     @Override
