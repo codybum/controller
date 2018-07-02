@@ -59,8 +59,13 @@ public class AgentServiceImpl implements AgentService {
                 reader.addLogListener(new LogWriter());
             }
 
+            String agentConfig = System.getProperty("agentConfig");
 
-            File configFile  = new File("conf/agent.ini");
+            if(agentConfig == null) {
+                agentConfig = "conf/agent.ini";
+            }
+
+            File configFile  = new File(agentConfig);
             if(configFile.isFile()) {
 
                 //Agent Config
@@ -72,14 +77,11 @@ public class AgentServiceImpl implements AgentService {
                 controllerEngine = new ControllerEngine(controllerState, plugin, pluginAdmin);
 
             } else {
-                System.out.println("NO CONFIG FILE!!");
+                System.out.println("NO CONFIG FILE " + agentConfig  + " FOUND! ");
             }
 
             //MessageSender messageSender = new MessageSender(plugin);
             //new Thread(messageSender).start();
-
-
-
 
         } catch(Exception ex) {
             ex.printStackTrace();
