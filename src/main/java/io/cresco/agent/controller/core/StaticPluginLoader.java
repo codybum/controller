@@ -6,6 +6,7 @@ import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
 
+import java.io.File;
 import java.util.Map;
 
 public class StaticPluginLoader implements Runnable  {
@@ -21,9 +22,11 @@ public class StaticPluginLoader implements Runnable  {
         this.plugin = controllerEngine.getPluginBuilder();
         logger = plugin.getLogger(this.getClass().getName(), CLogger.Level.Info);
         try {
-            String pluginConfigFile = plugin.getConfig().getStringParam("plugin_config_file");
-            if (pluginConfigFile != null) {
-                this.config = new Config(pluginConfigFile);
+
+            File pluginConfigFile  = new File("conf/plugin.ini");
+
+            if (pluginConfigFile.isFile()) {
+                this.config = new Config(pluginConfigFile.getAbsolutePath());
             }
         } catch(Exception ex) {
             ex.printStackTrace();
