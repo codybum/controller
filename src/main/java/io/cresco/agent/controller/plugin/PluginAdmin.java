@@ -27,7 +27,6 @@ public class PluginAdmin {
     private BundleContext context;
     private ConfigurationAdmin confAdmin;
     private Map<String,Configuration> configMap;
-    //private Map<String,PluginService> serviceMap;
     private Map<String,PluginNode> pluginMap;
 
     private AgentState agentState;
@@ -68,7 +67,6 @@ public class PluginAdmin {
     public PluginAdmin(AgentState agentState, BundleContext context) {
 
         configMap = new HashMap<>();
-        //serviceMap = new ConcurrentHashMap<>();
         pluginMap = new ConcurrentHashMap<>();
         this.context = context;
         this.agentState = agentState;
@@ -188,7 +186,7 @@ public class PluginAdmin {
             ex.printStackTrace();
         }
 
-        return null;
+        return returnPluginID;
     }
 
     public String addConfig(String pluginName, Map<String,Object> map) {
