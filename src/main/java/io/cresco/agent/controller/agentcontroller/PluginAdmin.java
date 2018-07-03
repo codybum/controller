@@ -20,7 +20,7 @@ public class PluginAdmin {
 
     private Gson gson;
 
-    private final int PLUGINLIMIT = 900;
+    private final int PLUGINLIMIT = 100;
     private final int TRYCOUNT = 30;
 
     private BundleContext context;
@@ -161,41 +161,42 @@ public class PluginAdmin {
 
     public String addPlugin(String pluginName, String jarFile, Map<String,Object> map) {
         String returnPluginID = null;
-        try {
+        if(pluginCount() < PLUGINLIMIT) {
+            try {
 
-            long bundleID = addBundle(jarFile);
-            if(bundleID != -1) {
-                if(startBundle(bundleID)) {
-                    String pluginID = addConfig(pluginName, map);
-                    if(pluginID != null) {
-                        PluginNode pluginNode = new PluginNode(pluginID,pluginName,jarFile,map);
-                        synchronized (pluginMap) {
-                            pluginMap.put(pluginID, pluginNode);
-                        }
+                long bundleID = addBundle(jarFile);
+                if (bundleID != -1) {
+                    if (startBundle(bundleID)) {
+                        String pluginID = addConfig(pluginName, map);
+                        if (pluginID != null) {
+                            PluginNode pluginNode = new PluginNode(pluginID, pluginName, jarFile, map);
+                            synchronized (pluginMap) {
+                                pluginMap.put(pluginID, pluginNode);
+                            }
 
-                        if(startPlugin(pluginID)) {
-                            returnPluginID = pluginID;
+                            if (startPlugin(pluginID)) {
+                                returnPluginID = pluginID;
+                            } else {
+                                System.out.println("Could not start agentcontroller " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
+                            }
+
                         } else {
-                            System.out.println("Could not start agentcontroller " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
+                            System.out.println("Could not create config for " + " pluginName " + pluginName + " no bundle " + jarFile);
                         }
-
                     } else {
-                        System.out.println("Could not create config for " + " pluginName " + pluginName + " no bundle " + jarFile);
+                        System.out.println("Could not start bundle Id " + bundleID + " pluginName " + pluginName + " no bundle " + jarFile);
                     }
+                    //controllerEngine.getPluginAdmin().startBundle(bundleID);
+                    //String pluginID = controllerEngine.getPluginAdmin().addConfig(pluginName,jarFile, map);
+                    //controllerEngine.getPluginAdmin().startPlugin(pluginID);
                 } else {
-                    System.out.println("Could not start bundle Id " + bundleID + " pluginName " + pluginName + " no bundle " + jarFile);
+                    System.out.println("Can't add " + pluginName + " no bundle " + jarFile);
                 }
-            //controllerEngine.getPluginAdmin().startBundle(bundleID);
-            //String pluginID = controllerEngine.getPluginAdmin().addConfig(pluginName,jarFile, map);
-            //controllerEngine.getPluginAdmin().startPlugin(pluginID);
-            } else {
-                System.out.println("Can't add " + pluginName + " no bundle " + jarFile);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-
-        } catch(Exception ex) {
-            ex.printStackTrace();
         }
-
         return returnPluginID;
     }
 
@@ -205,7 +206,7 @@ public class PluginAdmin {
         String pluginID = null;
         try {
 
-            if(pluginCount() < PLUGINLIMIT) {
+
                 boolean isEmpty = false;
                 int id = 0;
                 while (!isEmpty) {
@@ -227,7 +228,7 @@ public class PluginAdmin {
                     }
                     id++;
                 }
-            }
+
 
         } catch(Exception ex) {
             ex.printStackTrace();

@@ -77,7 +77,7 @@ public class ControllerEngine {
     private PluginAdmin pluginAdmin;
     private AgentExecutor executor;
     private MeasurementEngine measurementEngine;
-
+    private MsgRouter msgRouter;
 
     private Thread consumerAgentThread;
     private Thread activeBrokerManagerThread;
@@ -91,6 +91,7 @@ public class ControllerEngine {
         this.plugin = pluginBuilder;
         this.cstate = controllerState;
         this.logger = pluginBuilder.getLogger(ControllerEngine.class.getName(), CLogger.Level.Info);
+        this.msgRouter = new MsgRouter(this);
         this.executor = new AgentExecutor(this);
         this.plugin.setExecutor(this.executor);
         this.pluginAdmin = pluginAdmin;
@@ -1137,8 +1138,8 @@ public class ControllerEngine {
 
     public void msgIn(MsgEvent msg) {
 
-            msgInProcessQueue.submit(new MsgRoute(this, msg));
-
+            //msgInProcessQueue.submit(new MsgRoute(this, msg));
+            msgRouter.route(msg);
     }
 
     public PluginAdmin getPluginAdmin() { return pluginAdmin; }

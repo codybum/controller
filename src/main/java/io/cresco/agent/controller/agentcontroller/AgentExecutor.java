@@ -35,10 +35,10 @@ public class AgentExecutor implements Executor {
     }
     @Override
     public MsgEvent executeINFO(MsgEvent incoming) {
-        System.out.println("INCOMING INFO MESSAGE FOR AGENT FROM " + incoming.getSrcPlugin() + " setting new desc");
+        //System.out.println("INCOMING INFO MESSAGE FOR AGENT FROM " + incoming.getSrcPlugin() + " setting new desc");
 
-        /*
-        if(incoming.getSrcPlugin().endsWith("0")) {
+
+        //if(incoming.getSrcPlugin().endsWith("0")) {
             String pluginName = "io.cresco.skeleton";
             String jarFile = "/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar";
             Map<String, Object> map = new HashMap<>();
@@ -47,8 +47,8 @@ public class AgentExecutor implements Executor {
             map.put("jarfile", jarFile);
 
             controllerEngine.getPluginAdmin().addPlugin(pluginName, jarFile, map);
-        }
-        */
+        //}
+
         /*
             String pluginId = controllerEngine.getPluginAdmin().addConfig();
             if(pluginId != null) {
