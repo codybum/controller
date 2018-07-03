@@ -62,7 +62,7 @@ public class DBImport {
     private String importRegion;
     private List<String> importedList;
 
-    //private Launcher plugin;
+    //private Launcher agentcontroller;
     private CLogger logger;
 
     private ODatabaseDocumentTx db;
@@ -72,7 +72,7 @@ public class DBImport {
 
         this.logger = controllerEngine.getPluginBuilder().getLogger(DBImport.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(DBImport.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
+        //this.logger = new CLogger(DBImport.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
         this.db = db;
         jsonReader = new OJSONReader(new InputStreamReader(iStream));
         this.gdb = gdb;
@@ -126,7 +126,7 @@ public class DBImport {
                 Map<String,String> nodeParams = gdb.getNodeParams(lostNode);
                 String region = nodeParams.get("region");
                 String agent = nodeParams.get("agent");
-                String pluginId = nodeParams.get("plugin");
+                String pluginId = nodeParams.get("agentcontroller");
                 logger.debug("Removing " + region + " " + agent + " " + pluginId);
                 gdb.removeNode(region,agent,pluginId);
             }
@@ -191,7 +191,7 @@ public class DBImport {
                 String region = null;
                 String agent = null;
                 String plugin = null;
-                if((document.containsField("region")) && (!document.containsField("agent")) && (!document.containsField("plugin")))
+                if((document.containsField("region")) && (!document.containsField("agent")) && (!document.containsField("agentcontroller")))
                 {
                     //rNode
                     region = document.field("region");
@@ -199,7 +199,7 @@ public class DBImport {
                     isNodeType = true;
 
                 }
-                else if((document.containsField("region")) && (document.containsField("agent")) && (!document.containsField("plugin")))
+                else if((document.containsField("region")) && (document.containsField("agent")) && (!document.containsField("agentcontroller")))
                 {
                     //aNode
                     region = document.field("region");
@@ -207,17 +207,17 @@ public class DBImport {
                     isNodeType = true;
 
                 }
-                else if((document.containsField("region")) && (document.containsField("agent")) && (document.containsField("plugin")))
+                else if((document.containsField("region")) && (document.containsField("agent")) && (document.containsField("agentcontroller")))
                 {
                     //pNode
                     region = document.field("region");
                     agent = document.field("agent");
-                    plugin = document.field("plugin");
+                    plugin = document.field("agentcontroller");
                     isNodeType = true;
                 }
 
                 if(isNodeType) {
-                    logger.debug("Importing Node : Region :" + region + " Agent :" + agent + " plugin :" + plugin);
+                    logger.debug("Importing Node : Region :" + region + " Agent :" + agent + " agentcontroller :" + plugin);
 
                     String nodeId = gdb.getNodeId(region, agent, plugin);
 

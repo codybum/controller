@@ -35,8 +35,8 @@ public class MessageSender implements Runnable  {
                 msg.setParam("desc","to-rc-global");
                 plugin.msgOut(msg);
 
-                msg = plugin.getPluginMsgEvent(MsgEvent.Type.INFO, "plugin/0");
-                msg.setParam("desc","to-plugin-plugin");
+                msg = plugin.getPluginMsgEvent(MsgEvent.Type.INFO, "agentcontroller/0");
+                msg.setParam("desc","to-agentcontroller-agentcontroller");
                 plugin.msgOut(msg);
 
                 //TO REGION
@@ -44,8 +44,8 @@ public class MessageSender implements Runnable  {
                 msg.setParam("desc","to-region-agent");
                 plugin.msgOut(msg);
 
-                msg = plugin.getRegionalPluginMsgEvent(MsgEvent.Type.INFO,"unknownagent","plugin/0");
-                msg.setParam("desc","to-region-plugin");
+                msg = plugin.getRegionalPluginMsgEvent(MsgEvent.Type.INFO,"unknownagent","agentcontroller/0");
+                msg.setParam("desc","to-region-agentcontroller");
                 plugin.msgOut(msg);
 
                 //TO GLOBAL
@@ -53,11 +53,11 @@ public class MessageSender implements Runnable  {
                 msg.setParam("desc","to-global-agent");
                 plugin.msgOut(msg);
 
-                msg = plugin.getGlobalPluginMsgEvent(MsgEvent.Type.INFO,"unknownregion","unknownagent", "plugin/0");
-                msg.setParam("desc","to-global-plugin");
+                msg = plugin.getGlobalPluginMsgEvent(MsgEvent.Type.INFO,"unknownregion","unknownagent", "agentcontroller/0");
+                msg.setParam("desc","to-global-agentcontroller");
                 plugin.msgOut(msg);
 
-                //logger.info("Sent Message : " + message + " agent:" + plugin.getAgent());
+                //logger.info("Sent Message : " + message + " agent:" + agentcontroller.getAgent());
                 Thread.sleep(1000);
             } catch(Exception ex) {
                 ex.printStackTrace();

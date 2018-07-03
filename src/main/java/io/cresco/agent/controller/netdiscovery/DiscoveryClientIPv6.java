@@ -20,8 +20,8 @@ public class DiscoveryClientIPv6 {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DiscoveryClientIPv6.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(DiscoveryClientIPv6.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID());
-        //this.plugin = plugin;
+        //this.logger = new CLogger(DiscoveryClientIPv6.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID());
+        //this.agentcontroller = agentcontroller;
         //discoveryTimeout = Integer.parseInt(PluginEngine.config.getParam("discoverytimeout"));
         //System.out.println("DiscoveryClient : discoveryTimeout = " + discoveryTimeout);
         //discoveryTimeout = 1000;

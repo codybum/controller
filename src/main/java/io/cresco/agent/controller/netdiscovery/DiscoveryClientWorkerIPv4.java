@@ -32,8 +32,8 @@ class DiscoveryClientWorkerIPv4 {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DiscoveryClientWorkerIPv4.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(DiscoveryClientWorkerIPv4.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(),CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(DiscoveryClientWorkerIPv4.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         gson = new Gson();
         this.discoveryTimeout = discoveryTimeout;
         this.broadCastNetwork = broadCastNetwork;
@@ -43,8 +43,8 @@ class DiscoveryClientWorkerIPv4 {
     }
 
     DiscoveryClientWorkerIPv4(ControllerEngine controllerEngine, DiscoveryType disType, int discoveryTimeout, String broadCastNetwork, int discoveryPort) {
-        //this.logger = new CLogger(DiscoveryClientWorkerIPv4.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(),CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(DiscoveryClientWorkerIPv4.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DiscoveryClientWorkerIPv4.class.getName(),CLogger.Level.Info);

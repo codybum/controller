@@ -33,8 +33,8 @@ public class DiscoveryClientWorkerIPv6 {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DiscoveryClientWorkerIPv6.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(DiscoveryClientWorkerIPv6.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID());
-        //this.plugin = plugin;
+        //this.logger = new CLogger(DiscoveryClientWorkerIPv6.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID());
+        //this.agentcontroller = agentcontroller;
         gson = new Gson();
         //timer = new Timer();
         //timer.scheduleAtFixedRate(new StopListnerTask(), 1000, discoveryTimeout);
@@ -51,8 +51,8 @@ public class DiscoveryClientWorkerIPv6 {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DiscoveryClientWorkerIPv6.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(DiscoveryClientWorkerIPv6.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID());
-        //this.plugin = plugin;
+        //this.logger = new CLogger(DiscoveryClientWorkerIPv6.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID());
+        //this.agentcontroller = agentcontroller;
         gson = new Gson();
         //timer = new Timer();
         //timer.scheduleAtFixedRate(new StopListnerTask(), 1000, discoveryTimeout);
@@ -405,11 +405,11 @@ public class DiscoveryClientWorkerIPv6 {
 
             String discoverySecret = null;
             if (rme.getParam("discovery_type").equals(DiscoveryType.AGENT.name())) {
-                discoverySecret = plugin.getConfig().getStringParam("discovery_secret_agent");
+                discoverySecret = agentcontroller.getConfig().getStringParam("discovery_secret_agent");
             } else if (rme.getParam("discovery_type").equals(DiscoveryType.REGION.name())) {
-                discoverySecret = plugin.getConfig().getStringParam("discovery_secret_region");
+                discoverySecret = agentcontroller.getConfig().getStringParam("discovery_secret_region");
             } else if (rme.getParam("discovery_type").equals(DiscoveryType.GLOBAL.name())) {
-                discoverySecret = plugin.getConfig().getStringParam("discovery_secret_global");
+                discoverySecret = agentcontroller.getConfig().getStringParam("discovery_secret_global");
             }
             if(rme.getParam("validated_authenication") != null) {
                 decryptedString = discoveryCrypto.decrypt(rme.getParam("validated_authenication"), discoverySecret);
@@ -433,11 +433,11 @@ public class DiscoveryClientWorkerIPv6 {
 
             String discoverySecret = null;
             if (sme.getParam("discovery_type").equals(DiscoveryType.AGENT.name())) {
-                discoverySecret = plugin.getConfig().getStringParam("discovery_secret_agent");
+                discoverySecret = agentcontroller.getConfig().getStringParam("discovery_secret_agent");
             } else if (sme.getParam("discovery_type").equals(DiscoveryType.REGION.name())) {
-                discoverySecret = plugin.getConfig().getStringParam("discovery_secret_region");
+                discoverySecret = agentcontroller.getConfig().getStringParam("discovery_secret_region");
             } else if (sme.getParam("discovery_type").equals(DiscoveryType.GLOBAL.name())) {
-                discoverySecret = plugin.getConfig().getStringParam("discovery_secret_global");
+                discoverySecret = agentcontroller.getConfig().getStringParam("discovery_secret_global");
             }
 
             String verifyMessage = "DISCOVERY_MESSAGE_VERIFIED";

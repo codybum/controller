@@ -36,8 +36,8 @@ public class TCPDiscoveryStatic {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(TCPDiscoveryStatic.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(TCPDiscoveryStatic.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(TCPDiscoveryStatic.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         gson = new Gson();
         //this.discoveryTimeout = discoveryTimeout;
         //this.disType = disType;
@@ -50,8 +50,8 @@ public class TCPDiscoveryStatic {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(TCPDiscoveryStatic.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(TCPDiscoveryStatic.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(TCPDiscoveryStatic.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         gson = new Gson();
         //this.discoveryTimeout = discoveryTimeout;
         //this.disType = disType;
@@ -259,7 +259,7 @@ public class TCPDiscoveryStatic {
                     } else {
                         logger.trace("processIncoming() : no cert found");
                     }
-                    //sme.setParam("public_cert", plugin.getCertificateManager().getJsonFromCerts(plugin.getCertificateManager().getPublicCertificate()));
+                    //sme.setParam("public_cert", agentcontroller.getCertificateManager().getJsonFromCerts(agentcontroller.getCertificateManager().getPublicCertificate()));
 
                 }
             } catch (Exception ex) {
@@ -299,7 +299,7 @@ public class TCPDiscoveryStatic {
                     }
                     discoveredList.add(me);
 
-                    //sme.setParam("public_cert", plugin.getCertificateManager().getJsonFromCerts(plugin.getCertificateManager().getPublicCertificate()));
+                    //sme.setParam("public_cert", agentcontroller.getCertificateManager().getJsonFromCerts(agentcontroller.getCertificateManager().getPublicCertificate()));
 
 
                 }

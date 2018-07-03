@@ -22,7 +22,7 @@ public class DiscoveryClientIPv4 {
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DiscoveryClientIPv4.class.getName(),CLogger.Level.Info);
-        //this.logger = new CLogger(DiscoveryClientIPv4.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(),CLogger.Level.Info);
+        //this.logger = new CLogger(DiscoveryClientIPv4.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Info);
         this.plugin = plugin;
         //discoveryTimeout = Integer.parseInt(PluginEngine.config.getParam("discoverytimeout"));
         //System.out.println("DiscoveryClient : discoveryTimeout = " + discoveryTimeout);

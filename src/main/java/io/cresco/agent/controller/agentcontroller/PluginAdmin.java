@@ -1,6 +1,6 @@
-package io.cresco.agent.controller.plugin;
+package io.cresco.agent.controller.agentcontroller;
 
-import io.cresco.library.agent.AgentService;
+import com.google.gson.Gson;
 import io.cresco.library.agent.AgentState;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginService;
@@ -13,14 +13,12 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 
 import java.io.File;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PluginAdmin {
 
+    private Gson gson;
 
     private final int PLUGINLIMIT = 900;
 
@@ -66,8 +64,9 @@ public class PluginAdmin {
 
     public PluginAdmin(AgentState agentState, BundleContext context) {
 
-        configMap = new HashMap<>();
-        pluginMap = new ConcurrentHashMap<>();
+        this.gson = new Gson();
+        this.configMap = new HashMap<>();
+        this.pluginMap = new ConcurrentHashMap<>();
         this.context = context;
         this.agentState = agentState;
 
@@ -142,7 +141,7 @@ public class PluginAdmin {
         return  isStarted;
     }
 
-    public void msgOut(MsgEvent msg) {
+    public void msgIn(MsgEvent msg) {
 
         String pluginID = msg.getDstPlugin();
 
@@ -168,7 +167,7 @@ public class PluginAdmin {
                         if(startPlugin(pluginID)) {
                             returnPluginID = pluginID;
                         } else {
-                            System.out.println("Could not start plugin " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
+                            System.out.println("Could not start agentcontroller " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
                         }
                     } else {
                         System.out.println("Could not create config for " + " pluginName " + pluginName + " no bundle " + jarFile);
@@ -202,8 +201,8 @@ public class PluginAdmin {
                 while (!isEmpty) {
 
                     synchronized (configMap) {
-                        if (!configMap.containsKey("plugin/" + id)) {
-                            pluginID = "plugin/" + id;
+                        if (!configMap.containsKey("agentcontroller/" + id)) {
+                            pluginID = "agentcontroller/" + id;
                             Configuration configuration = confAdmin.createFactoryConfiguration(pluginName + ".Plugin", null);
                             Dictionary properties = new Hashtable();
 
@@ -263,6 +262,44 @@ public class PluginAdmin {
             ex.printStackTrace();
         }
         return isStarted;
+    }
+
+    public String getPluginExport() {
+        //boolean isExported = false;
+        String exportString = null;
+        try {
+            List<Map<String,String>> configMapList = new ArrayList<>();
+
+            Map<String, PluginNode> map = pluginMap;
+
+            Iterator it = pluginMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+
+                String pluginID = (String)pair.getKey();
+                PluginNode pluginNode = (PluginNode)pair.getValue();
+
+                int status = pluginNode.getStatus_code();
+                boolean isActive = pluginNode.getActive();
+
+                Map<String,String> configMap = new HashMap<>();
+
+                configMap.put("status", String.valueOf(status));
+                configMap.put("isactive", String.valueOf(isActive));
+                configMap.put("pluginid", pluginID);
+                configMap.put("configparams", gson.toJson(pluginNode.exportParamMap()));
+                configMapList.add(configMap);
+
+
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+            exportString = gson.toJson(configMapList);
+
+        } catch(Exception ex) {
+            System.out.println("PluginExport.pluginExport() Error " + ex.getMessage());
+        }
+
+        return exportString;
     }
 
 }

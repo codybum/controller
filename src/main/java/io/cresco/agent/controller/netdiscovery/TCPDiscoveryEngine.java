@@ -27,9 +27,9 @@ public class TCPDiscoveryEngine implements Runnable {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(TCPDiscoveryEngine.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(TCPDiscoveryEngine.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(),CLogger.Level.Info);
+        //this.logger = new CLogger(TCPDiscoveryEngine.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Info);
         logger.trace("Initializing");
-        //this.plugin = plugin;
+        //this.agentcontroller = agentcontroller;
         discoveryCrypto = new DiscoveryCrypto(controllerEngine);
         gson = new Gson();
         this.discoveryPort = plugin.getConfig().getIntegerParam("netdiscoveryport",32005);
@@ -40,9 +40,9 @@ public class TCPDiscoveryEngine implements Runnable {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(TCPDiscoveryEngine.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(TCPDiscoveryEngine.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(),CLogger.Level.Info);
+        //this.logger = new CLogger(TCPDiscoveryEngine.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Info);
         //logger.trace("Initializing");
-        //this.plugin = plugin;
+        //this.agentcontroller = agentcontroller;
         discoveryCrypto = new DiscoveryCrypto(controllerEngine);
         gson = new Gson();
         this.discoveryPort = discoveryPort;
@@ -221,7 +221,7 @@ public class TCPDiscoveryEngine implements Runnable {
                     else {
 
                         logger.error("src_region=" + rme.getParam("src_region") + " validatedAuthenication=" + validatedAuthenication);
-                        if ((rme.getParam("src_region").equals(plugin.getRegion())) && plugin.cstate.isRegionalController()()) {
+                        if ((rme.getParam("src_region").equals(agentcontroller.getRegion())) && agentcontroller.cstate.isRegionalController()()) {
                             logger.error("{}", "!reconnect attempt!");
                         }
 
@@ -347,7 +347,7 @@ public class TCPDiscoveryEngine implements Runnable {
                 String decryptedString = discoveryCrypto.decrypt(discoveryValidator,discoverySecret);
                 if(decryptedString != null) {
                     if (decryptedString.equals(verifyMessage)) {
-                        //plugin.brokerUserNameAgent
+                        //agentcontroller.brokerUserNameAgent
                         //isValidated = true;
                         //String verifyMessage = "DISCOVERY_MESSAGE_VERIFIED";
                         //encryptedString = discoveryCrypto.encrypt(verifyMessage,discoverySecret);

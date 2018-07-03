@@ -1,4 +1,4 @@
-package io.cresco.agent.controller.plugin;
+package io.cresco.agent.controller.agentcontroller;
 
 import java.io.BufferedInputStream;
 import java.io.File;

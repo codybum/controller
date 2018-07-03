@@ -34,8 +34,8 @@ public class UDPDiscoveryStatic {
     private DiscoveryCrypto discoveryCrypto;
 
     public UDPDiscoveryStatic(ControllerEngine controllerEngine) {
-        //this.logger = new CLogger(UDPDiscoveryStatic.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(UDPDiscoveryStatic.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(UDPDiscoveryStatic.class.getName(),CLogger.Level.Info);
@@ -52,8 +52,8 @@ public class UDPDiscoveryStatic {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(UDPDiscoveryStatic.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(UDPDiscoveryStatic.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(UDPDiscoveryStatic.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         gson = new Gson();
         //this.discoveryTimeout = discoveryTimeout;
         //this.disType = disType;
@@ -122,7 +122,7 @@ public class UDPDiscoveryStatic {
                     }
                     discoveredList.add(me);
 
-                    //sme.setParam("public_cert", plugin.getCertificateManager().getJsonFromCerts(plugin.getCertificateManager().getPublicCertificate()));
+                    //sme.setParam("public_cert", agentcontroller.getCertificateManager().getJsonFromCerts(agentcontroller.getCertificateManager().getPublicCertificate()));
 
 
                 }

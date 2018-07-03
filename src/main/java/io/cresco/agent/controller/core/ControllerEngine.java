@@ -1,6 +1,7 @@
 package io.cresco.agent.controller.core;
 
-import com.codahale.metrics.MetricRegistry;
+import io.cresco.agent.controller.agentcontroller.AgentHealthWatcher;
+import io.cresco.agent.controller.agentcontroller.AgentExecutor;
 import io.cresco.agent.controller.app.gPayload;
 import io.cresco.agent.controller.communication.*;
 import io.cresco.agent.controller.db.DBInterface;
@@ -8,7 +9,7 @@ import io.cresco.agent.controller.globalcontroller.GlobalHealthWatcher;
 import io.cresco.agent.controller.measurement.MeasurementEngine;
 import io.cresco.agent.controller.netdiscovery.*;
 import io.cresco.agent.controller.regionalcontroller.RegionHealthWatcher;
-import io.cresco.agent.controller.plugin.PluginAdmin;
+import io.cresco.agent.controller.agentcontroller.PluginAdmin;
 import io.cresco.library.agent.ControllerState;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
@@ -70,10 +71,11 @@ public class ControllerEngine {
     private DBInterface gdb;
     private KPIProducer kpip;
     private ActiveProducer ap;
+    private AgentHealthWatcher agentHealthWatcher;
     private RegionHealthWatcher regionHealthWatcher;
     private ExecutorService msgInProcessQueue;
     private PluginAdmin pluginAdmin;
-    private ExecutorImpl executor;
+    private AgentExecutor executor;
     private MeasurementEngine measurementEngine;
 
 
@@ -89,7 +91,7 @@ public class ControllerEngine {
         this.plugin = pluginBuilder;
         this.cstate = controllerState;
         this.logger = pluginBuilder.getLogger(ControllerEngine.class.getName(), CLogger.Level.Info);
-        this.executor = new ExecutorImpl(this);
+        this.executor = new AgentExecutor(this);
         this.plugin.setExecutor(this.executor);
         this.pluginAdmin = pluginAdmin;
         this.measurementEngine = new MeasurementEngine(this);
@@ -206,16 +208,12 @@ public class ControllerEngine {
             }
 
 
-            /*
-            //setRPC to reflect new values
-            this.setRPC(new RPC(this.msgOutQueue, this.region, this.agent, this.pluginID, this.logger));
-
             //set new watchdog to reflect discovered values
-            this.setWatchDog(new WatchDog(this.region, this.agent, this.pluginID, this.logger, this.config));
-            getWatchDog().start();
-            logger.info("WatchDog Started");
-            */
+            //this.setWatchDog(new WatchDog(this.region, this.agent, this.pluginID, this.logger, this.config));
+            //getWatchDog().start();
+            //logger.info("WatchDog Started");
 
+            this.agentHealthWatcher = new AgentHealthWatcher(this);
             //Setup Regional Watcher
             this.regionHealthWatcher = new RegionHealthWatcher(this);
 
@@ -300,13 +298,13 @@ public class ControllerEngine {
         boolean isInit = false;
         try {
             if(plugin.getConfig().getStringParam("regional_controller_host") != null) {
-                //this.cstate.setAgentInit("initAgent() Static Regional Host: " + plugin.getConfig().getStringParam("regional_controller_host"));
+                //this.cstate.setAgentInit("initAgent() Static Regional Host: " + agentcontroller.getConfig().getStringParam("regional_controller_host"));
                 while(!isInit) {
 
                     String tmpRegion = discoveryList.get(0).getParam("dst_region");
                     String tmpAgent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
                     cstate.setAgentInit(tmpRegion,tmpAgent,"initAgent() Static Regional Host: " + plugin.getConfig().getStringParam("regional_controller_host") + "TS : " + System.currentTimeMillis());
-                    //this.agent = plugin.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
+                    //this.agent = agentcontroller.getConfig().getStringParam("agentname", "agent-" + java.util.UUID.randomUUID().toString());
                     //this.agentpath = tmpRegion + "_" + this.agent;
                     certificateManager = new CertificateManager(this, cstate.getAgentPath());
 
@@ -392,7 +390,7 @@ public class ControllerEngine {
 
 
                             //UDPDiscoveryStatic ds = new UDPDiscoveryStatic(this);
-                            //discoveryList.addAll(ds.discover(DiscoveryType.AGENT, plugin.getConfig().getIntegerParam("discovery_static_agent_timeout", 10000), plugin.getConfig().getStringParam("regional_controller_host")));
+                            //discoveryList.addAll(ds.discover(DiscoveryType.AGENT, agentcontroller.getConfig().getIntegerParam("discovery_static_agent_timeout", 10000), agentcontroller.getConfig().getStringParam("regional_controller_host")));
 
                             //List<MsgEvent> certDiscovery =
 
@@ -738,7 +736,7 @@ public class ControllerEngine {
             le.setParam("src_region", getRegion());
             le.setParam("dst_region", getRegion());
             le.setParam("action", "enable");
-            le.setParam("watchdogtimer", String.valueOf(plugin.getConfig().getLongParam("watchdogtimer", 5000L)));
+            le.setParam("watchdogtimer", String.valueOf(agentcontroller.getConfig().getLongParam("watchdogtimer", 5000L)));
             le.setParam("source", "initRegion()");
             getGDB().addNode(le);
             */
@@ -1138,8 +1136,9 @@ public class ControllerEngine {
     public RegionHealthWatcher getRegionHealthWatcher() {return this.regionHealthWatcher;}
 
     public void msgIn(MsgEvent msg) {
-        //logger.info("msgIn : " + msg.getParams().toString());
-        msgInProcessQueue.submit(new MsgRoute(this, msg));
+
+            msgInProcessQueue.submit(new MsgRoute(this, msg));
+
     }
 
     public PluginAdmin getPluginAdmin() { return pluginAdmin; }

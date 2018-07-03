@@ -1,14 +1,15 @@
-package io.cresco.agent.controller.plugin;
+package io.cresco.agent.controller.agentcontroller;
 
 
 import io.cresco.library.plugin.PluginService;
 
-import javax.security.auth.login.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
@@ -35,8 +36,8 @@ public class PluginNode {
     //private String resource_id;
 
     /*
-    status_code = 3; //plugin init
-    status_code = 8; //plugin disabled
+    status_code = 3; //agentcontroller init
+    status_code = 8; //agentcontroller disabled
     status_code = 10; //started and working
     status_code = 40; //WATCHDOG check failed with agent
     status_code = 80; //failed to start
@@ -59,6 +60,22 @@ public class PluginNode {
         URL url = new File(jarPath).toURI().toURL();
         URLClassLoader loader = new URLClassLoader(new URL[] {new File(jarPath).toURI().toURL()}, this.getClass().getClassLoader());
         ResourceFinder finder = new ResourceFinder("META-INF/services", loader, url);
+    }
+
+    public Map<String, Object> getConfigMap() {
+        return configMap;
+    }
+
+    public Map<String, String> exportParamMap() {
+        //return configMap;
+        Map<String, String> paramMap = new HashMap<>();
+
+        Iterator it = configMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            paramMap.put((String) pair.getKey(), (String) pair.getValue());
+        }
+        return paramMap;
     }
 
     public String getJarPath() {

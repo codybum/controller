@@ -35,8 +35,8 @@ public class GlobalHealthWatcher implements Runnable {
         this.logger = plugin.getLogger(GlobalHealthWatcher.class.getName(),CLogger.Level.Info);
 
 
-        //this.logger = new CLogger(GlobalHealthWatcher.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-		//this.plugin = plugin;
+        //this.logger = new CLogger(GlobalHealthWatcher.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+		//this.agentcontroller = agentcontroller;
         global_host_map = new HashMap<>();
         regionalUpdateTimer = new Timer();
         regionalUpdateTimer.scheduleAtFixedRate(new GlobalHealthWatcher.GlobalNodeStatusWatchDog(controllerEngine, logger), 500, 15000);//remote
@@ -73,7 +73,7 @@ public class GlobalHealthWatcher implements Runnable {
 
                 le.setParam("watchdogtimer", String.valueOf(plugin.getConfig().getLongParam("watchdogtimer", 5000L)));
                 //MsgEvent re = new RPCCall().call(le);
-                //MsgEvent re = plugin.getRPC().call(le);
+                //MsgEvent re = agentcontroller.getRPC().call(le);
                 //logger.info("RPC DISABLE: " + re.getMsgBody() + " [" + re.getParams().toString() + "]");
                 plugin.sendMsgEvent(le);
             }
@@ -263,7 +263,7 @@ public class GlobalHealthWatcher implements Runnable {
                         logger.info("No Global Controller Found: Starting Global Services");
                         //start global stuff
                         //create globalscheduler queue
-                        //plugin.setResourceScheduleQueue(new LinkedBlockingQueue<MsgEvent>());
+                        //agentcontroller.setResourceScheduleQueue(new LinkedBlockingQueue<MsgEvent>());
                         controllerEngine.setAppScheduleQueue(new LinkedBlockingQueue<gPayload>());
                         startGlobalSchedulers();
                         //end global start
@@ -437,7 +437,7 @@ public class GlobalHealthWatcher implements Runnable {
                 if (discoveryList.size() == 0) {
                     logger.info("Static Region Connection to Global Controller : " + plugin.getConfig().getStringParam("global_controller_host",null) + " failed! - Restarting Global Discovery");
                 } else {
-                    //plugin.getIncomingCanidateBrokers().add(discoveryList.get(0)); //perhaps better way to do this
+                    //agentcontroller.getIncomingCanidateBrokers().add(discoveryList.get(0)); //perhaps better way to do this
                     logger.info("Global Controller Found: Region: " + discoveryList.get(0).getParam("src_region") + " agent:" + discoveryList.get(0).getParam("src_agent"));
                 }
         }
@@ -509,7 +509,7 @@ public class GlobalHealthWatcher implements Runnable {
         private CLogger logger;
         private PluginBuilder plugin;
         public GlobalNodeStatusWatchDog(ControllerEngine controllerEngine, CLogger logger) {
-            //this.plugin = plugin;
+            //this.agentcontroller = agentcontroller;
             this.controllerEngine = controllerEngine;
             this.plugin = controllerEngine.getPluginBuilder();
             this.logger = logger;
@@ -550,7 +550,7 @@ public class GlobalHealthWatcher implements Runnable {
                         Map<String,String> nodeParams = controllerEngine.getGDB().gdb.getNodeParams(entry.getKey());
                         String region = nodeParams.get("region");
                         String agent = nodeParams.get("agent");
-                        String pluginId = nodeParams.get("plugin");
+                        String pluginId = nodeParams.get("agentcontroller");
                         logger.error("Removing " + region + " " + agent + " " + pluginId);
                         controllerEngine.getGDB().removeNode(region,agent,pluginId);
                         */
@@ -559,7 +559,7 @@ public class GlobalHealthWatcher implements Runnable {
                         //Map<String,String> nodeParams = controllerEngine.getGDB().gdb.getNodeParams(entry.getKey());
                         String region = edgeParams.get("region");
                         String agent = edgeParams.get("agent");
-                        String pluginId = edgeParams.get("plugin");
+                        String pluginId = edgeParams.get("agentcontroller");
                         logger.error("Removing " + region + " " + agent + " " + pluginId);
                         controllerEngine.getGDB().removeNode(region,agent,pluginId);
                     }

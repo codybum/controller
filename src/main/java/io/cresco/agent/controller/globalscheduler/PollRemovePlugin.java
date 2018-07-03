@@ -23,9 +23,9 @@ public class PollRemovePlugin implements Runnable {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(PollRemovePlugin.class.getName(),CLogger.Level.Info);
 
-        //logger = new CLogger(PollRemovePlugin.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
+        //logger = new CLogger(PollRemovePlugin.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
 
-		//this.plugin = plugin;
+		//this.agentcontroller = agentcontroller;
 		this.resource_id = resource_id;
 		this.inode_id = inode_id;
 	}
@@ -42,7 +42,7 @@ public class PollRemovePlugin implements Runnable {
 
                     String region = controllerEngine.getGDB().dba.getIsAssignedParam(edge_id, "region");
                     String agent = controllerEngine.getGDB().dba.getIsAssignedParam(edge_id, "agent");
-                    String pluginId = controllerEngine.getGDB().dba.getIsAssignedParam(edge_id, "plugin");
+                    String pluginId = controllerEngine.getGDB().dba.getIsAssignedParam(edge_id, "agentcontroller");
 
                     logger.debug("starting to remove r: " + region + " a:" + agent + " p:" + pluginId);
 
@@ -92,7 +92,7 @@ public class PollRemovePlugin implements Runnable {
 
                 } else {
                     controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_code", "92");
-                    logger.error("plugin not found for resource_id: " + resource_id + " inode_id:" + inode_id + " setting inode status");
+                    logger.error("agentcontroller not found for resource_id: " + resource_id + " inode_id:" + inode_id + " setting inode status");
                 }
 
                 }
@@ -107,14 +107,14 @@ public class PollRemovePlugin implements Runnable {
 	public MsgEvent removePlugin(String region, String agent, String pluginId)
 	{
 
-		MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG,region,null,null,"remove plugin");
+		MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG,region,null,null,"remove agentcontroller");
 		me.setParam("src_region", plugin.getRegion());
 		me.setParam("src_agent", plugin.getAgent());
         me.setParam("src_plugin", plugin.getPluginID());
         me.setParam("dst_region", region);
 		me.setParam("dst_agent", agent);
 		me.setParam("action", "pluginremove");
-		me.setParam("plugin", pluginId);
+		me.setParam("agentcontroller", pluginId);
 		return me;	
 	}
 	

@@ -1,8 +1,10 @@
 package io.cresco.agent.controller.regionalcontroller;
 
 
+import io.cresco.agent.controller.communication.MsgRoute;
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.agent.controller.db.NodeStatusType;
+import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
 
@@ -18,17 +20,20 @@ public class RegionHealthWatcher {
     private long startTS;
     private int wdTimer;
     public Timer regionalUpdateTimer;
-    public RegionalCommandExec rce;
+    //public RegionalCommandExec rce;
+    private RegionalExecutor regionalExecutor;
 
     //private static final Logger logger = LoggerFactory.getLogger(HealthWatcher.class);
 
     public RegionHealthWatcher(ControllerEngine controllerEngine) {
-        //this.logger = new CLogger(RegionHealthWatcher.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
+        //this.logger = new CLogger(RegionHealthWatcher.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(RegionHealthWatcher.class.getName(),CLogger.Level.Info);
 
-        rce = new RegionalCommandExec(controllerEngine);
+        this.regionalExecutor = new RegionalExecutor(controllerEngine);
+
+        //rce = new RegionalCommandExec(controllerEngine);
         
         logger.debug("Initializing");
         this.plugin = plugin;
@@ -46,6 +51,66 @@ public class RegionHealthWatcher {
         communicationsHealthTimer.cancel();
         regionalUpdateTimer.cancel();
         logger.debug("Shutdown");
+    }
+
+    public void sendRegionalMsg(MsgEvent incoming) {
+
+        try {
+
+            if(incoming.dstIsLocal(plugin.getRegion(),plugin.getAgent(),plugin.getPluginID())) {
+
+                MsgEvent retMsg = null;
+
+
+                switch (incoming.getMsgType().toString().toUpperCase()) {
+                    case "CONFIG":
+                        retMsg = regionalExecutor.executeCONFIG(incoming);
+                        break;
+                    case "DISCOVER":
+                        retMsg = regionalExecutor.executeDISCOVER(incoming);
+                        break;
+                    case "ERROR":
+                        retMsg = regionalExecutor.executeERROR(incoming);
+                        break;
+                    case "EXEC":
+                        retMsg = regionalExecutor.executeEXEC(incoming);
+                        break;
+                    case "INFO":
+                        retMsg = regionalExecutor.executeINFO(incoming);
+                        break;
+                    case "WATCHDOG":
+                        retMsg = regionalExecutor.executeWATCHDOG(incoming);
+                        break;
+                    case "KPI":
+                        retMsg = regionalExecutor.executeKPI(incoming);
+                        break;
+
+                    default:
+                        logger.error("UNKNOWN MESSAGE TYPE! " + incoming.getParams());
+                        break;
+                }
+
+
+                if ((retMsg != null) && (retMsg.getParams().keySet().contains("is_rpc"))) {
+                    retMsg.setReturn();
+
+                    //pick up RPC from local agent
+                    String callId = retMsg.getParam(("callId-" + plugin.getRegion() + "-" +
+                            plugin.getAgent() + "-" + plugin.getPluginID()));
+                    if (callId != null) {
+                        plugin.receiveRPC(callId, retMsg);
+                    } else {
+                        plugin.msgOut(retMsg);
+                    }
+
+                }
+            }
+
+
+        } catch(Exception ex) {
+            logger.error("senRegionalMsg Error : " + ex.getMessage());
+        }
+
     }
 
     class CommunicationHealthWatcherTask extends TimerTask {
@@ -92,7 +157,7 @@ public class RegionHealthWatcher {
         private CLogger logger;
         private PluginBuilder plugin;
         public RegionalNodeStatusWatchDog(ControllerEngine controllerEngine, CLogger logger) {
-            //this.plugin = plugin;
+            //this.agentcontroller = agentcontroller;
             this.controllerEngine = controllerEngine;
             this.plugin = controllerEngine.getPluginBuilder();
 
@@ -121,7 +186,7 @@ public class RegionHealthWatcher {
                         //Map<String,String> nodeParams = controllerEngine.getGDB().gdb.getNodeParams(entry.getKey());
                         String region = edgeParams.get("region");
                         String agent = edgeParams.get("agent");
-                        String pluginId = edgeParams.get("plugin");
+                        String pluginId = edgeParams.get("agentcontroller");
                         logger.error("Removing " + region + " " + agent + " " + pluginId);
                         controllerEngine.getGDB().removeNode(region,agent,pluginId);
                     }
@@ -132,7 +197,7 @@ public class RegionHealthWatcher {
                         }
                         String region = nodeParams.get("region");
                         String agent = nodeParams.get("agent");
-                        String pluginId = nodeParams.get("plugin");
+                        String pluginId = nodeParams.get("agentcontroller");
                         logger.error("Problem with " + region + " " + agent + " " + pluginId);
                         logger.error("NodeID : " + entry.getKey() + " Status : " + entry.getValue().toString());
 

@@ -2,14 +2,12 @@ package io.cresco.agent.core;
 
 
 import io.cresco.agent.controller.core.ControllerEngine;
-import io.cresco.agent.controller.plugin.PluginAdmin;
+import io.cresco.agent.controller.agentcontroller.PluginAdmin;
 import io.cresco.library.agent.AgentService;
 import io.cresco.library.agent.AgentState;
 import io.cresco.library.agent.ControllerState;
-import io.cresco.library.agent.LoaderService;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
-import io.cresco.library.plugin.PluginService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -75,8 +73,8 @@ public class AgentServiceImpl implements AgentService {
 
             /*
             if((controllerState != null) && (pluginAdmin != null) && (agentState != null)) {
-                plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
-                controllerEngine = new ControllerEngine(controllerState, plugin, pluginAdmin);
+                agentcontroller = new PluginBuilder(this, this.getClass().getName(), context, map);
+                controllerEngine = new ControllerEngine(controllerState, agentcontroller, pluginAdmin);
             }
             */
 
@@ -111,7 +109,7 @@ public class AgentServiceImpl implements AgentService {
 
 
 
-            //MessageSender messageSender = new MessageSender(plugin);
+            //MessageSender messageSender = new MessageSender(agentcontroller);
             //new Thread(messageSender).start();
 
         } catch(Exception ex) {

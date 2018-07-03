@@ -111,16 +111,16 @@ class BrokerMonitor implements Runnable {
 	public void run() {
 		try {
 		    /*
-            while(this.plugin.getBrokeredAgents().get(agentPath).brokerStatus == BrokerStatusType.STARTING) {
-                logger.trace("Waiting on agentpath: " + agentPath + " brokerstatus: " + this.plugin.getBrokeredAgents().get(agentPath).brokerStatus.toString());
+            while(this.agentcontroller.getBrokeredAgents().get(agentPath).brokerStatus == BrokerStatusType.STARTING) {
+                logger.trace("Waiting on agentpath: " + agentPath + " brokerstatus: " + this.agentcontroller.getBrokeredAgents().get(agentPath).brokerStatus.toString());
                 Thread.sleep(1000);
             }
 		    */
             /*
-			String brokerAddress = this.plugin.getBrokeredAgents().get(agentPath).activeAddress;
+			String brokerAddress = this.agentcontroller.getBrokeredAgents().get(agentPath).activeAddress;
 			if (connectToBroker(brokerAddress)) { //connect to broker
 				MonitorActive = true;
-				this.plugin.getBrokeredAgents().get(agentPath).brokerStatus = BrokerStatusType.ACTIVE;
+				this.agentcontroller.getBrokeredAgents().get(agentPath).brokerStatus = BrokerStatusType.ACTIVE;
 			}
             */
 
@@ -132,7 +132,7 @@ class BrokerMonitor implements Runnable {
 
             if (connectToBroker(brokerAddress,brokerUsername,brokerPassword, agentPath)) { //connect to broker
                 MonitorActive = true;
-                //this.plugin.getBrokeredAgents().get(agentPath).brokerStatus = BrokerStatusType.ACTIVE;
+                //this.agentcontroller.getBrokeredAgents().get(agentPath).brokerStatus = BrokerStatusType.ACTIVE;
 				controllerEngine.getBrokeredAgents().get(agentPath).setActive();
                 logger.trace("Connected to brokerAddress: " + brokerAddress + " brokerUserName: " + brokerUsername + " brokerPassword: " + brokerPassword);
 
@@ -144,7 +144,7 @@ class BrokerMonitor implements Runnable {
 				    logger.trace("Check Broker Name: " + b.getRemoteBrokerName() + " for agentPath: " + agentPath);
 					logger.trace("found bridge[" + b + "] to " + b.getRemoteBrokerName() + " on broker :" + b.getLocalBrokerName());
 
-					//plugin.sendAPMessage(MsgEvent);
+					//agentcontroller.sendAPMessage(MsgEvent);
                     //if (b.getRemoteBrokerName().equals(agentPath)) {
 					    MonitorActive = true;
 					//}

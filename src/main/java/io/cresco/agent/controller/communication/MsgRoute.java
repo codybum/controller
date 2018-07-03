@@ -45,9 +45,9 @@ public class MsgRoute implements Runnable {
     private MsgEvent forwardToLocalPlugin() {
         boolean isOk = false;
         if(rm.getParam("desc") != null) {
-            if(rm.getParam("desc").startsWith("to-plugin")) {
+            if(rm.getParam("desc").startsWith("to-agentcontroller")) {
                 try {
-                    controllerEngine.getPluginAdmin().msgOut(rm);
+                    controllerEngine.getPluginAdmin().msgIn(rm);
                     isOk = true;
                 } catch(Exception ex) {
                     ex.printStackTrace();
@@ -65,6 +65,7 @@ public class MsgRoute implements Runnable {
         boolean isOk = false;
         if(rm.getParam("desc") != null) {
             if(rm.getParam("desc").startsWith("to-rc")) {
+                controllerEngine.getRegionHealthWatcher().sendRegionalMsg(rm);
                 isOk = true;
             }
         }
@@ -168,19 +169,19 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 671:
-                    logger.debug("Local agent sending message to remote global plugin 671");
+                    logger.debug("Local agent sending message to remote global agentcontroller 671");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteGlobal();
                     break;
 
                 case 687:
-                    logger.debug("Local plugin sending message to remote global agent 687");
+                    logger.debug("Local agentcontroller sending message to remote global agent 687");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteGlobal();
                     break;
 
                 case 703:
-                    logger.debug("Local plugin sending message to remote global plugin 703");
+                    logger.debug("Local agentcontroller sending message to remote global agentcontroller 703");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteGlobal();
                     break;
@@ -192,25 +193,25 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 735:
-                    logger.debug("Local agent sending message to remote regional plugin 735");
+                    logger.debug("Local agent sending message to remote regional agentcontroller 735");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteRegion();
                     break;
 
                 case 751:
-                    logger.debug("Local plugin sending message to remote regional agent 751");
+                    logger.debug("Local agentcontroller sending message to remote regional agent 751");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteRegion();
                     break;
 
                 case 767:
-                    logger.debug("Local plugin sending message to remote regional plugin 767");
+                    logger.debug("Local agentcontroller sending message to remote regional agentcontroller 767");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteRegion();
                     break;
 
                 case 991:
-                    logger.debug("Local agent sending message to local plugin 991");
+                    logger.debug("Local agent sending message to local agentcontroller 991");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalPlugin();
                     break;
@@ -222,37 +223,37 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 1007:
-                    logger.debug("Local plugin sending message to local agent 1007");
+                    logger.debug("Local agentcontroller sending message to local agent 1007");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalAgent();
                     break;
 
                 case 1023:
-                    logger.debug("Local plugin sending message to local plugin 1023");
+                    logger.debug("Local agentcontroller sending message to local agentcontroller 1023");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalPlugin();
                     break;
 
                 case 4751:
-                    logger.debug("Local plugin sending message to remote global agent 4751");
+                    logger.debug("Local agentcontroller sending message to remote global agent 4751");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteGlobal();
                     break;
 
                 case 4767:
-                    logger.debug("Local plugin sending message to remote global agent 4767");
+                    logger.debug("Local agentcontroller sending message to remote global agent 4767");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteGlobal();
                     break;
 
                 case 4783:
-                    logger.debug("Local plugin sending message to remote global agent 4783");
+                    logger.debug("Local agentcontroller sending message to remote global agent 4783");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteGlobal();
                     break;
 
                 case 4799:
-                    logger.debug("Local plugin sending message to remote global plugin 4799");
+                    logger.debug("Local agentcontroller sending message to remote global agentcontroller 4799");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteGlobal();
                     break;
@@ -264,20 +265,20 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 4831:
-                    logger.debug("Local agent sending message to local regional plugin 4831");
+                    logger.debug("Local agent sending message to local regional agentcontroller 4831");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalRegion();
                     break;
 
 
                 case 4847:
-                    logger.debug("Local plugin sending message to local regional agent 4847");
+                    logger.debug("Local agentcontroller sending message to local regional agent 4847");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalRegion();
                     break;
 
                 case 4863:
-                    logger.debug("Local plugin sending message to local regional plugin 4863");
+                    logger.debug("Local agentcontroller sending message to local regional agentcontroller 4863");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalRegion();
                     break;
@@ -289,19 +290,19 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 5087:
-                    logger.debug("Local agent sending message to local plugin 5087");
+                    logger.debug("Local agent sending message to local agentcontroller 5087");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalPlugin();
                     break;
 
                 case 5103:
-                    logger.debug("Local plugin sending message to local agent 5103");
+                    logger.debug("Local agentcontroller sending message to local agent 5103");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalAgent();
                     break;
 
                 case 5119:
-                    logger.debug("Local plugin sending message to local plugin 5119");
+                    logger.debug("Local agentcontroller sending message to local agentcontroller 5119");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalPlugin();
                     break;
@@ -313,19 +314,19 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 12959:
-                    logger.debug("Local agent sending message to local regional plugin 12959");
+                    logger.debug("Local agent sending message to local regional agentcontroller 12959");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalGlobal();
                     break;
 
                 case 12975:
-                    logger.debug("Local plugin sending message to local global agent 12975");
+                    logger.debug("Local agentcontroller sending message to local global agent 12975");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalGlobal();
                     break;
 
                 case 12991:
-                    logger.debug("Local plugin sending message to local global plugin 12991");
+                    logger.debug("Local agentcontroller sending message to local global agentcontroller 12991");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalGlobal();
                     break;
@@ -337,31 +338,31 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 13023:
-                    logger.debug("Local agent sending message to local regional plugin 13023");
+                    logger.debug("Local agent sending message to local regional agentcontroller 13023");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalRegion();
                     break;
 
                 case 13039:
-                    logger.debug("Local plugin sending message to local regional agent 13039");
+                    logger.debug("Local agentcontroller sending message to local regional agent 13039");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalRegion();
                     break;
 
                 case 13055:
-                    logger.debug("Local plugin sending message to local regional plugin 13055");
+                    logger.debug("Local agentcontroller sending message to local regional agentcontroller 13055");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalRegion();
                     break;
 
                 case 13279:
-                    logger.debug("Local agent sending message to local plugin 13279");
+                    logger.debug("Local agent sending message to local agentcontroller 13279");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalPlugin();
                     break;
 
                 case 13311:
-                    logger.debug("Local plugin sending message to local plugin 13311");
+                    logger.debug("Local agentcontroller sending message to local agentcontroller 13311");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalPlugin();
                     break;
@@ -373,19 +374,19 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 13295:
-                    logger.debug("Local plugin sending message to local agent 13295");
+                    logger.debug("Local agentcontroller sending message to local agent 13295");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalAgent();
                     break;
 
                 case 17359:
-                    logger.debug("Local plugin sending message to remote regional or global controller 17359");
+                    logger.debug("Local agentcontroller sending message to remote regional or global controller 17359");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteRegionalController();
                     break;
 
                 case 17391:
-                    logger.debug("Local plugin sending message to remote regional or global controller 17391");
+                    logger.debug("Local agentcontroller sending message to remote regional or global controller 17391");
                     logger.trace(rm.getParams().toString());
                     re = forwardToRemoteRegionalController();
                     break;
@@ -397,7 +398,7 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 21487:
-                    logger.debug("Local plugin sending message to local regional or remote global controller 21487");
+                    logger.debug("Local agentcontroller sending message to local regional or remote global controller 21487");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalRegionalController();
                     break;
@@ -409,7 +410,7 @@ public class MsgRoute implements Runnable {
                     break;
 
                 case 29679:
-                    logger.debug("Local plugin sending message to local regional or global controller 29679");
+                    logger.debug("Local agentcontroller sending message to local regional or global controller 29679");
                     logger.trace(rm.getParams().toString());
                     re = forwardToLocalRegionalController();
                     break;
@@ -439,157 +440,6 @@ public class MsgRoute implements Runnable {
             controllerEngine.getMeasurementEngine().updateTimer("message.transaction.time", messageTimeStamp);
         }
 
-    }
-
-    private MsgEvent getNull() {
-        return null;
-    }
-
-    private MsgEvent getRegionalCommandExecOutGoing() {
-        //TODO route should send directly there, local in commandexec will figure it out.
-        try {
-            boolean incoming = false;
-
-            String callId = "callId-" + /*PluginEngine.region*/plugin.getRegion() + "-" + /*PluginEngine.agent*/plugin.getAgent() + "-" + /*PluginEngine.plugin*/plugin.getPluginID(); //calculate callID
-            if (rm.getParam(callId) != null) { //send message to RPC hash
-            logger.error("WTF: WHY IS THERE A CALLID!");
-            }
-
-
-
-                //return PluginEngine.commandExec.cmdExec(rm);
-                if(controllerEngine.getRegionHealthWatcher() != null) {
-                    if(controllerEngine.getRegionHealthWatcher().rce != null) {
-                        return controllerEngine.getRegionHealthWatcher().rce.execute(rm);
-                    } else {
-                        logger.error("getRegionHealthWatcher().rce = null");
-                    }
-
-                } else {
-                    logger.error("getRegionHealthWatcher() = null");
-                }
-        } catch (Exception ex) {
-            logger.error("getRegionalCommandExec - " + ex.getMessage());
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    private MsgEvent getRegionalCommandExec() {
-
-        if((rm.getParam("dst_region").equals(plugin.getRegion())) && (rm.getParam("dst_agent").equals(plugin.getAgent())) && (rm.getParam("dst_plugin").equals(plugin.getPluginID()))) {
-            return getCommandExec();
-        } else {
-            externalSend();
-            return null;
-        }
-    }
-
-    private MsgEvent getRegionalCommandExec2() {
-        //TODO route should send directly there, local in commandexec will figure it out.
-        try {
-            String callId = "callId-" + /*PluginEngine.region*/plugin.getRegion() + "-" + /*PluginEngine.agent*/plugin.getAgent() + "-" + /*PluginEngine.plugin*/plugin.getPluginID(); //calculate callID
-            if (rm.getParam(callId) != null) { //send message to RPC hash
-                //PluginEngine.rpcMap.put(rm.getParam(callId), rm);
-                //plugin.receiveRPC(rm.getParam(callId), rm);
-                String RPCkey = rm.getParam(callId);
-                rm.removeParam(callId);
-                rm.removeParam("is_rpc");
-                //todo FIX RPC
-                //plugin.receiveRPC(RPCkey, rm);
-            } else {
-                //return PluginEngine.commandExec.cmdExec(rm);
-                if(controllerEngine.getRegionHealthWatcher() != null) {
-                    if(controllerEngine.getRegionHealthWatcher().rce != null) {
-                        return controllerEngine.getRegionHealthWatcher().rce.execute(rm);
-                    } else {
-                        logger.error("getRegionHealthWatcher().rce = null");
-                    }
-
-                } else {
-                    logger.error("getRegionHealthWatcher() = null");
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("getRegionalCommandExec - " + ex.getMessage());
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    private MsgEvent getCommandExec() {
-        try {
-            String callId = "callId-" + /*PluginEngine.region*/plugin.getRegion() + "-" + /*PluginEngine.agent*/plugin.getAgent() + "-" + /*PluginEngine.plugin*/plugin.getPluginID(); //calculate callID
-            if (rm.getParam(callId) != null) { //send message to RPC hash
-                //PluginEngine.rpcMap.put(rm.getParam(callId), rm);
-                String RPCkey = rm.getParam(callId);
-                rm.removeParam(callId);
-                rm.removeParam("is_rpc");
-                //todo FIX RPC
-                //plugin.receiveRPC(RPCkey, rm);
-            }
-            //check header for propper exec location
-            else {
-                if((rm.getParam("is_regional") != null) &&(rm.getParam("is_global") != null)) {
-                    //this is a global command
-                    if(controllerEngine.cstate.isGlobalController()) {
-                        return controllerEngine.getRegionHealthWatcher().rce.gce.execute(rm);
-                    } else {
-                        //todo Make sure this is correct
-                        //set regional controller as dest
-                        //logger.error("Global command sent, but controller is not global");
-                        //return null;
-                        //send to exec to determine where it should go
-                        //todo fix exec
-                        //return plugin.execute(rm);
-                    }
-                } else if((rm.getParam("is_regional") != null) &&(rm.getParam("is_global") == null)) {
-                    //this is a regional command
-                    if(controllerEngine.cstate.isRegionalController()) {
-                        return controllerEngine.getRegionHealthWatcher().rce.execute(rm);
-                    } else {
-                        logger.error("Regional command sent, but controller is not regional");
-                        return null;
-                    }
-                } else {
-                    //todo
-                    //fix exec
-                    //return plugin.execute(rm);
-                }
-            }
-
-        } catch (Exception ex) {
-            logger.error("getCommandExec - " + ex.getMessage());
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    private void externalSend() {
-        String targetAgent = null;
-        try {
-            if ((rm.getParam("dst_region") != null) && (rm.getParam("dst_agent") != null)) {
-                //agent message
-                targetAgent = rm.getParam("dst_region") + "_" + rm.getParam("dst_agent");
-
-            } else if ((rm.getParam("dst_region") != null) && (rm.getParam("dst_agent") == null)) {
-                //regional message
-                targetAgent = rm.getParam("dst_region");
-            }
-            logger.trace("Send Target : " + targetAgent);
-            if (/*PluginEngine.isReachableAgent(targetAgent)*/controllerEngine.isReachableAgent(targetAgent)) {
-                //PluginEngine.ap.sendMessage(rm);
-                controllerEngine.sendAPMessage(rm);
-                logger.trace("Send Target : " + targetAgent + " params : " + rm.getParams().toString());
-                //System.out.println("SENT NOT CONTROLLER MESSAGE / REMOTE=: " + targetAgent + " " + " region=" + ce.getParam("dst_region") + " agent=" + ce.getParam("dst_agent") + " "  + ce.getParams());
-            } else {
-                logger.error("Unreachable External Agent : " + targetAgent);
-                logger.error(rm.getParams().toString());
-            }
-        } catch (Exception ex) {
-            logger.error("External Send Error : " + targetAgent);
-            ex.printStackTrace();
-        }
     }
 
     private int getRoutePath() {
@@ -643,7 +493,7 @@ public class MsgRoute implements Runnable {
             }
             if (rm.getParam("dst_plugin") != null) {
                 RXpe = "1";
-                if (rm.getParam("dst_plugin").equals(/*PluginEngine.plugin*/plugin.getPluginID())) {
+                if (rm.getParam("dst_plugin").equals(/*PluginEngine.agentcontroller*/plugin.getPluginID())) {
                     RXp = "1";
                 }
             }
@@ -663,7 +513,7 @@ public class MsgRoute implements Runnable {
             }
             if (rm.getParam("src_plugin") != null) {
                 TXpe = "1";
-                if (rm.getParam("src_plugin").equals(/*PluginEngine.plugin*/plugin.getPluginID())) {
+                if (rm.getParam("src_plugin").equals(/*PluginEngine.agentcontroller*/plugin.getPluginID())) {
                     TXp = "1";
                 }
             }

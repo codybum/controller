@@ -32,7 +32,7 @@ public class ActiveProducerWorker {
 		this.plugin = controllerEngine.getPluginBuilder();
 		this.logger = plugin.getLogger(ActiveProducerWorker.class.getName(),CLogger.Level.Info);
 
-		//this.logger = new CLogger(ActiveProducerWorker.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
+		//this.logger = new CLogger(ActiveProducerWorker.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
 		this.producerWorkerName = UUID.randomUUID().toString();
 		try {
 			queueName = TXQueueName;

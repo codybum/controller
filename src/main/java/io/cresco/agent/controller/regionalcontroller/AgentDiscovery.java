@@ -16,15 +16,15 @@ public class AgentDiscovery {
     private GlobalCommandExec gce;
 
     public AgentDiscovery(ControllerEngine controllerEngine) {
-        //this.plugin = plugin;
-        //logger = new CLogger(AgentDiscovery.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Debug);
+        //this.agentcontroller = agentcontroller;
+        //logger = new CLogger(AgentDiscovery.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Debug);
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(AgentDiscovery.class.getName(),CLogger.Level.Info);
 
 
         gce = new GlobalCommandExec(controllerEngine);
-        //rpc = new RPC(plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), null);
+        //rpc = new RPC(agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), null);
     }
 
     private void globalSend(MsgEvent ge) {

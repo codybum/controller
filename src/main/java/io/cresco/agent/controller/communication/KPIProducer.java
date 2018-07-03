@@ -33,7 +33,7 @@ public class KPIProducer {
 		this.plugin = controllerEngine.getPluginBuilder();
 		this.logger = plugin.getLogger(KPIProducer.class.getName(),CLogger.Level.Info);
 
-		//this.logger = new CLogger(KPIProducer.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
+		//this.logger = new CLogger(KPIProducer.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
 		this.producerWorkerName = UUID.randomUUID().toString();
 		try {
 			queueName = TXQueueName;
@@ -44,7 +44,7 @@ public class KPIProducer {
 
 			/*
 			connf = new ActiveMQSslConnectionFactory(URI);
-			connf.setKeyAndTrustManagers(plugin.getCertificateManager().getKeyManagers(),plugin.getCertificateManager().getTrustManagers(), new SecureRandom());
+			connf.setKeyAndTrustManagers(agentcontroller.getCertificateManager().getKeyManagers(),agentcontroller.getCertificateManager().getTrustManagers(), new SecureRandom());
 			conn = (ActiveMQConnection) connf.createConnection();
 			*/
 
@@ -89,7 +89,7 @@ public class KPIProducer {
 			TextMessage outgoingMessage = sess.createTextMessage(gson.toJson(params));
 			outgoingMessage.setStringProperty("region", region);
 			outgoingMessage.setStringProperty("agent", agent);
-			outgoingMessage.setStringProperty("plugin", pluginId);
+			outgoingMessage.setStringProperty("agentcontroller", pluginId);
 			outgoingMessage.setStringProperty("resourceid", resource_id);
 			outgoingMessage.setStringProperty("inodeid", inode_id);
 			//producer.send(sess.createTextMessage(gson.toJson(params)));

@@ -31,7 +31,7 @@ public class KPIBroker {
 		this.plugin = controllerEngine.getPluginBuilder();
 		this.logger = plugin.getLogger(KPIBroker.class.getName(),CLogger.Level.Info);
 
-		//this.logger = new CLogger(ActiveBroker.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(),CLogger.Level.Info);
+		//this.logger = new CLogger(ActiveBroker.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Info);
 		logger.info("Initialized");
 		try {
 			if(portAvailable(32011)) {

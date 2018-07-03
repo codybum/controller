@@ -60,8 +60,9 @@ public class StaticPluginLoader implements Runnable  {
                                         jarFile = pluginPath + "/" + jarFile;
                                     }
                                 }
-                                String pluginID = controllerEngine.getPluginAdmin().addPlugin(pluginName,jarFile,map);
-                                logger.info("STATIC LOADED : pluginID: " + pluginID + " pluginName: " + pluginName + " jarName: " +jarFile);
+                                //todo enable this in the future
+                                //String pluginID = controllerEngine.getPluginAdmin().addPlugin(pluginName,jarFile,map);
+                                //logger.info("STATIC LOADED : pluginID: " + pluginID + " pluginName: " + pluginName + " jarName: " +jarFile);
 
                             }
 
@@ -71,7 +72,7 @@ public class StaticPluginLoader implements Runnable  {
                         }
                     }
 
-                    //logger.info("Sent Message : " + message + " agent:" + plugin.getAgent());
+                    //logger.info("Sent Message : " + message + " agent:" + agentcontroller.getAgent());
                     //Thread.sleep(1000);
                 }
             } catch(Exception ex) {

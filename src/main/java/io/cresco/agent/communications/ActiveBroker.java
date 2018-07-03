@@ -27,7 +27,7 @@ public class ActiveBroker {
 
 		try {
 
-			int discoveryPort = 32010; //plugin.getConfig().getIntegerParam("discovery_port",32010);
+			int discoveryPort = 32010; //agentcontroller.getConfig().getIntegerParam("discovery_port",32010);
 
 			if(portAvailable(discoveryPort)) {
 

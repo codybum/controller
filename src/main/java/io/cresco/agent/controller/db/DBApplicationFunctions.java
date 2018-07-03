@@ -44,8 +44,8 @@ public class DBApplicationFunctions {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DBApplicationFunctions.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(DBApplicationFunctions.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(DBApplicationFunctions.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         //this.pool = dbe.pool;
 
         this.factory = dbe.factory;
@@ -687,7 +687,7 @@ public class DBApplicationFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 nodeRemoved = IsetPipelineStatusNoTx(pipelineId,status_code,status_desc);
@@ -763,10 +763,10 @@ public class DBApplicationFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("ADDNODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("ADDNODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
-                node_id = IaddNode(region, agent, plugin);
+                node_id = IaddNode(region, agent, agentcontroller);
                 count++;
 
             }
@@ -777,7 +777,7 @@ public class DBApplicationFunctions {
 
                 if(count > 0)
                 {
-                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     long delay = (long)(Math.random() * 1000);
                     //logger.error("delay: " + delay);
                     Thread.sleep(delay); //random wait to prevent sync error
@@ -1677,7 +1677,7 @@ public class DBApplicationFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 nodeRemoved = IremoveNode(rid);
@@ -2066,7 +2066,7 @@ public class DBApplicationFunctions {
                 //odb.commit();
 
                 logger.info(.add Pipeline to Scheduler Queue");
-                //plugin.getAppScheduleQueue().add(gpay);
+                //agentcontroller.getAppScheduleQueue().add(gpay);
                 //return gpay;
                 */
                 graph.commit();
@@ -2276,14 +2276,14 @@ public class DBApplicationFunctions {
 
                     String region = v.getProperty("region").toString();
                     String agent = v.getProperty("agent").toString();
-                    String plugin = v.getProperty("plugin").toString();
+                    String plugin = v.getProperty("agentcontroller").toString();
 
                     if ((region != null) && (agent != null)  && (plugin != null)) {
                         //edge_id = edge_id.substring(edge_id.indexOf("[") + 1, edge_id.indexOf("]"));
-                        logger.debug("parameter = " + region + " agent " + "plugin " + plugin);
+                        logger.debug("parameter = " + region + " agent " + "agentcontroller " + plugin);
                         nodeMap.put("region",region);
                         nodeMap.put("agent",agent);
-                        nodeMap.put("plugin",plugin);
+                        nodeMap.put("agentcontroller",plugin);
                     }
 
                 }
@@ -2366,14 +2366,14 @@ public class DBApplicationFunctions {
             createEdgeClass("isReachable",null);
 
             logger.debug("Create isAssigned Edge Class");
-            String[] isAssignedProps = {"resource_id","inode_id","region", "agent", "plugin"}; //Property names
+            String[] isAssignedProps = {"resource_id","inode_id","region", "agent", "agentcontroller"}; //Property names
             createEdgeClass("isAssigned",isAssignedProps);
 
             logger.debug("Create resourceNode Vertex Class");
             String[] resourceProps = {"resource_id"}; //Property names
             createVertexClass("resourceNode", resourceProps);
 
-            //create plugin anchor resource and inodes
+            //create agentcontroller anchor resource and inodes
             String[]  pluginAnchors= {"sysinfo","netdiscovery","container","controllerinfo"}; //Property names
             for(String pAnchor : pluginAnchors)
             {
@@ -2469,7 +2469,7 @@ public class DBApplicationFunctions {
                     createVertexIndex("iNode","inode_id",true);
 
 
-                    //create plugin anchor resource and inodes
+                    //create agentcontroller anchor resource and inodes
                     String[]  pluginAnchors= {"sysinfo","netdiscovery","container"}; //Property names
                     for(String pAnchor : pluginAnchors)
                     {
@@ -3112,7 +3112,7 @@ public class DBApplicationFunctions {
 */
     //WRITES
 /*
-    public String addIsConnectedEdge(String resource_id, String inode_id, String region, String agent, String plugin)
+    public String addIsConnectedEdge(String resource_id, String inode_id, String region, String agent, String agentcontroller)
     {
         String edge_id = null;
 
@@ -3126,7 +3126,7 @@ public class DBApplicationFunctions {
                 {
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
-                edge_id = IaddIsConnectedEdge(resource_id, inode_id, region, agent, plugin);
+                edge_id = IaddIsConnectedEdge(resource_id, inode_id, region, agent, agentcontroller);
                 count++;
 
             }
@@ -3153,7 +3153,7 @@ public class DBApplicationFunctions {
             edge_id = getResourceEdgeId(resource_id,inode_id,region,agent,pluginId);
             if(edge_id != null)
             {
-                //logger.debug("Node already Exist: region=" + region + " agent=" + agent + " plugin=" + plugin);
+                //logger.debug("Node already Exist: region=" + region + " agent=" + agent + " agentcontroller=" + agentcontroller);
             }
             else
             {
@@ -3161,7 +3161,7 @@ public class DBApplicationFunctions {
                 if((resource_id != null) && (inode_id != null) && (region != null) && (agent != null) && (pluginId != null))
                 {
                     String inode_node_id = getINodeNodeId(inode_id);
-                    String pnode_node_id = plugin.getGDB().gdb.getNodeId(region,agent,pluginId);
+                    String pnode_node_id = agentcontroller.getGDB().gdb.getNodeId(region,agent,pluginId);
                     if((inode_node_id != null) && (pnode_node_id != null))
                     {
                         graph = factory.getTx();
@@ -3175,7 +3175,7 @@ public class DBApplicationFunctions {
                             e.setProperty("inode_id", inode_id);
                             e.setProperty("region", region);
                             e.setProperty("agent", agent);
-                            e.setProperty("plugin", pluginId);
+                            e.setProperty("agentcontroller", pluginId);
                             graph.commit();
                             edge_id = e.getId().toString();
                         }
@@ -3195,7 +3195,7 @@ public class DBApplicationFunctions {
                 }
                 else
                 {
-                    logger.debug("IaddIsAttachedEdge: required input is null : " + resource_id + "," + inode_id + "," + region + "," + agent + "," + plugin);
+                    logger.debug("IaddIsAttachedEdge: required input is null : " + resource_id + "," + inode_id + "," + region + "," + agent + "," + agentcontroller);
 
                 }
 
@@ -3267,7 +3267,7 @@ public class DBApplicationFunctions {
             edge_id = getResourceEdgeId(resource_id,inode_id,region,agent,pluginId);
             if(edge_id != null)
             {
-                //logger.debug("Node already Exist: region=" + region + " agent=" + agent + " plugin=" + plugin);
+                //logger.debug("Node already Exist: region=" + region + " agent=" + agent + " agentcontroller=" + agentcontroller);
             }
             else
             {
@@ -3289,7 +3289,7 @@ public class DBApplicationFunctions {
                             e.setProperty("inode_id", inode_id);
                             e.setProperty("region", region);
                             e.setProperty("agent", agent);
-                            e.setProperty("plugin", pluginId);
+                            e.setProperty("agentcontroller", pluginId);
                             graph.commit();
                             edge_id = e.getId().toString();
                         }
@@ -3480,7 +3480,7 @@ public class DBApplicationFunctions {
             node_id = getINodeNodeId(inode_id);
             if(node_id != null)
             {
-                //logger.debug("Node already Exist: region=" + region + " agent=" + agent + " plugin=" + plugin);
+                //logger.debug("Node already Exist: region=" + region + " agent=" + agent + " agentcontroller=" + agentcontroller);
             }
             else
             {
@@ -3545,7 +3545,7 @@ public class DBApplicationFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("ADDNODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("ADDNODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 node_id = IaddResourceNode(resource_id);
@@ -3576,7 +3576,7 @@ public class DBApplicationFunctions {
 
             if(node_id != null)
             {
-                //logger.debug("Node already Exist: region=" + region + " agent=" + agent + " plugin=" + plugin);
+                //logger.debug("Node already Exist: region=" + region + " agent=" + agent + " agentcontroller=" + agentcontroller);
             }
             else
             {
@@ -3624,7 +3624,7 @@ public class DBApplicationFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 nodeRemoved = IremoveINode(inode_id);
@@ -3651,7 +3651,7 @@ public class DBApplicationFunctions {
         OrientGraph graph = null;
         try
         {
-            //String pathname = getPathname(region,agent,plugin);
+            //String pathname = getPathname(region,agent,agentcontroller);
             String node_id = getINodeNodeId(inode_id);
             if(node_id == null)
             {
@@ -3698,7 +3698,7 @@ public class DBApplicationFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 nodeRemoved = IremoveResourceNode(resource_id);
@@ -3725,7 +3725,7 @@ public class DBApplicationFunctions {
         OrientGraph graph = null;
         try
         {
-            //String pathname = getPathname(region,agent,plugin);
+            //String pathname = getPathname(region,agent,agentcontroller);
             String node_id = getResourceNodeId(resource_id);
             if(node_id == null)
             {
@@ -3831,7 +3831,7 @@ public class DBApplicationFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetINodeParams(inode_id, paramMap);
@@ -3863,7 +3863,7 @@ public class DBApplicationFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetINodeParam(inode_id, paramKey, paramValue);
@@ -3936,7 +3936,7 @@ public class DBApplicationFunctions {
             perfMap.putAll(params);
             perfMap.put("region", region);
             perfMap.put("agent", agent);
-            perfMap.put("plugin", pluginId);
+            perfMap.put("agentcontroller", pluginId);
             perfMap.put("resourceid", resource_id);
             perfMap.put("inodeid", inode_id);
             */
@@ -3949,12 +3949,12 @@ public class DBApplicationFunctions {
 
             //create node if not seen.. this needs to be changed.
             if(plugin_node_id != null) {
-                //plugin_node_id = plugin.getGDB().gdb.addNode(region,agent,pluginId);
+                //plugin_node_id = agentcontroller.getGDB().gdb.addNode(region,agent,pluginId);
                 //logger.debug("updateKPI : Added Node" + region + " " + agent + " " + pluginId + " = " + plugin_node_id);
 
 
                 if ((resource_node_id != null) && (inode_node_id != null) && (plugin_node_id != null)) {
-                    //logger.debug("updateKPI resource_node_id " + resource_id + " inode_id " + inode_id + "  Node" + region + " " + agent + " " + plugin + " = " + plugin_node_id);
+                    //logger.debug("updateKPI resource_node_id " + resource_id + " inode_id " + inode_id + "  Node" + region + " " + agent + " " + agentcontroller + " = " + plugin_node_id);
                     //check if edge is found, if not create it
                     edge_id = getResourceEdgeId(resource_id, inode_id, region, agent, pluginId);
                     if (edge_id == null) {
@@ -3984,7 +3984,7 @@ public class DBApplicationFunctions {
                     logger.debug("Can't update missing nodes : " + resource_node_id + "," + inode_node_id + "," + plugin_node_id);
                 }
             } else {
-                logger.debug("Can't update plugin with no agent : " + resource_id + "," + inode_id + "," + region + "," + agent);
+                logger.debug("Can't update agentcontroller with no agent : " + resource_id + "," + inode_id + "," + region + "," + agent);
             }
         }
         catch(Exception ex)

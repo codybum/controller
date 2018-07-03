@@ -27,7 +27,7 @@ public class BrokeredAgent {
 		this.controllerEngine = controllerEngine;
 		this.plugin = controllerEngine.getPluginBuilder();
 		this.logger = plugin.getLogger(BrokeredAgent.class.getName(),CLogger.Level.Info);
-		//this.logger = new CLogger(BrokeredAgent.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(),CLogger.Level.Trace);
+		//this.logger = new CLogger(BrokeredAgent.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Trace);
 		logger.debug("Initializing: " + agentPath + " address: " + activeAddress);
 		System.out.print("Name of Agent to message [q to quit]: ");
 		this.plugin = plugin;

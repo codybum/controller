@@ -1,20 +1,21 @@
-package io.cresco.agent.controller.core;
+package io.cresco.agent.controller.agentcontroller;
 
+import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.Executor;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
 
-public class ExecutorImpl implements Executor {
+public class AgentExecutor implements Executor {
 
     private ControllerEngine controllerEngine;
     private PluginBuilder plugin;
     CLogger logger;
 
-    public ExecutorImpl(ControllerEngine controllerEngine) {
+    public AgentExecutor(ControllerEngine controllerEngine) {
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
-        logger = plugin.getLogger(ExecutorImpl.class.getName(),CLogger.Level.Info);
+        logger = plugin.getLogger(AgentExecutor.class.getName(),CLogger.Level.Info);
     }
 
     @Override
@@ -38,8 +39,8 @@ public class ExecutorImpl implements Executor {
                 controllerEngine.getPluginAdmin().startPlugin(pluginId);
             }
 */
-        //if(rm.getParam("desc").startsWith("to-plugin")) {
-        incoming.setParam("desc","to-plugin-agent-rpc");
+        //if(rm.getParam("desc").startsWith("to-agentcontroller")) {
+        incoming.setParam("desc","to-agentcontroller-agent-rpc");
         return incoming;
     }
     @Override

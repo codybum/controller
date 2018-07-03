@@ -53,8 +53,8 @@ public class DBBaseFunctions {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DBBaseFunctions.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(DBBaseFunctions.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(DBBaseFunctions.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         //this.factory = dbe.factory;
         //this.factory = getFactory();
         this.factory = dbe.factory;
@@ -235,7 +235,7 @@ public class DBBaseFunctions {
                 /*
                 //TransactionalGraph tgraph = factory.getTx();
                 OIndex<?> idx = factory.getDatabase().getMetadata().getIndexManager().getIndex("pNode.nodePath");
-                String key = "[\"" + region + "\",\"" + agent + "\",\"" + plugin +"\"]";
+                String key = "[\"" + region + "\",\"" + agent + "\",\"" + agentcontroller +"\"]";
                 //OIdentifiable rec = idx.get(key);
                 Object luke = (Object)idx.get(key);
                 logger.error(luke.toString());
@@ -334,7 +334,7 @@ public class DBBaseFunctions {
                 /*
                 //TransactionalGraph tgraph = factory.getTx();
                 OIndex<?> idx = factory.getDatabase().getMetadata().getIndexManager().getIndex("pNode.nodePath");
-                String key = "[\"" + region + "\",\"" + agent + "\",\"" + plugin +"\"]";
+                String key = "[\"" + region + "\",\"" + agent + "\",\"" + agentcontroller +"\"]";
                 //OIdentifiable rec = idx.get(key);
                 Object luke = (Object)idx.get(key);
                 logger.error(luke.toString());
@@ -642,7 +642,7 @@ public class DBBaseFunctions {
                         String node_id = v.getProperty("rid").toString();
                         node_id = node_id.substring(node_id.indexOf("[") + 1, node_id.indexOf("]"));
                         Vertex pNode = graph.getVertex(node_id);
-                        node_list.add(pNode.getProperty("plugin").toString());
+                        node_list.add(pNode.getProperty("agentcontroller").toString());
                     }
                 }
                 //graph.shutdown();
@@ -943,12 +943,12 @@ public class DBBaseFunctions {
 
             if(node_id != null)
             {
-                logger.error("Node already Exist: region=" + region + " agent=" + agent + " plugin=" + plugin);
+                logger.error("Node already Exist: region=" + region + " agent=" + agent + " agentcontroller=" + plugin);
                 //Thread.dumpStack();
             }
             else
             {
-                //logger.debug("Adding Node : region=" + region + " agent=" + agent + " plugin=" + plugin);
+                //logger.debug("Adding Node : region=" + region + " agent=" + agent + " agentcontroller=" + agentcontroller);
                 if((region != null) && (agent == null) && (plugin == null))
                 {
                     graph = factory.getTx();
@@ -1002,12 +1002,12 @@ public class DBBaseFunctions {
                 }
                 else if((region != null) && (agent != null) && (plugin != null))
                 {
-                    //logger.debug("Adding Plugin : region=" + region + " agent=" + agent + " plugin=" + plugin);
+                    //logger.debug("Adding Plugin : region=" + region + " agent=" + agent + " agentcontroller=" + agentcontroller);
 
                     String agent_id = getNodeId(region,agent,null);
                     if(agent_id == null)
                     {
-                        //logger.debug("For region=" + region + " we must add agent=" + agent + " before adding plugin=" + plugin);
+                        //logger.debug("For region=" + region + " we must add agent=" + agent + " before adding agentcontroller=" + agentcontroller);
                         agent_id = addNode(region,agent,null);
                         setNodeParam(region,agent,null, "enable_pending", Boolean.TRUE.toString());
 
@@ -1019,7 +1019,7 @@ public class DBBaseFunctions {
                         Vertex v = graph.addVertex("class:pNode");
                         v.setProperty("region", region);
                         v.setProperty("agent", agent);
-                        v.setProperty("plugin", plugin);
+                        v.setProperty("agentcontroller", plugin);
 
 
                         Vertex fromV = graph.getVertex(v.getId().toString());
@@ -1029,14 +1029,14 @@ public class DBBaseFunctions {
                         Edge he = graph.addEdge("class:isPluginHealth", fromV, toV, "isPluginHealth");
                         he.setProperty("region", region);
                         he.setProperty("agent", agent);
-                        he.setProperty("plugin", plugin);
+                        he.setProperty("agentcontroller", plugin);
 
-                        //no need to set this as health is checked on the plugin level
+                        //no need to set this as health is checked on the agentcontroller level
                         //he.setProperty("enable_pending", Boolean.TRUE.toString());
                         graph.commit();
 					    /*
 					    //add Edge
-					    String edge_id = addEdge(region,agent,plugin,region,agent,null,"isPlugin");
+					    String edge_id = addEdge(region,agent,agentcontroller,region,agent,null,"isPlugin");
 					    if(edge_id == null)
 					    {
 					    	logger.debug("Unable to add isPlugin Edge between region=" + region + " agent=" + "agent=" + region + " and agent=" + agent);
@@ -1082,7 +1082,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("ADDNODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("ADDNODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 node_id = IaddNode(region, agent, plugin);
@@ -1236,7 +1236,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("REMOVENODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 nodeRemoved = IremoveNode(region, agent, plugin);
@@ -1263,7 +1263,7 @@ public class DBBaseFunctions {
         OrientGraph graph = null;
         try
         {
-            //String pathname = getPathname(region,agent,plugin);
+            //String pathname = getPathname(region,agent,agentcontroller);
             String node_id = getNodeId(region,agent,plugin);
             if(node_id == null)
             {
@@ -1356,7 +1356,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetNodeParamsNoTx(nodeId, paramMap);
@@ -1433,7 +1433,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetEdgeParamsNoTx(edgeId, paramMap);
@@ -1508,7 +1508,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetNodeParamsNoTx(region, agent, plugin, paramMap);
@@ -1585,7 +1585,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetNodeParams(region, agent, plugin, paramMap);
@@ -1625,7 +1625,7 @@ public class DBBaseFunctions {
                     Map.Entry pairs = (Map.Entry)it.next();
                     iNode.setProperty( pairs.getKey().toString(), pairs.getValue().toString());
 
-                    //to make sure indexing of plugin type works
+                    //to make sure indexing of agentcontroller type works
                     if((paramMap.containsKey("configparams") && (region != null) && (agent != null) && (plugin != null))) {
 
                         Type type = new TypeToken<Map<String, String>>(){}.getType();
@@ -1679,7 +1679,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetEdgeParam(edgeId, paramKey, paramValue);
@@ -1749,7 +1749,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetNodeParam(nodeId, paramKey, paramValue);
@@ -1821,7 +1821,7 @@ public class DBBaseFunctions {
             {
                 if(count > 0)
                 {
-                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("iNODEUPDATE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IsetNodeParam(region, agent, plugin, paramKey, paramValue);
@@ -1922,7 +1922,7 @@ public class DBBaseFunctions {
             }
 
             logger.debug("Create Plugin Vertex Class");
-            String[] pProps = {"region", "agent", "plugin"}; //Property names
+            String[] pProps = {"region", "agent", "agentcontroller"}; //Property names
             createVertexClass("pNode", pProps);
 
             for(String indexName : pNodeIndexParams) {
@@ -1965,7 +1965,7 @@ public class DBBaseFunctions {
             createEdgeClass("isPlugin",null);
 
             logger.debug("Create isPluginHealth Edge Class");
-            String[] isPluginHealthProps = {"region","agent","plugin"}; //Property names
+            String[] isPluginHealthProps = {"region","agent","agentcontroller"}; //Property names
             //createEdgeClass("isPlugin",isPluginProps);
             createEdgeClass("isPluginHealth",isPluginHealthProps);
 

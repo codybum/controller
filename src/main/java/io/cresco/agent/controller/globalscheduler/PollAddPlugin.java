@@ -26,8 +26,8 @@ public class PollAddPlugin implements Runnable {
 		this.plugin = controllerEngine.getPluginBuilder();
 		this.logger = plugin.getLogger(PollAddPlugin.class.getName(),CLogger.Level.Info);
 
-		//this.logger = new CLogger(PollAddPlugin.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Trace);
-		//this.plugin = plugin;
+		//this.logger = new CLogger(PollAddPlugin.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Trace);
+		//this.agentcontroller = agentcontroller;
 		this.resource_id = resource_id;
 		this.inode_id = inode_id;
 		this.region = region;
@@ -44,7 +44,7 @@ public class PollAddPlugin implements Runnable {
 
 				if(re != null) {
 					//info returned from agent
-					String pluginId = re.getParam("plugin");
+					String pluginId = re.getParam("agentcontroller");
 					controllerEngine.getGDB().dba.addIsAttachedEdge(resource_id, inode_id, region, agent, pluginId);
 
 					String status_code_plugin = re.getParam("status_code");

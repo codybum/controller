@@ -23,9 +23,9 @@ public class DBManager implements Runnable  {
 
 		//importQueue = new LinkedBlockingQueue<>();
 		this.importQueue = importQueue;
-		//this.logger = new CLogger(DBManager.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
+		//this.logger = new CLogger(DBManager.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
 		logger.debug("DB Manager initialized");
-		//this.plugin = plugin;
+		//this.agentcontroller = agentcontroller;
 		//timer = new Timer();
 		//timer.scheduleAtFixedRate(new DBWatchDog(logger), 500, 15000);//remote
 	}

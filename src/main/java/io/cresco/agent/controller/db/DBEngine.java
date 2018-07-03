@@ -27,8 +27,8 @@ public class DBEngine {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DBEngine.class.getName(),CLogger.Level.Info);
 
-        //this.plugin = plugin;
-        //logger = new CLogger(DBEngine.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
+        //logger = new CLogger(DBEngine.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
         this.retryCount = plugin.getConfig().getIntegerParam("db_retry_count",50);
         //this.factory = getFactory();
 
@@ -37,10 +37,10 @@ public class DBEngine {
 
         setPool();
         /*
-        String host = plugin.getConfig().getStringParam("gdb_host");
-        String username = plugin.getConfig().getStringParam("gdb_username");
-        String password = plugin.getConfig().getStringParam("gdb_password");
-        String dbname = plugin.getConfig().getStringParam("gdb_dbname");
+        String host = agentcontroller.getConfig().getStringParam("gdb_host");
+        String username = agentcontroller.getConfig().getStringParam("gdb_username");
+        String password = agentcontroller.getConfig().getStringParam("gdb_password");
+        String dbname = agentcontroller.getConfig().getStringParam("gdb_dbname");
 
         String iURI = null;
         if ((host != null) && (username != null) && (password != null) && (dbname != null)) {
@@ -334,19 +334,19 @@ public class DBEngine {
     }
 
 
-    public String getNodeClass(String region, String agent, String plugin)
+    public String getNodeClass(String region, String agent, String agentcontroller)
     {
         try
         {
-            if((region != null) && (agent == null) && (plugin == null))
+            if((region != null) && (agent == null) && (agentcontroller == null))
             {
                 return "rNode";
             }
-            else if((region != null) && (agent != null) && (plugin == null))
+            else if((region != null) && (agent != null) && (agentcontroller == null))
             {
                 return "aNode";
             }
-            else if((region != null) && (agent != null) && (plugin != null))
+            else if((region != null) && (agent != null) && (agentcontroller != null))
             {
                 return "pNode";
             }
@@ -370,7 +370,7 @@ public class DBEngine {
             {
                 if(count > 0)
                 {
-                    //logger.debug("ADDNODE RETRY : region=" + region + " agent=" + agent + " plugin" + plugin);
+                    //logger.debug("ADDNODE RETRY : region=" + region + " agent=" + agent + " agentcontroller" + agentcontroller);
                     Thread.sleep((long)(Math.random() * 1000)); //random wait to prevent sync error
                 }
                 isUpdated = IupdateEdge(edge_id, params);

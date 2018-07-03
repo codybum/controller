@@ -55,9 +55,9 @@ public class ResourceSchedulerEngine implements Runnable {
         this.logger = plugin.getLogger(ResourceSchedulerEngine.class.getName(),CLogger.Level.Info);
 
         gson = new Gson();
-		//this.plugin = plugin;
+		//this.agentcontroller = agentcontroller;
 		this.ghw = ghw;
-        //logger = new CLogger(ResourceSchedulerEngine.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
+        //logger = new CLogger(ResourceSchedulerEngine.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
 
         jarStringCache = CacheBuilder.newBuilder()
                 .concurrencyLevel(4)
@@ -103,7 +103,7 @@ public class ResourceSchedulerEngine implements Runnable {
 						//check the pipeline node
 						if(ce.getParam("globalcmd").equals("addplugin"))
 						{
-							//do something to activate a plugin
+							//do something to activate a agentcontroller
 							logger.debug("starting precheck...");
 							//String pluginJar = verifyPlugin(ce);
 							pNode pluginNode = verifyPlugin(ce);
@@ -119,14 +119,14 @@ public class ResourceSchedulerEngine implements Runnable {
 							{
 
 								//Here is where scheduling is taking place
-								logger.debug("plugin precheck = OK");
+								logger.debug("agentcontroller precheck = OK");
 									String region = ce.getParam("location_region");
 									String agent = ce.getParam("location_agent");
 									String resource_id = ce.getParam("resource_id");
 									String inode_id = ce.getParam("inode_id");
 
-									//schedule plugin
-									logger.debug("Scheduling plugin on region=" + region + " agent=" + agent);
+									//schedule agentcontroller
+									logger.debug("Scheduling agentcontroller on region=" + region + " agent=" + agent);
 									MsgEvent me = addPlugin(region,agent,ce.getParam("configparams"));
                                     me.setCompressedParam("pnode",gson.toJson(pluginNode));
 									logger.debug("pluginadd message: " + me.getParams().toString());
@@ -239,7 +239,7 @@ public class ResourceSchedulerEngine implements Runnable {
             }
 
         } else {
-            logger.error("requested plugin not found!");
+            logger.error("requested agentcontroller not found!");
         }
 
 
@@ -265,8 +265,8 @@ public class ResourceSchedulerEngine implements Runnable {
 
         List<String> pluginMap = getPluginInventory();
         for(String pluginfile : pluginMap) {
-            logger.debug("plugin = " + pluginfile);
-            logger.debug("plugin name = " + getPluginName(pluginfile));
+            logger.debug("agentcontroller = " + pluginfile);
+            logger.debug("agentcontroller name = " + getPluginName(pluginfile));
                 String pluginName = getPluginName(pluginfile);
                 if(pluginName != null) {
                     if (requestedPlugin.equals(pluginName)) {
@@ -293,7 +293,7 @@ public class ResourceSchedulerEngine implements Runnable {
 		}
 		else
 		{
-			ce.setMsgBody("Matching plugin could not be found!");
+			ce.setMsgBody("Matching agentcontroller could not be found!");
 			ce.setParam("pluginstatus","failed");
 		}
 		*/
@@ -414,7 +414,7 @@ public class ResourceSchedulerEngine implements Runnable {
 
 	    //else if (ce.getParam("configtype").equals("pluginadd"))
 
-		MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG,region,null,null,"add plugin");
+		MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG,region,null,null,"add agentcontroller");
 		me.setParam("src_region", plugin.getRegion());
 		me.setParam("src_agent", plugin.getAgent());
         me.setParam("src_plugin", plugin.getPluginID());
@@ -426,16 +426,16 @@ public class ResourceSchedulerEngine implements Runnable {
 	}
 	
 	public MsgEvent downloadPlugin(String region, String agent, String pluginId, String pluginurl, boolean forceDownload) {
-		MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG,region,null,null,"download plugin");
+		MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG,region,null,null,"download agentcontroller");
         me.setParam("src_region", plugin.getRegion());
         me.setParam("src_agent", plugin.getAgent());
         me.setParam("src_plugin", plugin.getPluginID());
         me.setParam("dst_region", region);
         me.setParam("dst_agent", agent);
         me.setParam("configtype", "plugindownload");
-		me.setParam("plugin", pluginId);
+		me.setParam("agentcontroller", pluginId);
 		me.setParam("pluginurl", pluginurl);
-		//me.setParam("configparams", "perflevel="+ perflevel + ",pluginname=DummyPlugin,jarfile=..//Cresco-Agent-Dummy-Plugin/target/cresco-agent-dummy-plugin-0.5.0-SNAPSHOT-jar-with-dependencies.jar,region=test2,watchdogtimer=5000");
+		//me.setParam("configparams", "perflevel="+ perflevel + ",pluginname=DummyPlugin,jarfile=..//Cresco-Agent-Dummy-Plugin/target/cresco-agent-dummy-agentcontroller-0.5.0-SNAPSHOT-jar-with-dependencies.jar,region=test2,watchdogtimer=5000");
 		if(forceDownload)
 		{
 			me.setParam("forceplugindownload", "true");

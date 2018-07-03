@@ -42,8 +42,8 @@ public class DBInterface {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(DBInterface.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(DBInterface.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-        //this.plugin = plugin;
+        //this.logger = new CLogger(DBInterface.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+        //this.agentcontroller = agentcontroller;
         this.importQueue = new LinkedBlockingQueue<>();
         this.gde = new DBEngine(controllerEngine);
         this.gdb = new DBBaseFunctions(controllerEngine,gde);
@@ -391,7 +391,7 @@ public class DBInterface {
         try
         {
             repoList = new ArrayList<>();
-            String repoPluginsJSON = getPluginListByType("pluginname","cresco-agent-dashboard-plugin");
+            String repoPluginsJSON = getPluginListByType("pluginname","cresco-agent-dashboard-agentcontroller");
             Map<String,List<Map<String,String>>> myMap = gson.fromJson(repoPluginsJSON, type);
 
             for(Map<String,String> perfMap : myMap.get("plugins")) {
@@ -406,7 +406,7 @@ public class DBInterface {
                 request.setParam("src_plugin", plugin.getPluginID());
                 request.setParam("dst_region", region);
                 request.setParam("dst_agent", agent);
-                request.setParam("dst_plugin", perfMap.get("plugin"));
+                request.setParam("dst_plugin", perfMap.get("agentcontroller"));
                 request.setParam("action", "repolist");
                 MsgEvent response = plugin.sendRPC(request);
 
@@ -420,10 +420,10 @@ public class DBInterface {
                     logger.error(contactMap.get("port"));
                 }
                 */
-                //String resource_node_id = plugin.getGDB().dba.getResourceNodeId("sysinfo_resource");
-                //String inode_node_id = plugin.getGDB().dba.getINodeNodeId("sysinfo_inode");
-                //String plugin_node_id = plugin.getGDB().gdb.getNodeId(region,agent,"plugin/0");
-                //String edge_id = plugin.getGDB().dba.getResourceEdgeId("sysinfo_resource", "sysinfo_inode", region, agent, "plugin/0");
+                //String resource_node_id = agentcontroller.getGDB().dba.getResourceNodeId("sysinfo_resource");
+                //String inode_node_id = agentcontroller.getGDB().dba.getINodeNodeId("sysinfo_inode");
+                //String plugin_node_id = agentcontroller.getGDB().gdb.getNodeId(region,agent,"agentcontroller/0");
+                //String edge_id = agentcontroller.getGDB().dba.getResourceEdgeId("sysinfo_resource", "sysinfo_inode", region, agent, "agentcontroller/0");
 
             }
 
@@ -817,7 +817,7 @@ public class DBInterface {
                     resourceTotal.remove("src_plugin");
                     resourceTotal.remove("src_region");
                     resourceTotal.remove("src_agent");
-                    resourceTotal.remove("plugin");
+                    resourceTotal.remove("agentcontroller");
                     resourceTotal.remove("region");
                     resourceTotal.remove("agent");
                     resourceTotal.remove("inode_id");
@@ -943,10 +943,10 @@ public class DBInterface {
                 for (int i = 0; i < nodeSize; i++) {
                     gpay.nodes.get(i).params.clear();
                     //logger.error("vnode=" + gpay.nodes.get(i).node_id);
-                    //String inodeid = plugin.getGDB().dba.getINodefromVNode(gpay.nodes.get(i).node_id);
+                    //String inodeid = agentcontroller.getGDB().dba.getINodefromVNode(gpay.nodes.get(i).node_id);
                     //logger.error("inode=" + inodeid);
-                    //String status_code = plugin.getGDB().dba.getINodeParam(inodeid,"status_code");
-                    //String status_desc = plugin.getGDB().dba.getINodeParam(inodeid,"status_desc");
+                    //String status_code = agentcontroller.getGDB().dba.getINodeParam(inodeid,"status_code");
+                    //String status_desc = agentcontroller.getGDB().dba.getINodeParam(inodeid,"status_desc");
                     //gpay.nodes.get(i).params.put("inode_id",inodeid);
                     //logger.error("iNODE: " + gpay.nodes.get(i).node_id);
                     String inodeNodeid = dba.getINodeNodeId(gpay.nodes.get(i).node_id);
@@ -958,8 +958,8 @@ public class DBInterface {
                     String inode_id = inodeParams.get("inode_id");
                     String resource_id = inodeParams.get("resource_id");
 
-                    //String status_code = plugin.getGDB().dba.getINodeParam(gpay.nodes.get(i).node_id, "status_code");
-                    //String status_desc = plugin.getGDB().dba.getINodeParam(gpay.nodes.get(i).node_id, "status_desc");
+                    //String status_code = agentcontroller.getGDB().dba.getINodeParam(gpay.nodes.get(i).node_id, "status_code");
+                    //String status_desc = agentcontroller.getGDB().dba.getINodeParam(gpay.nodes.get(i).node_id, "status_desc");
                     gpay.nodes.get(i).params.put("status_code", status_code);
                     gpay.nodes.get(i).params.put("status_desc", status_desc);
                     gpay.nodes.get(i).params.put("params", params);
@@ -976,8 +976,8 @@ public class DBInterface {
                 //gdb.getEdgeParamsNoTx()
 
                 //String returnGetGpipeline = gson.toJson(gpay);
-                //String returnGetGpipeline = plugin.getGDB().dba.getPipeline(actionPipelineId);
-                //queryReturn = DatatypeConverter.printBase64Binary(plugin.getGDB().gdb.stringCompress(returnGetGpipeline));
+                //String returnGetGpipeline = agentcontroller.getGDB().dba.getPipeline(actionPipelineId);
+                //queryReturn = DatatypeConverter.printBase64Binary(agentcontroller.getGDB().gdb.stringCompress(returnGetGpipeline));
                 queryReturn = gson.toJson(gpay);
             }
 
@@ -1102,7 +1102,7 @@ public class DBInterface {
                 //logger.info(gdb.getIsAssignedParam(String edge_id,String param_name)
                 String region = gdb.getIsAssignedParam(edgeID,"region");
                 String agent = gdb.getIsAssignedParam(edgeID,"agent");
-                String pluginID = gdb.getIsAssignedParam(edgeID,"plugin");
+                String pluginID = gdb.getIsAssignedParam(edgeID,"agentcontroller");
 
                 Map<String,String> edgeParams = gdb.getIsAssignedParams(edgeID);
                 for (Map.Entry<String, String> entry : edgeParams.entrySet()) {
@@ -1145,7 +1145,7 @@ public class DBInterface {
                                         logger.trace("configParams : " + pluginConfigparams);
                                         if (pluginConfigparams != null) {
                                             Map<String, String> pMap = paramStringToMap(pluginConfigparams);
-                                            if (pMap.get("pluginname").equals("cresco-sysinfo-plugin")) {
+                                            if (pMap.get("pluginname").equals("cresco-sysinfo-agentcontroller")) {
 
                                                 String isAssignedEdgeId = dba.getResourceEdgeId("sysinfo_resource", "sysinfo_inode",region,agent,pluginId);
                                                 Map<String,String> edgeParams = dba.getIsAssignedParams(isAssignedEdgeId);
@@ -1215,7 +1215,7 @@ public class DBInterface {
         Map<String,NodeStatusType> nodeStatusMap = null;
         try {
             nodeStatusMap = new HashMap<>();
-            //List<String> queryList = gdb.getNodeIds(region,agent,plugin,false);
+            //List<String> queryList = gdb.getNodeIds(region,agent,agentcontroller,false);
             List<String> queryList = gdb.getEdgeHealthIds(region,agent,plugin,false);
             //logger.info("getEdgeHealthStatus : Count : " + queryList.size());
 
@@ -1350,7 +1350,7 @@ public class DBInterface {
             /*
             String region = de.getParam("src_region");
             String agent = de.getParam("src_agent");
-            String plugin = de.getParam("src_plugin");
+            String agentcontroller = de.getParam("src_plugin");
             */
 
             String region = de.getParam("region_name");
@@ -1373,7 +1373,7 @@ public class DBInterface {
 
                 if((region != null) && (agent != null) && (plugin == null)) {
                     //logger.info("is Agent: Process Plugins");
-                    //add plugin configs for agent
+                    //add agentcontroller configs for agent
                     if (de.getParam("pluginconfigs") != null) {
                         List<Map<String, String>> configMapList = new Gson().fromJson(de.getCompressedParam("pluginconfigs"),
                                 new TypeToken<List<Map<String, String>>>() {
@@ -1410,7 +1410,7 @@ public class DBInterface {
 
             String nodeId = gdb.getNodeId(region,agent,pluginId);
 
-            logger.trace("watchdog() region=" + region + " agent=" + agent + " plugin=" + pluginId);
+            logger.trace("watchdog() region=" + region + " agent=" + agent + " agentcontroller=" + pluginId);
 
             if(nodeId != null) {
                 //update watchdog_ts for local db
@@ -1436,7 +1436,7 @@ public class DBInterface {
 
                 if(edgeId != null) {
 
-                    //logger.error("UPDATE EDGE : " + edgeId + " region:" + region + " agent:" + agent + " plugin:" + pluginId);
+                    //logger.error("UPDATE EDGE : " + edgeId + " region:" + region + " agent:" + agent + " agentcontroller:" + pluginId);
                     //logger.error(gdb.getEdgeParamsNoTx(edgeId).toString());
                     gdb.setEdgeParamsNoTx(edgeId,updateMap);
                 } else {
@@ -1446,7 +1446,7 @@ public class DBInterface {
 
                 if((region != null) && (agent != null) && (pluginId == null)) {
 
-                    //add plugin configs for agent
+                    //add agentcontroller configs for agent
                     if (de.getParam("pluginconfigs") != null) {
 
                         List<Map<String, String>> configMapList = new Gson().fromJson(de.getCompressedParam("pluginconfigs"),
@@ -1459,7 +1459,7 @@ public class DBInterface {
                         for (Map<String, String> configMap : configMapList) {
                             String subpluginId = configMap.get("pluginid");
 
-                            //remove plugin from remove list of new config exist
+                            //remove agentcontroller from remove list of new config exist
                             if(pluginRemoveList.contains(subpluginId)) {
                                 pluginRemoveList.remove(subpluginId);
                             }
@@ -1473,8 +1473,8 @@ public class DBInterface {
                             for (Map.Entry<String, String> entry : configMap.entrySet())
                             {
                                 System.out.println(entry.getKey() + "/" + entry.getValue());
-                                //gdb.addNode(region, agent,plugin);
-                                //gdb.setNodeParams(region,agent,plugin, de.getParams());
+                                //gdb.addNode(region, agent,agentcontroller);
+                                //gdb.setNodeParams(region,agent,agentcontroller, de.getParams());
                             }
                             */
 
@@ -1483,7 +1483,7 @@ public class DBInterface {
                         //remove nodes on the pluginRemoveList, they are no longer on the agent
                         for(String removePlugin : pluginRemoveList) {
                             if(!gdb.removeNode(region,agent, removePlugin)) {
-                                logger.error("watchDogUpdate Error : Could not remove plugin region:" + region + " agent:" + agent + " plugin:" + removePlugin);
+                                logger.error("watchDogUpdate Error : Could not remove agentcontroller region:" + region + " agent:" + agent + " agentcontroller:" + removePlugin);
                             }
                         }
                     }
@@ -1505,14 +1505,14 @@ public class DBInterface {
                 /*
                 if(gdb.getNodeId(region,agent,null) != null) {
 
-                    MsgEvent le = new MsgEvent(MsgEvent.Type.CONFIG,plugin.getRegion(),null,null,"enabled");
+                    MsgEvent le = new MsgEvent(MsgEvent.Type.CONFIG,agentcontroller.getRegion(),null,null,"enabled");
                     le.setMsgBody("Get Plugin Inventory From Agent");
-                    le.setParam("src_region", plugin.getRegion());
+                    le.setParam("src_region", agentcontroller.getRegion());
                     le.setParam("dst_region", region);
                     le.setParam("dst_agent", agent);
                     le.setParam("configtype","plugininventory");
-                    le.setParam("plugin",pluginId);
-                    this.plugin.msgIn(le);
+                    le.setParam("agentcontroller",pluginId);
+                    this.agentcontroller.msgIn(le);
                 }
                 */
 
@@ -1540,7 +1540,7 @@ public class DBInterface {
                 wasRemoved = true;
             }
             else {
-                logger.error("removeNode() MsgEvent region: " + region + " agent:" + agent + " plugin:" + plugin + " does not exist!");
+                logger.error("removeNode() MsgEvent region: " + region + " agent:" + agent + " agentcontroller:" + plugin + " does not exist!");
             }
 
         } catch (Exception ex) {
@@ -1556,12 +1556,12 @@ public class DBInterface {
 
             String nodeId = gdb.getNodeId(region,agent,plugin);
             if(nodeId != null) {
-                logger.debug("Removing Node: " + "region: " + region + " agent:" + agent + " plugin:" + plugin);
+                logger.debug("Removing Node: " + "region: " + region + " agent:" + agent + " agentcontroller:" + plugin);
                 gdb.removeNode(region, agent,plugin);
                 wasRemoved = true;
             }
             else {
-                logger.error("RemoveNode() region: " + region + " agent:" + agent + " plugin:" + plugin + " does not exist!");
+                logger.error("RemoveNode() region: " + region + " agent:" + agent + " agentcontroller:" + plugin + " does not exist!");
             }
 
         } catch (Exception ex) {

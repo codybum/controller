@@ -24,8 +24,8 @@ public class PollRemovePipeline implements Runnable {
 
 	public PollRemovePipeline(ControllerEngine controllerEngine, String pipelineId)
 	{
-		//this.logger = new CLogger(PollRemovePipeline.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-		//this.plugin = plugin;
+		//this.logger = new CLogger(PollRemovePipeline.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+		//this.agentcontroller = agentcontroller;
 		//this.assignedNodes = assignedNodes;
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();

@@ -32,8 +32,8 @@ public class AppSchedulerEngine implements Runnable {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(AppSchedulerEngine.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(AppSchedulerEngine.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Debug);
-		//this.plugin = plugin;
+        //this.logger = new CLogger(AppSchedulerEngine.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Debug);
+		//this.agentcontroller = agentcontroller;
 		this.ghw = ghw;
         addPipelineExecutor = Executors.newFixedThreadPool(100);
 	}

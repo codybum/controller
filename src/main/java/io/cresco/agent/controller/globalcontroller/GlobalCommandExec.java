@@ -35,8 +35,8 @@ public class GlobalCommandExec {
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(GlobalCommandExec.class.getName(),CLogger.Level.Info);
 
-        //this.logger = new CLogger(GlobalCommandExec.class, plugin.getMsgOutQueue(), plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), CLogger.Level.Info);
-		//this.plugin = plugin;
+        //this.logger = new CLogger(GlobalCommandExec.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
+		//this.agentcontroller = agentcontroller;
 		removePipelineExecutor = Executors.newFixedThreadPool(100);
     }
 
@@ -270,7 +270,7 @@ public class GlobalCommandExec {
      * in a region: (action_region=[region] action_agent=null, or all know plugins: (action_region=null action_agent=null)
      * @param ce MsgEvent.Type.EXEC, action=listplugins, action_region=[optional region] action_agent=[optional agent]
      *           if action_region=null all agents are listed
-     * @return creates "plugin list", in compressed json format
+     * @return creates "agentcontroller list", in compressed json format
      *
      * <ul>
      * <li>Coffee</li>
@@ -337,9 +337,9 @@ public class GlobalCommandExec {
     }
 
     /**
-     * Query to list a specific plugin configuration
+     * Query to list a specific agentcontroller configuration
      * @param ce regionlist action, MsgEvent.Type.EXEC, action=plugininfo, action_region=[region] action_agent=[agent] action_plugin=[plugin_id]
-     * @return creates "plugin info", in compressed json format
+     * @return creates "agentcontroller info", in compressed json format
      * @see GlobalCommandExec#execute(MsgEvent)
      */
 
@@ -567,7 +567,7 @@ public class GlobalCommandExec {
             }
             else
             {
-                ce.setMsgBody("No plugin directory exist to inventory");
+                ce.setMsgBody("No agentcontroller directory exist to inventory");
             }
         }
         catch(Exception ex) {
@@ -590,7 +590,7 @@ public class GlobalCommandExec {
             }
             else
             {
-                ce.setMsgBody("No plugin directory exist to inventory");
+                ce.setMsgBody("No agentcontroller directory exist to inventory");
             }
         }
         catch(Exception ex) {
@@ -796,7 +796,7 @@ public class GlobalCommandExec {
                 baseUrl = baseUrl + "/";
             }
 
-            URL website = new URL(baseUrl + ce.getParam("plugin"));
+            URL website = new URL(baseUrl + ce.getParam("agentcontroller"));
             ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 
             File jarLocation = new File(ControllerEngine.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
@@ -811,7 +811,7 @@ public class GlobalCommandExec {
                     System.out.println("Directory " + pluginDir + " didn't exist and we failed to create it!");
                 }
             }
-            String pluginFile = parentDirName + "/plugins/" + ce.getParam("plugin");
+            String pluginFile = parentDirName + "/plugins/" + ce.getParam("agentcontroller");
             boolean forceDownload = false;
             if(ce.getParam("forceplugindownload") != null)
             {
@@ -822,26 +822,26 @@ public class GlobalCommandExec {
             File pluginFileObject = new File(pluginFile);
             if (!pluginFileObject.exists() || forceDownload)
             {
-                FileOutputStream fos = new FileOutputStream(parentDirName + "/plugins/" + ce.getParam("plugin"));
+                FileOutputStream fos = new FileOutputStream(parentDirName + "/plugins/" + ce.getParam("agentcontroller"));
 
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
                 if(pluginFileObject.exists())
                 {
-                    ce.setParam("hasplugin", ce.getParam("plugin"));
-                    ce.setMsgBody("Downloaded Plugin:" + ce.getParam("plugin"));
-                    System.out.println("Downloaded Plugin:" + ce.getParam("plugin"));
+                    ce.setParam("hasplugin", ce.getParam("agentcontroller"));
+                    ce.setMsgBody("Downloaded Plugin:" + ce.getParam("agentcontroller"));
+                    System.out.println("Downloaded Plugin:" + ce.getParam("agentcontroller"));
                 }
                 else
                 {
-                    ce.setMsgBody("Problem Downloading Plugin:" + ce.getParam("plugin"));
-                    System.out.println("Problem Downloading Plugin:" + ce.getParam("plugin"));
+                    ce.setMsgBody("Problem Downloading Plugin:" + ce.getParam("agentcontroller"));
+                    System.out.println("Problem Downloading Plugin:" + ce.getParam("agentcontroller"));
                 }
             }
             else
             {
-                ce.setMsgBody("Plugin already exists:" + ce.getParam("plugin"));
-                ce.setParam("hasplugin", ce.getParam("plugin"));
-                System.out.println("Plugin already exists:" + ce.getParam("plugin"));
+                ce.setMsgBody("Plugin already exists:" + ce.getParam("agentcontroller"));
+                ce.setParam("hasplugin", ce.getParam("agentcontroller"));
+                System.out.println("Plugin already exists:" + ce.getParam("agentcontroller"));
             }
 
         }
@@ -861,7 +861,7 @@ public class GlobalCommandExec {
                 if(pipelineId != null) {
                     String pipelinString = controllerEngine.getGDB().dba.getPipeline(pipelineId);
                     if(pipelinString != null) {
-                        logger.trace("removePipelineExecutor.execute(new PollRemovePipeline(plugin, pipelineId));");
+                        logger.trace("removePipelineExecutor.execute(new PollRemovePipeline(agentcontroller, pipelineId));");
                         removePipelineExecutor.execute(new PollRemovePipeline(controllerEngine, pipelineId));
                                 /*
                                 List<String> iNodeList = controllerEngine.getGDB().dba.getresourceNodeList(pipelineId,null);
@@ -875,7 +875,7 @@ public class GlobalCommandExec {
                                     me.setParam("inode_id", iNodeId);
                                     me.setParam("resource_id", pipelineId);
                                     //ghw.resourceScheduleQueue.add(me);
-                                    plugin.getResourceScheduleQueue().add(me);
+                                    agentcontroller.getResourceScheduleQueue().add(me);
 
                                 }
                                 */
@@ -936,7 +936,7 @@ public class GlobalCommandExec {
 
 	private MsgEvent addPlugin(MsgEvent ce) {
 	    try {
-	        logger.error("g: add plugin!");
+	        logger.error("g: add agentcontroller!");
 
         if((ce.getParam("inode_id") != null) && (ce.getParam("resource_id") != null) && (ce.getParam("configparams") != null)) {
 
@@ -1095,7 +1095,7 @@ public class GlobalCommandExec {
 		{
 			phm = new HashMap<String,String>();
 	        JarFile jarFile = new JarFile(jarFileName);
-            JarEntry je = jarFile.getJarEntry("plugin.conf");
+            JarEntry je = jarFile.getJarEntry("agentcontroller.conf");
             InputStream in = jarFile.getInputStream(je);
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line;
@@ -1124,7 +1124,7 @@ public class GlobalCommandExec {
 		try 
 		{
 			JarFile jarFile = new JarFile(jarFileName);
-            JarEntry je = jarFile.getJarEntry("plugin.conf");
+            JarEntry je = jarFile.getJarEntry("agentcontroller.conf");
             InputStream in = jarFile.getInputStream(je);
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line;

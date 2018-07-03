@@ -107,16 +107,16 @@ public class ActiveBrokerManager implements Runnable  {
 						if(addBroker && !controllerEngine.isReachableAgent(agentPath)) {
                             addBroker(agentPath);
                             int count = 0;
-                            //while(!this.plugin.isReachableAgent(agentPath)) {
+                            //while(!this.agentcontroller.isReachableAgent(agentPath)) {
 
                             	/*
-                            	MsgEvent sme = new MsgEvent(MsgEvent.Type.DISCOVER, this.plugin.getRegion(), this.plugin.getAgent(), this.plugin.getPluginID(), "Discovery request.");
-								sme.setParam("src_region", this.plugin.getRegion());
-								sme.setParam("src_agent", this.plugin.getAgent());
+                            	MsgEvent sme = new MsgEvent(MsgEvent.Type.DISCOVER, this.agentcontroller.getRegion(), this.agentcontroller.getAgent(), this.agentcontroller.getPluginID(), "Discovery request.");
+								sme.setParam("src_region", this.agentcontroller.getRegion());
+								sme.setParam("src_agent", this.agentcontroller.getAgent());
 								String[] regionAgent = agentPath.split("_");
 								sme.setParam("dst_region",regionAgent[0]);
 								sme.setParam("dst_agent",regionAgent[1]);
-								plugin.sendMsgEvent(sme);
+								agentcontroller.sendMsgEvent(sme);
 								*/
 
 								logger.trace("Waiting on Broker : " + agentPath + " remote_ip: " + agentIP + " count:" + count);
@@ -162,7 +162,7 @@ public class ActiveBrokerManager implements Runnable  {
 
 		    		if((controllerEngine.cstate.getGlobalControllerPath()) != null && (controllerEngine.cstate.getGlobalControllerPath().equals(ba.agentPath))) {
                         logger.info("Clearing Global Controller Path " +ba.agentPath);
-                        //plugin.setGlobalController(null,null);
+                        //agentcontroller.setGlobalController(null,null);
 						controllerEngine.cstate.setRegionalGlobalFailed("BrokerWatchDog: BrokerStatusType.FAILED : BrokerPath: " +ba.agentPath);
                     }
 

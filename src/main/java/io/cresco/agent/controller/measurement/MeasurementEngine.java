@@ -64,7 +64,7 @@ public class MeasurementEngine {
         */
         //jmxMeterRegistry = new JmxMeterRegistry(JmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT, metricRegistry, jmxReporter);
 
-        //crescoMeterRegistry = new CrescoMeterRegistry(plugin,CrescoConfig.DEFAULT, Clock.SYSTEM);
+        //crescoMeterRegistry = new CrescoMeterRegistry(agentcontroller,CrescoConfig.DEFAULT, Clock.SYSTEM);
 
         //JmxMeterRegistry jmxMeterRegistry = new JmxMeterRegistry(JmxConfig.DEFAULT, Clock.SYSTEM);
 
@@ -259,7 +259,7 @@ public class MeasurementEngine {
 
             Timer timer = Timer.builder(name).description(description).register(crescoMeterRegistry);
             //this.crescoMeterRegistry.
-            //Timer timer = this.crescoMeterRegistry.timer(plugin.getPluginID() + "_" + name);
+            //Timer timer = this.crescoMeterRegistry.timer(agentcontroller.getPluginID() + "_" + name);
             //timer.takeSnapshot().
             metricMap.put(name,new CMetric(name,description,group,"TIMER"));
             return true;
