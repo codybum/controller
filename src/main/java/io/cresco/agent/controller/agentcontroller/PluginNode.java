@@ -132,6 +132,7 @@ public class PluginNode {
 
     public void setPluginService(PluginService pluginService) {
         this.pluginService = pluginService;
+        this.active = true;
     }
 
     /*

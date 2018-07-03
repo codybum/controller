@@ -38,43 +38,50 @@ public class StaticPluginLoader implements Runnable  {
 
     public void run() {
 
+        boolean isStaticInit = false;
+
             try {
 
-                if(config != null) {
+                while(!isStaticInit) {
 
+                    if(controllerEngine.cstate.isActive()) {
+                        if (config != null) {
 
-                    for(String tmpPluginID : config.getPluginList(1)) {
+                            for (String tmpPluginID : config.getPluginList(1)) {
 
+                                try {
+                                    Map<String, Object> map = config.getConfigMap(tmpPluginID);
 
-                        try {
-                            Map<String, Object> map = config.getConfigMap(tmpPluginID);
+                                    if ((map.containsKey("pluginname") && (map.containsKey("jarfile")))) {
+                                        String pluginName = (String) map.get("pluginname");
+                                        String jarFile = (String) map.get("jarfile");
+                                        String pluginPath = plugin.getConfig().getStringParam("pluginpath");
+                                        if (pluginPath != null) {
+                                            if (pluginPath.endsWith("/")) {
+                                                jarFile = pluginPath + jarFile;
+                                            } else {
+                                                jarFile = pluginPath + "/" + jarFile;
+                                            }
+                                        }
+                                        String pluginID = controllerEngine.getPluginAdmin().addPlugin(pluginName, jarFile, map);
+                                        logger.info("STATIC LOADED : pluginID: " + pluginID + " pluginName: " + pluginName + " jarName: " + jarFile);
 
-                            if ((map.containsKey("pluginname") && (map.containsKey("jarfile")))) {
-                                String pluginName = (String) map.get("pluginname");
-                                String jarFile = (String) map.get("jarfile");
-                                String pluginPath = plugin.getConfig().getStringParam("pluginpath");
-                                if(pluginPath != null) {
-                                    if(pluginPath.endsWith("/")) {
-                                        jarFile = pluginPath + jarFile;
-                                    } else {
-                                        jarFile = pluginPath + "/" + jarFile;
                                     }
-                                }
-                                //todo enable this in the future
-                                //String pluginID = controllerEngine.getPluginAdmin().addPlugin(pluginName,jarFile,map);
-                                //logger.info("STATIC LOADED : pluginID: " + pluginID + " pluginName: " + pluginName + " jarName: " +jarFile);
 
+
+                                } catch (Exception exe) {
+                                    exe.printStackTrace();
+                                }
                             }
 
-
-                        } catch(Exception exe) {
-                            exe.printStackTrace();
+                            //logger.info("Sent Message : " + message + " agent:" + agentcontroller.getAgent());
+                            //Thread.sleep(1000);
+                            isStaticInit = true;
                         }
                     }
-
-                    //logger.info("Sent Message : " + message + " agent:" + agentcontroller.getAgent());
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                 }
+
             } catch(Exception ex) {
                 ex.printStackTrace();
             }

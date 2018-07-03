@@ -45,7 +45,7 @@ public class MsgRoute implements Runnable {
     private MsgEvent forwardToLocalPlugin() {
         boolean isOk = false;
         if(rm.getParam("desc") != null) {
-            if(rm.getParam("desc").startsWith("to-agentcontroller")) {
+            if(rm.getParam("desc").startsWith("to-plugin")) {
                 try {
                     controllerEngine.getPluginAdmin().msgIn(rm);
                     isOk = true;

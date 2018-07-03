@@ -6,6 +6,9 @@ import io.cresco.library.plugin.Executor;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AgentExecutor implements Executor {
 
     private ControllerEngine controllerEngine;
@@ -32,13 +35,28 @@ public class AgentExecutor implements Executor {
     }
     @Override
     public MsgEvent executeINFO(MsgEvent incoming) {
-        //System.out.println("INCOMING INFO MESSAGE FOR AGENT FROM " + incoming.getSrcPlugin() + " setting new desc");
+        System.out.println("INCOMING INFO MESSAGE FOR AGENT FROM " + incoming.getSrcPlugin() + " setting new desc");
+
         /*
-        String pluginId = controllerEngine.getPluginAdmin().addConfig();
+        if(incoming.getSrcPlugin().endsWith("0")) {
+            String pluginName = "io.cresco.skeleton";
+            String jarFile = "/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar";
+            Map<String, Object> map = new HashMap<>();
+
+            map.put("pluginname", pluginName);
+            map.put("jarfile", jarFile);
+
+            controllerEngine.getPluginAdmin().addPlugin(pluginName, jarFile, map);
+        }
+        */
+        /*
+            String pluginId = controllerEngine.getPluginAdmin().addConfig();
             if(pluginId != null) {
                 controllerEngine.getPluginAdmin().startPlugin(pluginId);
             }
-*/
+
+        */
+
         //if(rm.getParam("desc").startsWith("to-agentcontroller")) {
         incoming.setParam("desc","to-agentcontroller-agent-rpc");
         return incoming;

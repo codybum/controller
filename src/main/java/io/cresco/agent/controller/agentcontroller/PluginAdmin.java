@@ -21,6 +21,7 @@ public class PluginAdmin {
     private Gson gson;
 
     private final int PLUGINLIMIT = 900;
+    private final int TRYCOUNT = 30;
 
     private BundleContext context;
     private ConfigurationAdmin confAdmin;
@@ -65,8 +66,11 @@ public class PluginAdmin {
     public PluginAdmin(AgentState agentState, BundleContext context) {
 
         this.gson = new Gson();
-        this.configMap = new HashMap<>();
-        this.pluginMap = new ConcurrentHashMap<>();
+
+
+        this.configMap = Collections.synchronizedMap(new HashMap<>());
+        this.pluginMap = Collections.synchronizedMap(new HashMap<>());
+        //this.pluginMap = new ConcurrentHashMap<>();
         this.context = context;
         this.agentState = agentState;
 
@@ -144,9 +148,12 @@ public class PluginAdmin {
     public void msgIn(MsgEvent msg) {
 
         String pluginID = msg.getDstPlugin();
-
-        if(pluginMap.containsKey(pluginID)) {
-            pluginMap.get(pluginID).getPluginService().inMsg(msg);
+        synchronized (pluginMap) {
+            if (pluginMap.containsKey(pluginID)) {
+                if(pluginMap.get(pluginID).getActive()) {
+                    pluginMap.get(pluginID).getPluginService().inMsg(msg);
+                }
+            }
         }
 
     }
@@ -162,13 +169,16 @@ public class PluginAdmin {
                     String pluginID = addConfig(pluginName, map);
                     if(pluginID != null) {
                         PluginNode pluginNode = new PluginNode(pluginID,pluginName,jarFile,map);
-                        pluginMap.put(pluginID,pluginNode);
-                        //create a config object here
+                        synchronized (pluginMap) {
+                            pluginMap.put(pluginID, pluginNode);
+                        }
+
                         if(startPlugin(pluginID)) {
                             returnPluginID = pluginID;
                         } else {
                             System.out.println("Could not start agentcontroller " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
                         }
+
                     } else {
                         System.out.println("Could not create config for " + " pluginName " + pluginName + " no bundle " + jarFile);
                     }
@@ -201,8 +211,8 @@ public class PluginAdmin {
                 while (!isEmpty) {
 
                     synchronized (configMap) {
-                        if (!configMap.containsKey("agentcontroller/" + id)) {
-                            pluginID = "agentcontroller/" + id;
+                        if (!configMap.containsKey("plugin/" + id)) {
+                            pluginID = "plugin/" + id;
                             Configuration configuration = confAdmin.createFactoryConfiguration(pluginName + ".Plugin", null);
                             Dictionary properties = new Hashtable();
 
@@ -229,34 +239,49 @@ public class PluginAdmin {
 
     public boolean startPlugin(String pluginID) {
         boolean isStarted = false;
+
         try {
             ServiceReference<?>[] servRefs = null;
+            int count = 0;
 
-            while (servRefs == null) {
+            while ((!isStarted) && (count < TRYCOUNT)) {
 
                 String filterString = "(pluginID=" + pluginID + ")";
                 Filter filter = context.createFilter(filterString);
 
                 //servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
-                servRefs = context.getServiceReferences(PluginService.class.getName(), null);
+                servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
 
                 if (servRefs == null || servRefs.length == 0) {
-                    System.out.println("NULL FOUND NOTHING!");
+                    //System.out.println("NULL FOUND NOTHING!");
+
                 } else {
-                    System.out.println("Running Service Count: " + servRefs.length);
+                    //System.out.println("Running Service Count: " + servRefs.length);
 
                     for (ServiceReference sr : servRefs) {
+
                         boolean assign = servRefs[0].isAssignableTo(context.getBundle(), PluginService.class.getName());
-                        System.out.println("Can Assign Service : " + assign);
 
-                        PluginService ps = (PluginService) context.getService(sr);
+                        if(assign) {
+                            PluginService ps = (PluginService) context.getService(sr);
 
-                        pluginMap.get(pluginID).setPluginService((PluginService) context.getService(sr));
-                        isStarted = true;
+                            synchronized (pluginMap) {
+                                if (pluginMap.containsKey(pluginID)) {
+                                    pluginMap.get(pluginID).setPluginService((PluginService) context.getService(sr));
+                                    isStarted = true;
+                                } else {
+                                    System.out.println("NO PLUGIN IN PLUGIN MAP FOR THIS SERVICE : " + pluginID + " elements " + pluginMap.hashCode() + " thread:" + Thread.currentThread().getName());
+                                }
+                            }
 
+                        }
                     }
                 }
+                count++;
                 Thread.sleep(1000);
+            }
+            if(servRefs == null) {
+                System.out.println("COULD NOT START PLUGIN COULD NOT GET SERVICE");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -265,33 +290,34 @@ public class PluginAdmin {
     }
 
     public String getPluginExport() {
-        //boolean isExported = false;
+
+
         String exportString = null;
         try {
+
             List<Map<String,String>> configMapList = new ArrayList<>();
 
-            Map<String, PluginNode> map = pluginMap;
+            synchronized (pluginMap) {
+                Iterator it = pluginMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
 
-            Iterator it = pluginMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
+                    String pluginID = (String) pair.getKey();
+                    PluginNode pluginNode = (PluginNode) pair.getValue();
 
-                String pluginID = (String)pair.getKey();
-                PluginNode pluginNode = (PluginNode)pair.getValue();
+                    int status = pluginNode.getStatus_code();
+                    boolean isActive = pluginNode.getActive();
 
-                int status = pluginNode.getStatus_code();
-                boolean isActive = pluginNode.getActive();
+                    Map<String, String> configMap = new HashMap<>();
 
-                Map<String,String> configMap = new HashMap<>();
+                    configMap.put("status", String.valueOf(status));
+                    configMap.put("isactive", String.valueOf(isActive));
+                    configMap.put("pluginid", pluginID);
+                    configMap.put("configparams", gson.toJson(pluginNode.exportParamMap()));
+                    configMapList.add(configMap);
 
-                configMap.put("status", String.valueOf(status));
-                configMap.put("isactive", String.valueOf(isActive));
-                configMap.put("pluginid", pluginID);
-                configMap.put("configparams", gson.toJson(pluginNode.exportParamMap()));
-                configMapList.add(configMap);
-
-
-                it.remove(); // avoids a ConcurrentModificationException
+                    //it.remove(); // avoids a ConcurrentModificationException
+                }
             }
             exportString = gson.toJson(configMapList);
 
