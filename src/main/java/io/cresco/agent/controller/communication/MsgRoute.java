@@ -151,6 +151,8 @@ public class MsgRoute implements Runnable {
                 return;
             }
 
+
+
             int routePath = getRoutePath();
             //todo change back
             //rm.setParam("routepath",String.valueOf(routePath));
@@ -434,11 +436,7 @@ public class MsgRoute implements Runnable {
         }
         finally
         {
-            /*
-            if(plugin.cstate.isActive()) {
-                plugin.getMeasurementEngine().updateTimer("message.transaction.time", messageTimeStamp);
-            }
-            */
+            controllerEngine.getMeasurementEngine().updateTimer("message.transaction.time", messageTimeStamp);
         }
 
     }

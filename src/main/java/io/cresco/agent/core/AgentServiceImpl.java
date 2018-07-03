@@ -18,6 +18,7 @@ import org.osgi.service.log.LogReaderService;
 import org.osgi.service.log.LogService;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -86,20 +87,26 @@ public class AgentServiceImpl implements AgentService {
                 agentConfig = "conf/agent.ini";
             }
 
+            Map<String,Object> map = null;
+
             File configFile  = new File(agentConfig);
             if(configFile.isFile()) {
 
                 //Agent Config
                 Config config = config = new Config(configFile.getAbsolutePath());
-                Map<String,Object> map = config.getConfigMap();
 
-                plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
-
-                controllerEngine = new ControllerEngine(controllerState, plugin, pluginAdmin);
+                map = config.getConfigMap();
 
             } else {
+                map = new HashMap<>();
                 System.out.println("NO CONFIG FILE " + agentConfig  + " FOUND! ");
             }
+
+
+            plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
+
+            controllerEngine = new ControllerEngine(controllerState, plugin, pluginAdmin);
+
 
 
 

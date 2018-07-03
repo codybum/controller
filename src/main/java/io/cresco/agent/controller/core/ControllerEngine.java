@@ -1,9 +1,11 @@
 package io.cresco.agent.controller.core;
 
+import com.codahale.metrics.MetricRegistry;
 import io.cresco.agent.controller.app.gPayload;
 import io.cresco.agent.controller.communication.*;
 import io.cresco.agent.controller.db.DBInterface;
 import io.cresco.agent.controller.globalcontroller.GlobalHealthWatcher;
+import io.cresco.agent.controller.measurement.MeasurementEngine;
 import io.cresco.agent.controller.netdiscovery.*;
 import io.cresco.agent.controller.regionalcontroller.RegionHealthWatcher;
 import io.cresco.agent.controller.plugin.PluginAdmin;
@@ -72,6 +74,7 @@ public class ControllerEngine {
     private ExecutorService msgInProcessQueue;
     private PluginAdmin pluginAdmin;
     private ExecutorImpl executor;
+    private MeasurementEngine measurementEngine;
 
 
     private Thread consumerAgentThread;
@@ -89,8 +92,9 @@ public class ControllerEngine {
         this.executor = new ExecutorImpl(this);
         this.plugin.setExecutor(this.executor);
         this.pluginAdmin = pluginAdmin;
+        this.measurementEngine = new MeasurementEngine(this);
 
-        //this.msgInProcessQueue = Executors.newFixedThreadPool(4);
+        //this.msgInProcessQueue = Executors.newFixedThreadPool(100);
         this.msgInProcessQueue = Executors.newCachedThreadPool();
         //this.msgInProcessQueue = Executors.newSingleThreadExecutor();
 
@@ -1140,4 +1144,7 @@ public class ControllerEngine {
 
     public PluginAdmin getPluginAdmin() { return pluginAdmin; }
 
+    public MeasurementEngine getMeasurementEngine() {
+        return measurementEngine;
+    }
 }

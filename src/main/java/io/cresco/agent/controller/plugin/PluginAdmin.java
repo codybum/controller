@@ -149,6 +149,7 @@ public class PluginAdmin {
         if(pluginMap.containsKey(pluginID)) {
             pluginMap.get(pluginID).getPluginService().inMsg(msg);
         }
+
     }
 
 
@@ -226,39 +227,6 @@ public class PluginAdmin {
         return pluginID;
     }
 
-    public String addConfig2() {
-
-
-        String pluginID = null;
-        try {
-
-            if(pluginCount() < PLUGINLIMIT) {
-                boolean isEmpty = false;
-                int id = 0;
-                while (!isEmpty) {
-
-                    synchronized (configMap) {
-                        if (!configMap.containsKey("plugin/" + id)) {
-                            pluginID = "plugin/" + id;
-                            Configuration configuration = confAdmin.createFactoryConfiguration("io.cresco.skeleton.Plugin", null);
-                            Dictionary properties = new Hashtable();
-
-                            properties.put("pluginID", pluginID);
-                            configuration.update(properties);
-                            configMap.put(pluginID, configuration);
-                            isEmpty = true;
-                        }
-                    }
-                    id++;
-                }
-            }
-
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return pluginID;
-    }
 
     public boolean startPlugin(String pluginID) {
         boolean isStarted = false;
