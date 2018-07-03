@@ -3,6 +3,7 @@ package io.cresco.agent.controller.regionalcontroller;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.agent.controller.globalcontroller.GlobalCommandExec;
+import io.cresco.agent.controller.globalcontroller.GlobalExecutor;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.Executor;
 import io.cresco.library.plugin.PluginBuilder;
@@ -13,13 +14,14 @@ public class RegionalExecutor implements Executor {
     private ControllerEngine controllerEngine;
     private PluginBuilder plugin;
     private CLogger logger;
-    private GlobalCommandExec gce;
+    private GlobalExecutor globalExecutor;
 
     public RegionalExecutor(ControllerEngine controllerEngine) {
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
         logger = plugin.getLogger(RegionalExecutor.class.getName(),CLogger.Level.Info);
-        gce = new GlobalCommandExec(controllerEngine);
+        globalExecutor = new GlobalExecutor(controllerEngine);
+
     }
 
     @Override
@@ -94,6 +96,7 @@ public class RegionalExecutor implements Executor {
     }
     @Override
     public MsgEvent executeKPI(MsgEvent incoming) {
+        /*
         logger.debug("KPI: " + incoming.printHeader());
 
         if(controllerEngine.cstate.isGlobalController()) {
@@ -105,6 +108,8 @@ public class RegionalExecutor implements Executor {
             }
             return null;
         }
+        */
+        return null;
     }
 
     private void globalSend(MsgEvent ge) {
@@ -129,6 +134,65 @@ public class RegionalExecutor implements Executor {
         msg.setParam("type", "agent_controller");
         logger.debug("Returning communication details to Cresco agent");
         return msg;
+    }
+
+    public void sendGlobalMsg(MsgEvent incoming) {
+
+        try {
+
+                if (incoming.dstIsLocal(plugin.getRegion(), plugin.getAgent(), plugin.getPluginID())) {
+
+                    MsgEvent retMsg = null;
+
+
+                    switch (incoming.getMsgType().toString().toUpperCase()) {
+                        case "CONFIG":
+                            retMsg = globalExecutor.executeCONFIG(incoming);
+                            break;
+                        case "DISCOVER":
+                            retMsg = globalExecutor.executeDISCOVER(incoming);
+                            break;
+                        case "ERROR":
+                            retMsg = globalExecutor.executeERROR(incoming);
+                            break;
+                        case "EXEC":
+                            retMsg = globalExecutor.executeEXEC(incoming);
+                            break;
+                        case "INFO":
+                            retMsg = globalExecutor.executeINFO(incoming);
+                            break;
+                        case "WATCHDOG":
+                            retMsg = globalExecutor.executeWATCHDOG(incoming);
+                            break;
+                        case "KPI":
+                            retMsg = globalExecutor.executeKPI(incoming);
+                            break;
+
+                        default:
+                            logger.error("UNKNOWN MESSAGE TYPE! " + incoming.getParams());
+                            break;
+                    }
+
+
+                    if ((retMsg != null) && (retMsg.getParams().keySet().contains("is_rpc"))) {
+                        retMsg.setReturn();
+
+                        //pick up RPC from local agent
+                        String callId = retMsg.getParam(("callId-" + plugin.getRegion() + "-" +
+                                plugin.getAgent() + "-" + plugin.getPluginID()));
+                        if (callId != null) {
+                            plugin.receiveRPC(callId, retMsg);
+                        } else {
+                            plugin.msgOut(retMsg);
+                        }
+
+                    }
+                }
+
+        } catch(Exception ex) {
+            logger.error("senRegionalMsg Error : " + ex.getMessage());
+        }
+
     }
 
 

@@ -1,7 +1,6 @@
 package io.cresco.agent.controller.regionalcontroller;
 
 
-import io.cresco.agent.controller.communication.MsgRoute;
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.agent.controller.db.NodeStatusType;
 import io.cresco.library.messaging.MsgEvent;
@@ -20,10 +19,8 @@ public class RegionHealthWatcher {
     private long startTS;
     private int wdTimer;
     public Timer regionalUpdateTimer;
-    //public RegionalCommandExec rce;
     private RegionalExecutor regionalExecutor;
 
-    //private static final Logger logger = LoggerFactory.getLogger(HealthWatcher.class);
 
     public RegionHealthWatcher(ControllerEngine controllerEngine) {
         //this.logger = new CLogger(RegionHealthWatcher.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Info);
@@ -57,7 +54,11 @@ public class RegionHealthWatcher {
 
         try {
 
-            if(incoming.dstIsLocal(plugin.getRegion(),plugin.getAgent(),plugin.getPluginID())) {
+            if (incoming.isGlobal()) {
+                regionalExecutor.sendGlobalMsg(incoming);
+            } else {
+
+            if (incoming.dstIsLocal(plugin.getRegion(), plugin.getAgent(), plugin.getPluginID())) {
 
                 MsgEvent retMsg = null;
 
@@ -105,7 +106,7 @@ public class RegionHealthWatcher {
 
                 }
             }
-
+        }
 
         } catch(Exception ex) {
             logger.error("senRegionalMsg Error : " + ex.getMessage());
@@ -157,7 +158,7 @@ public class RegionHealthWatcher {
         private CLogger logger;
         private PluginBuilder plugin;
         public RegionalNodeStatusWatchDog(ControllerEngine controllerEngine, CLogger logger) {
-            //this.agentcontroller = agentcontroller;
+
             this.controllerEngine = controllerEngine;
             this.plugin = controllerEngine.getPluginBuilder();
 
