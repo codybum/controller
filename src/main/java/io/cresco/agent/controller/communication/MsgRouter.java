@@ -11,14 +11,11 @@ public class MsgRouter {
     private ControllerEngine controllerEngine;
     private PluginBuilder plugin;
     private CLogger logger;
-    private long messageTimeStamp;
 
     public MsgRouter(ControllerEngine controllerEngine) {
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
         this.logger = plugin.getLogger(MsgRouter.class.getName(),CLogger.Level.Info);
-        this.messageTimeStamp = System.nanoTime();
-
     }
 
     private void forwardToLocalAgent(MsgEvent rm) {
@@ -139,6 +136,7 @@ public class MsgRouter {
     }
 
     public void route(MsgEvent rm) {
+        long messageTimeStamp = System.nanoTime();
         try {
 
             rm = getTTL(rm);
@@ -147,7 +145,6 @@ public class MsgRouter {
                 int routePath = getRoutePath(rm);
                 rm.setParam("routepath-" + plugin.getAgent(), String.valueOf(routePath));
 
-                MsgEvent re = null;
                 switch (routePath) {
 
                     case 655:
@@ -407,7 +404,6 @@ public class MsgRouter {
                     default:
                         //System.out.println("CONTROLLER ROUTE CASE " + routePath + " " + rm.getParams());
                         logger.error("DEFAULT ROUTE CASE " + routePath + " " + rm.getParam("desc"));
-                        re = null;
                         break;
                 }
 

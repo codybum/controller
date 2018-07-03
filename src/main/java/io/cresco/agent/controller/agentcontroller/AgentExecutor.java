@@ -58,7 +58,7 @@ public class AgentExecutor implements Executor {
         */
 
         //if(rm.getParam("desc").startsWith("to-agentcontroller")) {
-        incoming.setParam("desc","to-agentcontroller-agent-rpc");
+        incoming.setParam("desc","to-plugin-agent-rpc");
         return incoming;
     }
     @Override

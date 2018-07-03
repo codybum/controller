@@ -20,8 +20,8 @@ public class PluginAdmin {
 
     private Gson gson;
 
-    private final int PLUGINLIMIT = 100;
-    private final int TRYCOUNT = 30;
+    private int PLUGINLIMIT = 900;
+    private int TRYCOUNT = 30;
 
     private BundleContext context;
     private ConfigurationAdmin confAdmin;
@@ -66,13 +66,13 @@ public class PluginAdmin {
     public PluginAdmin(AgentState agentState, BundleContext context) {
 
         this.gson = new Gson();
-
-
         this.configMap = Collections.synchronizedMap(new HashMap<>());
         this.pluginMap = Collections.synchronizedMap(new HashMap<>());
         //this.pluginMap = new ConcurrentHashMap<>();
         this.context = context;
         this.agentState = agentState;
+
+        
 
         ServiceReference configurationAdminReference = null;
 
