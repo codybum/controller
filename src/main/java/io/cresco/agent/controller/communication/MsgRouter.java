@@ -19,53 +19,15 @@ public class MsgRouter {
     }
 
     private void forwardToLocalAgent(MsgEvent rm) {
-        boolean isOk = false;
-        if(rm.getParam("desc") != null) {
-            if(rm.getParam("desc").startsWith("to-agent")) {
-                try {
                     controllerEngine.getPluginBuilder().msgIn(rm);
-                    isOk = true;
-                } catch(Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-
-        if(!isOk) {
-            System.out.println("forwardToLocalAgent() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
-        }
     }
 
     private void forwardToLocalPlugin(MsgEvent rm) {
-        boolean isOk = false;
-        if(rm.getParam("desc") != null) {
-            if(rm.getParam("desc").startsWith("to-plugin")) {
-                try {
                     controllerEngine.getPluginAdmin().msgIn(rm);
-                    isOk = true;
-                } catch(Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-
-        if(!isOk) {
-            System.out.println("forwardToLocalPlugin() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
-        }
     }
 
     private void forwardToLocalRegionalController(MsgEvent rm) {
-        boolean isOk = false;
-        if(rm.getParam("desc") != null) {
-            if(rm.getParam("desc").startsWith("to-rc")) {
                 controllerEngine.getRegionHealthWatcher().sendRegionalMsg(rm);
-                isOk = true;
-            }
-        }
-
-        if(!isOk) {
-            System.out.println("forwardToLocalRegionalController() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
-        }
     }
 
     private void forwardToRemoteRegionalController(MsgEvent rm) {
@@ -394,6 +356,13 @@ public class MsgRouter {
                         forwardToLocalRegionalController(rm);
                         break;
 
+                    case 29663:
+                        logger.debug("Local regional or local global controller 29663 sending message back to plugin");
+                        logger.trace(rm.getParams().toString());
+                        forwardToLocalPlugin(rm);
+                        break;
+
+
                     case 29679:
                         logger.debug("Local agentcontroller sending message to local regional or global controller 29679");
                         logger.trace(rm.getParams().toString());
@@ -403,7 +372,7 @@ public class MsgRouter {
 
                     default:
                         //System.out.println("CONTROLLER ROUTE CASE " + routePath + " " + rm.getParams());
-                        logger.error("DEFAULT ROUTE CASE " + routePath + " " + rm.getParam("desc"));
+                        logger.error("DEFAULT ROUTE CASE " + routePath + " " + rm.getParam("desc") + rm.getParams());
                         break;
                 }
 
@@ -544,4 +513,127 @@ public class MsgRouter {
         }
 
     }
+
+    /*
+
+    private void forwardToLocalAgent(MsgEvent rm) {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-agent")) {
+                try {
+                    controllerEngine.getPluginBuilder().msgIn(rm);
+                    isOk = true;
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("forwardToLocalAgent() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
+        }
+    }
+
+    private void forwardToLocalPlugin(MsgEvent rm) {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-plugin")) {
+                try {
+                    controllerEngine.getPluginAdmin().msgIn(rm);
+                    isOk = true;
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("forwardToLocalPlugin() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
+        }
+    }
+
+    private void forwardToLocalRegionalController(MsgEvent rm) {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-rc")) {
+                controllerEngine.getRegionHealthWatcher().sendRegionalMsg(rm);
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("forwardToLocalRegionalController() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
+        }
+    }
+
+    private void forwardToRemoteRegionalController(MsgEvent rm) {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-rc")) {
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("forwardToRemoteRegionalController() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
+        }
+    }
+
+    private void forwardToLocalRegion(MsgEvent rm) {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-region")) {
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("forwardToLocalRegion() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
+        }
+
+    }
+
+    private void forwardToRemoteRegion(MsgEvent rm) {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-region")) {
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("forwardToRemoteRegion() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
+        }
+    }
+
+    private void forwardToLocalGlobal(MsgEvent rm) {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-global")) {
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("forwardToLocalGlobal() BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
+        }
+
+    }
+
+    private void forwardToRemoteGlobal(MsgEvent rm) {
+        boolean isOk = false;
+        if(rm.getParam("desc") != null) {
+            if(rm.getParam("desc").startsWith("to-global")) {
+                isOk = true;
+            }
+        }
+
+        if(!isOk) {
+            System.out.println("forwardToRemoteGlobal(rm) BAD MESSAGE : " + rm.getParams() + " RouteCase :" + getRoutePath(rm));
+        }
+    }
+
+     */
+
+
 }

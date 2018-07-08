@@ -1,8 +1,6 @@
 package io.cresco.agent.controller.regionalcontroller;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.cresco.agent.controller.core.ControllerEngine;
-import io.cresco.agent.controller.globalcontroller.GlobalCommandExec;
 import io.cresco.agent.controller.globalcontroller.GlobalExecutor;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.Executor;

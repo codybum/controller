@@ -2,7 +2,7 @@ package io.cresco.agent.controller.regionalcontroller;
 
 
 import io.cresco.agent.controller.core.ControllerEngine;
-import io.cresco.agent.controller.globalcontroller.GlobalCommandExec;
+import io.cresco.agent.controller.globalcontroller.GlobalExecutor;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.messaging.RPC;
 import io.cresco.library.plugin.PluginBuilder;
@@ -13,7 +13,7 @@ public class AgentDiscovery {
     private PluginBuilder plugin;
     private CLogger logger;
     private RPC rpc;
-    private GlobalCommandExec gce;
+    private GlobalExecutor gce;
 
     public AgentDiscovery(ControllerEngine controllerEngine) {
         //this.agentcontroller = agentcontroller;
@@ -23,7 +23,7 @@ public class AgentDiscovery {
         this.logger = plugin.getLogger(AgentDiscovery.class.getName(),CLogger.Level.Info);
 
 
-        gce = new GlobalCommandExec(controllerEngine);
+        gce = new GlobalExecutor(controllerEngine);
         //rpc = new RPC(agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), null);
     }
 

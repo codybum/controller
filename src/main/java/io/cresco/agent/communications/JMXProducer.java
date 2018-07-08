@@ -2,7 +2,6 @@ package io.cresco.agent.communications;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.jms.pool.PooledConnectionFactory;
-import org.springframework.jms.connection.CachingConnectionFactory;
 
 import javax.jms.*;
 

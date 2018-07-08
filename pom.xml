@@ -17,6 +17,8 @@
     <maven.compiler.version>3.5.1</maven.compiler.version>
     <activemq.version>5.15.4</activemq.version>
     <orientdb.version>2.2.36</orientdb.version>
+    <commons.version>1.10</commons.version>
+
 
 </properties>
 
@@ -90,11 +92,155 @@
         <version>1.10</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+    <dependency>
+        <groupId>commons-net</groupId>
+        <artifactId>commons-net</artifactId>
+        <version>3.6</version>
+    </dependency>
+
+<!--
     <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>${logback.version}</version>
     </dependency>
+-->
+    <!--
+    <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-all</artifactId>
+        <version>${activemq.version}</version>
+
+    </dependency>
+
+-->
+
+    <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-osgi -->
+    <!--
+    <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-osgi</artifactId>
+        <version>5.15.4</version>
+    </dependency>
+    -->
+
+
+    <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-broker</artifactId>
+        <version>5.15.4</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-client</artifactId>
+        <version>5.15.4</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-pool</artifactId>
+        <version>5.15.4</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jms_1.1_spec</artifactId>
+        <version>1.1.1</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
+        <version>1.0.1</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.fusesource.hawtbuf</groupId>
+        <artifactId>hawtbuf</artifactId>
+        <version>1.11</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+        <artifactId>concurrentlinkedhashmap-lru</artifactId>
+        <version>1.4.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>4.5.1</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.tinkerpop.blueprints/blueprints-core -->
+    <dependency>
+        <groupId>com.tinkerpop.blueprints</groupId>
+        <artifactId>blueprints-core</artifactId>
+        <version>2.6.0</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+    <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.6</version>
+    </dependency>
+
+
+    <!-- OrientDB -->
+
+    <!-- Embedded: 1. core 2. graphdb -->
+    <!-- Stand Alone: 1. graphdb 2. core -->
+
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-core</artifactId>
+            <version>${orientdb.version}</version>
+
+        </dependency>
+
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-graphdb</artifactId>
+            <version>${orientdb.version}</version>
+
+        </dependency>
+
+    <!--
+    <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jms_1.1_spec</artifactId>
+        <version>1.1.1</version>
+    </dependency>
+-->
+
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+    <!-- https://mvnrepository.com/artifact/log4j/log4j -->
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+    </dependency>
+
+
+
+
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.25</version>
+
+    </dependency>
+
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.7.25</version>
+
+    </dependency>
+
 
 
 </dependencies>
@@ -130,8 +276,13 @@
                     <Bundle-Version>${project.version}-${maven.build.timestamp}</Bundle-Version>
                     <Bundle-Activator>io.cresco.agent.core.Activator</Bundle-Activator>
                     <Import-Package>org.osgi.service.cm.ConfigurationAdmin;*;resolution:=optional</Import-Package>
-                    <Embed-Dependency>!org.osgi.*;!osgi.cmpn.*;!library;!activemq*;*</Embed-Dependency>
-                    <Export-Package></Export-Package>
+                    <Embed-Dependency>!org.osgi.*;!osgi.cmpn.*;!library;*</Embed-Dependency>
+                    <Export-Package>
+                        <!--
+                        org.apache.commons.lang.*;
+                        org.slf4j.*
+                        -->
+                    </Export-Package>
                     <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
                 </instructions>
             </configuration>

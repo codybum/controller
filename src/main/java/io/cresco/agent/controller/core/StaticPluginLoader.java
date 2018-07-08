@@ -63,6 +63,7 @@ public class StaticPluginLoader implements Runnable  {
                                                 jarFile = pluginPath + "/" + jarFile;
                                             }
                                         }
+                                        //
                                         String pluginID = controllerEngine.getPluginAdmin().addPlugin(pluginName, jarFile, map);
                                         logger.info("STATIC LOADED : pluginID: " + pluginID + " pluginName: " + pluginName + " jarName: " + jarFile);
 

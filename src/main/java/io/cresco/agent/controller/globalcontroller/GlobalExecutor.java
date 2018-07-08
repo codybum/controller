@@ -36,7 +36,7 @@ public class GlobalExecutor implements Executor {
 
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
-        this.logger = plugin.getLogger(GlobalCommandExec.class.getName(),CLogger.Level.Info);
+        this.logger = plugin.getLogger(GlobalExecutor.class.getName(),CLogger.Level.Trace);
         removePipelineExecutor = Executors.newFixedThreadPool(100);
     }
 
@@ -167,7 +167,7 @@ public class GlobalExecutor implements Executor {
      * Query to list all regions
      * @param ce MsgEvent.Type.EXEC, action=listregions
      * @return creates "regionslist", in compressed json format
-     * @see GlobalCommandExec#execute(MsgEvent)
+     * @see GlobalExecutor#executeEXEC(MsgEvent)
      */
     private MsgEvent listRegions(MsgEvent ce) {
         try {
@@ -186,7 +186,7 @@ public class GlobalExecutor implements Executor {
      * @param ce MsgEvent.Type.EXEC, action=listagents, action_region=[optional region]
      *           if action_region=null all agents are listed
      * @return creates "agentslist", in compressed json format
-     * @see GlobalCommandExec#execute(MsgEvent)
+     * @see GlobalExecutor#executeEXEC(MsgEvent)
      */
     private MsgEvent listAgents(MsgEvent ce) {
 
@@ -221,7 +221,7 @@ public class GlobalExecutor implements Executor {
      * <li>Milk</li>
      * </ul>
      *
-     * @see GlobalCommandExec#execute(MsgEvent)
+     * @see GlobalExecutor#executeEXEC(MsgEvent)
      */
 
     private MsgEvent listPlugins(MsgEvent ce) {
@@ -283,7 +283,7 @@ public class GlobalExecutor implements Executor {
      * Query to list a specific agentcontroller configuration
      * @param ce regionlist action, MsgEvent.Type.EXEC, action=plugininfo, action_region=[region] action_agent=[agent] action_plugin=[plugin_id]
      * @return creates "agentcontroller info", in compressed json format
-     * @see GlobalCommandExec#execute(MsgEvent)
+     * @see GlobalExecutor#executeEXEC(MsgEvent)
      */
 
     private MsgEvent pluginInfo(MsgEvent ce) {
