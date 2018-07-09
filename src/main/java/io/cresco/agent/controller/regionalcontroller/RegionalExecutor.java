@@ -171,7 +171,6 @@ public class RegionalExecutor implements Executor {
                             break;
                     }
 
-
                     if ((retMsg != null) && (retMsg.getParams().keySet().contains("is_rpc"))) {
                         retMsg.setReturn();
 
