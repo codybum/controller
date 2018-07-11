@@ -11,13 +11,9 @@
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk>1.8</jdk>
-    <cresco.plugin.library.version>0.5.3</cresco.plugin.library.version>
-    <logback.version>1.1.7</logback.version>
-    <mojo.buildnumber.version>1.4</mojo.buildnumber.version>
     <maven.compiler.version>3.5.1</maven.compiler.version>
     <activemq.version>5.15.4</activemq.version>
     <orientdb.version>2.2.36</orientdb.version>
-    <commons.version>1.10</commons.version>
 
 
 </properties>
@@ -78,26 +74,29 @@
         <scope>provided</scope>
     </dependency>
 
-
-    <dependency>
-        <groupId>io.cresco</groupId>
-        <artifactId>library</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <scope>provided</scope>
-    </dependency>
-
+    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
     <dependency>
         <groupId>commons-configuration</groupId>
         <artifactId>commons-configuration</artifactId>
         <version>1.10</version>
     </dependency>
 
+    <dependency>
+    <groupId>io.cresco</groupId>
+    <artifactId>library</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <scope>provided</scope>
+    </dependency>
+
+
     <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+    <!--
     <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
         <version>3.6</version>
     </dependency>
+    -->
 
 <!--
     <dependency>
@@ -181,7 +180,6 @@
         <version>2.6.0</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
     <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
@@ -208,24 +206,12 @@
 
         </dependency>
 
-    <!--
+
     <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jms_1.1_spec</artifactId>
-        <version>1.1.1</version>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jul-to-slf4j</artifactId>
+        <version>1.7.25</version>
     </dependency>
--->
-
-    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-    <!-- https://mvnrepository.com/artifact/log4j/log4j -->
-    <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.17</version>
-    </dependency>
-
-
-
 
     <dependency>
         <groupId>org.slf4j</groupId>
@@ -238,8 +224,34 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>1.7.25</version>
-
     </dependency>
+
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.16</version>
+    </dependency>
+
+<!--
+    <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+    </dependency>
+
+-->
+
+    <!-- https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>1.7.25</version>
+    </dependency>
+
+
+    <!-- for orientdb -->
+    <!-- https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j -->
+
 
 
 

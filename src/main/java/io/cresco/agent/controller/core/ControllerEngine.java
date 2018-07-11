@@ -1115,6 +1115,7 @@ public class ControllerEngine {
                 while (!this.UDPDiscoveryActive && !this.TCPDiscoveryActive) {
                     Thread.sleep(1000);
                 }
+
                 this.DiscoveryActive = true;
             }
             isStarted = true;

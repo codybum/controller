@@ -35,7 +35,7 @@ public class Config {
     }
 
     public Map<String,Object> getConfigMap() {
-    return getConfigMap("general");
+        return getConfigMap("general");
     }
 
     public Map<String,Object> getConfigMap(String section) {
@@ -121,6 +121,7 @@ public class Config {
         SubnodeConfiguration sObj = iniConfObj.getSection("general");
         return sObj.getString("plugin_config_file");
     }
+
 
 
 }

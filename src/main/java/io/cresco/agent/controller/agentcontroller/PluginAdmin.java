@@ -15,6 +15,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PluginAdmin {
 
@@ -28,11 +29,15 @@ public class PluginAdmin {
     private Map<String,Configuration> configMap;
     private Map<String,PluginNode> pluginMap;
 
+    private AtomicBoolean lockConfig = new AtomicBoolean();
+    private AtomicBoolean lockPlugin = new AtomicBoolean();
+
+
     private AgentState agentState;
 
     public int pluginCount() {
 
-        synchronized (configMap) {
+        synchronized (lockConfig) {
             return configMap.size();
         }
     }
@@ -148,7 +153,7 @@ public class PluginAdmin {
     public void msgIn(MsgEvent msg) {
 
         String pluginID = msg.getDstPlugin();
-        synchronized (pluginMap) {
+        synchronized (lockPlugin) {
             if (pluginMap.containsKey(pluginID)) {
                 if(pluginMap.get(pluginID).getActive()) {
                     pluginMap.get(pluginID).getPluginService().inMsg(msg);
@@ -170,15 +175,17 @@ public class PluginAdmin {
                         String pluginID = addConfig(pluginName, map);
                         if (pluginID != null) {
                             PluginNode pluginNode = new PluginNode(pluginID, pluginName, jarFile, map);
-                            synchronized (pluginMap) {
+                            synchronized (lockPlugin) {
                                 pluginMap.put(pluginID, pluginNode);
                             }
+
 
                             if (startPlugin(pluginID)) {
                                 returnPluginID = pluginID;
                             } else {
                                 System.out.println("Could not start agentcontroller " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
                             }
+
 
                         } else {
                             System.out.println("Could not create config for " + " pluginName " + pluginName + " no bundle " + jarFile);
@@ -211,7 +218,7 @@ public class PluginAdmin {
                 int id = 0;
                 while (!isEmpty) {
 
-                    synchronized (configMap) {
+                    synchronized (lockConfig) {
                         if (!configMap.containsKey("plugin/" + id)) {
                             pluginID = "plugin/" + id;
                             Configuration configuration = confAdmin.createFactoryConfiguration(pluginName + ".Plugin", null);
@@ -266,7 +273,7 @@ public class PluginAdmin {
                         if(assign) {
                             PluginService ps = (PluginService) context.getService(sr);
 
-                            synchronized (pluginMap) {
+                            synchronized (lockPlugin) {
                                 if (pluginMap.containsKey(pluginID)) {
                                     pluginMap.get(pluginID).setPluginService((PluginService) context.getService(sr));
                                     isStarted = true;
@@ -298,7 +305,7 @@ public class PluginAdmin {
 
             List<Map<String,String>> configMapList = new ArrayList<>();
 
-            synchronized (pluginMap) {
+            synchronized (lockPlugin) {
                 Iterator it = pluginMap.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();

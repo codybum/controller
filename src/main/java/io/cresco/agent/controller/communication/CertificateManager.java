@@ -4,20 +4,18 @@ import com.google.gson.Gson;
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
-import org.apache.commons.net.util.Base64;
+//import org.apache.commons.net.util.Base64;
 
 import sun.security.tools.keytool.CertAndKeyGen;
 import sun.security.x509.*;
 
 import javax.net.ssl.*;
-import javax.security.auth.x500.X500PrivateCredential;
 import java.io.*;
-import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.UUID;
 
 public class CertificateManager {
@@ -368,8 +366,9 @@ public class CertificateManager {
                 logger.error(cert.toString());
                 PublicKey publicKey = cert.getPublicKey();
 
-                String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
-                //trustStore.setCertificateEntry(cert.toString(),cert);
+                //String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
+                String publicKeyString = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+                        //trustStore.setCertificateEntry(cert.toString(),cert);
                 //keyStore.setCertificateEntry(cert.toString(),cert);
 
                 logger.error(publicKeyString);
@@ -384,7 +383,8 @@ public class CertificateManager {
                 logger.error(cert.toString());
                 PublicKey publicKey = cert.getPublicKey();
 
-                String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
+                //String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
+                String publicKeyString = Base64.getEncoder().encodeToString(publicKey.getEncoded());
                 //trustStore.setCertificateEntry(cert.toString(),cert);
                 //keyStore.setCertificateEntry(cert.toString(),cert);
 
@@ -409,8 +409,8 @@ public class CertificateManager {
             for(Certificate cert:certs){
                 logger.error(cert.toString());
                 PublicKey publicKey = cert.getPublicKey();
-
-                String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
+                String publicKeyString = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+                //String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
                 //trustStore.setCertificateEntry(cert.toString(),cert);
                 //keyStore.setCertificateEntry(cert.toString(),cert);
 
@@ -423,8 +423,8 @@ public class CertificateManager {
             if(cert != null) {
                 logger.error(cert.toString());
                 PublicKey publicKey = cert.getPublicKey();
-
-                String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
+                String publicKeyString = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+                //String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
                 //trustStore.setCertificateEntry(cert.toString(),cert);
                 //keyStore.setCertificateEntry(cert.toString(),cert);
 
@@ -452,8 +452,8 @@ public class CertificateManager {
             for(Certificate cert:certs){
                 logger.error(cert.toString());
                 PublicKey publicKey = cert.getPublicKey();
-
-                String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
+                String publicKeyString = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+                //String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
                 trustStore.setCertificateEntry(cert.toString(),cert);
                 logger.error(publicKeyString);
             }
@@ -510,7 +510,8 @@ public class CertificateManager {
     private String getStringFromCert(X509Certificate cert) {
         String certString = null;
         try {
-            certString = Base64.encodeBase64String(cert.getEncoded());
+            certString = Base64.getEncoder().encodeToString(cert.getEncoded());
+
         } catch(Exception ex) {
             logger.error("getStringFromCert() : error " + ex.getMessage());
         }
@@ -520,8 +521,12 @@ public class CertificateManager {
     private X509Certificate getCertfromString(String certString) {
         X509Certificate cert= null;
         try {
+            /*
+            byte[] valueDecoded = Base64.decodeBase64(bytesEncoded);
+System.out.println("Decoded value is " + new String(valueDecoded));
+             */
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            InputStream inputStream = new ByteArrayInputStream(Base64.decodeBase64(certString));
+            InputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(certString));
             cert = (X509Certificate)certificateFactory.generateCertificate(inputStream);
         } catch(Exception ex) {
             logger.error("getCertfromString : error " + ex.getMessage());
@@ -576,4 +581,7 @@ public class CertificateManager {
         }
         return certJson;
     }
+
+
+
 }

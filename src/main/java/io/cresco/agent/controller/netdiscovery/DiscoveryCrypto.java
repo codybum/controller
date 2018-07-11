@@ -3,13 +3,13 @@ package io.cresco.agent.controller.netdiscovery;
 
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.library.utilities.CLogger;
-import org.apache.commons.net.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.Base64;
 
 public class DiscoveryCrypto {
     private CLogger logger;
@@ -41,7 +41,7 @@ public class DiscoveryCrypto {
             c.init(Cipher.ENCRYPT_MODE, key);
             final byte[] encValue = c.doFinal(valueEnc.getBytes());
             //encryptedValue = new BASE64Encoder().encode(encValue);
-            encryptedValue = Base64.encodeBase64String(encValue);
+            encryptedValue = Base64.getEncoder().encodeToString(encValue);
         } catch(Exception ex) {
             logger.error(ex.getMessage());
             ex.printStackTrace();
@@ -60,7 +60,7 @@ public class DiscoveryCrypto {
             final Cipher c = Cipher.getInstance(ALGORITHM);
             c.init(Cipher.DECRYPT_MODE, key);
             //final byte[] decorVal = new BASE64Decoder().decodeBuffer(encryptedValue);
-            final byte[] decorVal = Base64.decodeBase64(encryptedValue);
+            final byte[] decorVal = Base64.getDecoder().decode(encryptedValue);
             //byte[] valueDecoded= Base64.decodeBase64(bytesEncoded );
             final byte[] decValue = c.doFinal(decorVal);
             decryptedValue = new String(decValue);

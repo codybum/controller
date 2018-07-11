@@ -4,9 +4,11 @@ package io.cresco.agent.core;
 import org.osgi.framework.*;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.log.LogReaderService;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * This class implements a simple bundle that utilizes the OSGi
@@ -24,42 +26,20 @@ public class Activator implements BundleActivator
      * @param context the framework context for the bundle.
      **/
 
-    private List<Configuration> configurationList = new ArrayList();
-
-    //public CrescoMeterRegistry crescoMeterRegistry;
-
     public void start(BundleContext context)
     {
 
         try {
 
-            //crescoMeterRegistry = new CrescoMeterRegistry("cresco");
-            //crescoMeterRegistry.start();
+            SLF4JBridgeHandler.removeHandlersForRootLogger();
+            SLF4JBridgeHandler.install();
+            java.util.logging.Logger ODBLogger = java.util.logging.Logger.getLogger("com.orientechnologies");
+            ODBLogger.setLevel(Level.ALL);
+            java.util.logging.Logger apacheCommonsLogger = java.util.logging.Logger.getLogger("com.orientechnologies");
+            apacheCommonsLogger.setLevel(Level.ALL);
 
-            /*
-            Timer t = Timer
-                    .builder("my.timer")
-                    .description("a description of what this timer does") // optional
-                    .tags("region", "test") // optional
-                    .register(crescoMeterRegistry);
-            */
-            /*
-            //Do Init
-            ActiveBroker broker = new ActiveBroker("mybroker","name","password");
+            //org.apache.commons.configuration.DefaultFileSystem
 
-            //Timer t = crescoMeterRegistry.get("test").timer();
-
-            JMXConsumer mc = new JMXConsumer(t);
-            */
-
-
-            //JMXProducer mp = new JMXProducer();
-            //Post Init
-
-            //Bundle bundle = context.installBundle("file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar");
-
-                //MessageReporter rep = new MessageReporter(context);
-                //new Thread(new PluginManager(context)).start();
 
 
         } catch(Exception ex) {

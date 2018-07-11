@@ -13,7 +13,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.*;
-import org.osgi.service.log.LogReaderService;
 import org.osgi.service.log.LogService;
 
 import java.io.File;
@@ -28,9 +27,10 @@ import java.util.Map;
         service = { AgentService.class} ,
         immediate = true,
         //reference=@Reference(name="ConfigurationAdmin", service=ConfigurationAdmin.class)
-        reference={ @Reference(name="ConfigurationAdmin", service=ConfigurationAdmin.class) , @Reference(name="LogService", service=LogService.class) }
+        reference={ @Reference(name="LogService", service=LogService.class),
+                    @Reference(name="ConfigurationAdmin", service=ConfigurationAdmin.class)
+        }
 )
-
 
 /*
 @Component(
@@ -53,6 +53,7 @@ public class AgentServiceImpl implements AgentService {
 
     public AgentServiceImpl() {
 
+
     }
 
     @Activate
@@ -67,12 +68,16 @@ public class AgentServiceImpl implements AgentService {
 
         try {
 
+
+
+            /*
             ServiceReference ref = context.getServiceReference(LogReaderService.class.getName());
             if (ref != null)
             {
                 LogReaderService reader = (LogReaderService) context.getService(ref);
                 reader.addLogListener(new LogWriter());
             }
+            */
 
             /*
             if((controllerState != null) && (pluginAdmin != null) && (agentState != null)) {
