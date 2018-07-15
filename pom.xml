@@ -19,9 +19,10 @@
     </properties>
 
     <repositories>
+
         <repository>
             <id>localrepository</id>
-            <url>file:///Users/cody/IdeaProjects/repo</url>
+            <url>file:../repo</url>
         </repository>
     </repositories>
 
@@ -86,51 +87,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <dependency>
-            <groupId>io.cresco</groupId>
-            <artifactId>library</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
-        <!--
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>3.6</version>
-        </dependency>
-        -->
-
-        <!--
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-        -->
-        <!--
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-all</artifactId>
-            <version>${activemq.version}</version>
-
-        </dependency>
-
-    -->
-
-        <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-osgi -->
-        <!--
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-osgi</artifactId>
-            <version>5.15.4</version>
-        </dependency>
-        -->
-
-
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -204,10 +160,11 @@
             <version>1.4.2</version>
         </dependency>
 
+
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>4.5.1</version>
+            <version>4.5.0</version>
         </dependency>
 
         <dependency>
@@ -216,12 +173,20 @@
             <version>2.6.0</version>
             <exclusions>
                 <exclusion>
+                    <groupId>commons-configuration</groupId>
+                    <artifactId>commons-configuration</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -249,91 +214,42 @@
             <groupId>com.orientechnologies</groupId>
             <artifactId>orientdb-graphdb</artifactId>
             <version>${orientdb.version}</version>
-
-        </dependency>
-
-        <!--
-
-<exclusions>
+            <exclusions>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
             </exclusions>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-
-    <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-
-
-        -->
-
-        <!--
-        <dependency>
-            <groupId>org.ops4j.pax.logging</groupId>
-            <artifactId>pax-logging-api</artifactId>
-            <version>1.10.1</version>
+            <groupId>io.cresco</groupId>
+            <artifactId>library</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+            <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+            </exclusion>
+            </exclusions>
         </dependency>
--->
 
-        <!--
         <dependency>
-            <groupId>org.ops4j.pax.logging</groupId>
-            <artifactId>pax-logging-service</artifactId>
-            <version>1.10.1</version>
-            <scope>provided</scope>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>25.1-jre</version>
         </dependency>
--->
 
-        <!-- https://mvnrepository.com/artifact/org.ops4j.pax.logging/pax-logging-log4j2 -->
+
 
         <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
             <artifactId>pax-logging-log4j2</artifactId>
             <version>1.10.1</version>
             <scope>provided</scope>
-
         </dependency>
-
-
-
-        <!-- for orientdb -->
-        <!-- https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j -->
-
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-
-
-
-
-
 
     </dependencies>
 

@@ -27,7 +27,7 @@ public class Activator implements BundleActivator
     {
 
         try {
-
+            
             /*
 
             SLF4JBridgeHandler.removeHandlersForRootLogger();
