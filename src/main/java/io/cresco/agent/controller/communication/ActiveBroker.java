@@ -3,6 +3,8 @@ package io.cresco.agent.controller.communication;
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.utilities.CLogger;
+import org.apache.activemq.broker.BrokerPlugin;
+import org.apache.activemq.broker.util.LoggingBrokerPlugin;
 import org.apache.activemq.broker.SslBrokerService;
 import org.apache.activemq.broker.SslContext;
 import org.apache.activemq.broker.TransportConnector;
@@ -102,7 +104,6 @@ public class ActiveBroker {
 				sslContextBroker.setSSLContext(sslContext);
 				logger.info("Initialized SSL Context");
 
-
 				PolicyMap map = new PolicyMap();
 		        map.setDefaultEntry(entry);
 
@@ -117,6 +118,20 @@ public class ActiveBroker {
 				broker.setPopulateJMSXUserID(true);
 				broker.setUseAuthenticatedPrincipalForJMSXUserID(true);
 
+
+				LoggingBrokerPlugin lbp = new LoggingBrokerPlugin();
+				lbp.setLogAll(false);
+				lbp.setLogConnectionEvents(false);
+				lbp.setLogConsumerEvents(false);
+				lbp.setLogProducerEvents(false);
+				lbp.setLogInternalEvents(false);
+				lbp.setLogSessionEvents(false);
+				lbp.setLogTransactionEvents(false);
+				lbp.setPerDestinationLogger(false);
+
+				//broker.setPlugins(new BrokerPlugin[]{lbp});
+				//LoggingBrokerPlugin
+				//LoggingBrokerPlugin
 				/*
 				broker.setUseJmx(true);
 				broker.getManagementContext().setConnectorPort(2099);

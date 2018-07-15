@@ -13,6 +13,8 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -114,24 +116,21 @@ public class PluginAdmin {
                     bundle = context.installBundle("file:" + fileLocation);
                 }
 
-                if(bundle != null) {
-                    bundleID = bundle.getBundleId();
-                }
-
-            /*
-            System.out.println("bundle location: " + bundle.getLocation());
-            System.out.println("bundle sname: " + bundle.getSymbolicName());
-            System.out.println("bundle state: " + bundle.getState());
-            System.out.println("bundle id: " + bundle.getBundleId());
-            System.out.println("bundle version: " + bundle.getVersion());
-
-            bundle location: file:/Users/cody/IdeaProjects/skeleton/target/skeleton-1.0-SNAPSHOT.jar
-            bundle sname: cresco.io.skeleton
-            bundle state: 2
-            bundle id: 17
-            bundle version: 1.0.0.SNAPSHOT-2018-06-29T201634Z
-            */
             }
+            //check local repo
+            else {
+                URL bundleURL = getClass().getClassLoader().getResource(fileLocation);
+                if(bundleURL != null) {
+
+                    String bundlePath = bundleURL.getPath();
+                    InputStream bundleStream = getClass().getClassLoader().getResourceAsStream(fileLocation);
+                    bundle = context.installBundle(bundlePath,bundleStream);
+                }
+            }
+            if(bundle != null) {
+                bundleID = bundle.getBundleId();
+            }
+
 
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -334,6 +333,33 @@ public class PluginAdmin {
         }
 
         return exportString;
+    }
+
+
+    public Bundle installInternalBundleJars(String bundleName) {
+
+        Bundle installedBundle = null;
+        try {
+            URL bundleURL = getClass().getClassLoader().getResource(bundleName);
+            if(bundleURL != null) {
+
+                String bundlePath = bundleURL.getPath();
+                installedBundle = context.installBundle(bundlePath,
+                        getClass().getClassLoader().getResourceAsStream(bundleName));
+
+            } else {
+                System.out.println("Bundle = null");
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        if(installedBundle == null) {
+            System.out.println("Failed to load bundle exiting!");
+            System.exit(0);
+        }
+
+        return installedBundle;
     }
 
 }

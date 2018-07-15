@@ -53,13 +53,24 @@ public class PluginNode {
         this.jarPath = jarPath;
         this.configMap = configMap;
 
-        Manifest manifest = new JarInputStream(new FileInputStream(new File(this.jarPath))).getManifest();
+        URL url = getClass().getClassLoader().getResource(jarPath);
+        Manifest manifest = null;
+        if(url != null) {
+            manifest = new JarInputStream(getClass().getClassLoader().getResourceAsStream(jarPath)).getManifest();
+        } else {
+            //url = new File(jarPath).toURI().toURL();
+            manifest = new JarInputStream(new FileInputStream(new File(this.jarPath))).getManifest();
+        }
+
         Attributes mainAttributess = manifest.getMainAttributes();
         name = mainAttributess.getValue("artifactId");
         version = mainAttributess.getValue("Implementation-Version");
-        URL url = new File(jarPath).toURI().toURL();
-        URLClassLoader loader = new URLClassLoader(new URL[] {new File(jarPath).toURI().toURL()}, this.getClass().getClassLoader());
-        ResourceFinder finder = new ResourceFinder("META-INF/services", loader, url);
+
+
+        //URL url = new File(jarPath).toURI().toURL();
+        //URLClassLoader loader = new URLClassLoader(new URL[] {new File(jarPath).toURI().toURL()}, this.getClass().getClassLoader());
+        //ResourceFinder finder = new ResourceFinder("META-INF/services", loader, url);
+
     }
 
     public Map<String, Object> getConfigMap() {

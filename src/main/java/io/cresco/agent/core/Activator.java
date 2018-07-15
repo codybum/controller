@@ -2,12 +2,8 @@ package io.cresco.agent.core;
 
 
 import org.osgi.framework.*;
-import org.osgi.service.cm.Configuration;
-import org.osgi.service.log.LogReaderService;
-import org.slf4j.bridge.SLF4JBridgeHandler;
+//import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -17,6 +13,7 @@ import java.util.logging.Level;
  **/
 public class Activator implements BundleActivator
 {
+
 
 
     /**
@@ -31,15 +28,21 @@ public class Activator implements BundleActivator
 
         try {
 
+            /*
+
             SLF4JBridgeHandler.removeHandlersForRootLogger();
             SLF4JBridgeHandler.install();
             java.util.logging.Logger ODBLogger = java.util.logging.Logger.getLogger("com.orientechnologies");
-            ODBLogger.setLevel(Level.ALL);
-            java.util.logging.Logger apacheCommonsLogger = java.util.logging.Logger.getLogger("com.orientechnologies");
-            apacheCommonsLogger.setLevel(Level.ALL);
+            ODBLogger.setLevel(Level.SEVERE);
 
+            java.util.logging.Logger AMQLogger = java.util.logging.Logger.getLogger("org.apache.activemq");
+            AMQLogger.setLevel(Level.SEVERE);
+
+            java.util.logging.Logger apacheCommonsLogger = java.util.logging.Logger.getLogger("org.apache.commons.configuration");
+            apacheCommonsLogger.setLevel(Level.SEVERE);
+
+            */
             //org.apache.commons.configuration.DefaultFileSystem
-
 
 
         } catch(Exception ex) {

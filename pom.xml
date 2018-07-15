@@ -2,21 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-<groupId>io.cresco</groupId>
-<artifactId>controller</artifactId>
-<version>1.0-SNAPSHOT</version>
+    <groupId>io.cresco</groupId>
+    <artifactId>controller</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-<properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jdk>1.8</jdk>
-    <maven.compiler.version>3.5.1</maven.compiler.version>
-    <activemq.version>5.15.4</activemq.version>
-    <orientdb.version>2.2.36</orientdb.version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdk>1.8</jdk>
+        <maven.compiler.version>3.5.1</maven.compiler.version>
+        <activemq.version>5.15.4</activemq.version>
+        <orientdb.version>2.2.36</orientdb.version>
 
 
-</properties>
+    </properties>
 
     <repositories>
         <repository>
@@ -25,172 +25,202 @@
         </repository>
     </repositories>
 
-<dependencies>
+    <dependencies>
 
-    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.core -->
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.core -->
 
-    <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.core</artifactId>
-        <version>6.0.0</version>
-        <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.annotation</artifactId>
-        <version>6.0.0</version>
-    </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.annotation</artifactId>
+            <version>6.0.0</version>
+        </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.component.annotations -->
-    <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.service.component.annotations</artifactId>
-        <version>1.4.0</version>
-        <scope>provided</scope>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.component.annotations -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
+            <version>1.4.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.metatype.annotations -->
-    <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.service.metatype.annotations</artifactId>
-        <version>1.4.0</version>
-        <scope>provided</scope>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.metatype.annotations -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.metatype.annotations</artifactId>
+            <version>1.4.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.cm -->
-    <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.service.cm</artifactId>
-        <version>1.6.0</version>
-        <scope>provided</scope>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.cm -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.cm</artifactId>
+            <version>1.6.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.repository -->
-    <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.service.repository</artifactId>
-        <version>1.1.0</version>
-        <scope>provided</scope>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.repository -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.repository</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
-    <dependency>
-        <groupId>commons-configuration</groupId>
-        <artifactId>commons-configuration</artifactId>
-        <version>1.10</version>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-    <groupId>io.cresco</groupId>
-    <artifactId>library</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>io.cresco</groupId>
+            <artifactId>library</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 
 
-    <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
-    <!--
-    <dependency>
-        <groupId>commons-net</groupId>
-        <artifactId>commons-net</artifactId>
-        <version>3.6</version>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+        <!--
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+        </dependency>
+        -->
+
+        <!--
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+        -->
+        <!--
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+            <version>${activemq.version}</version>
+
+        </dependency>
+
     -->
 
-<!--
-    <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
-    </dependency>
--->
-    <!--
-    <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-all</artifactId>
-        <version>${activemq.version}</version>
-
-    </dependency>
-
--->
-
-    <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-osgi -->
-    <!--
-    <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-osgi</artifactId>
-        <version>5.15.4</version>
-    </dependency>
-    -->
+        <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-osgi -->
+        <!--
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-osgi</artifactId>
+            <version>5.15.4</version>
+        </dependency>
+        -->
 
 
-    <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-broker</artifactId>
-        <version>5.15.4</version>
-    </dependency>
 
-    <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-client</artifactId>
-        <version>5.15.4</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.15.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-pool</artifactId>
-        <version>5.15.4</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>5.15.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jms_1.1_spec</artifactId>
-        <version>1.1.1</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>5.15.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
-        <version>1.0.1</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>1.1.1</version>
+        </dependency>
 
-    <dependency>
-        <groupId>org.fusesource.hawtbuf</groupId>
-        <artifactId>hawtbuf</artifactId>
-        <version>1.11</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
+            <version>1.0.1</version>
+        </dependency>
 
-    <dependency>
-        <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-        <artifactId>concurrentlinkedhashmap-lru</artifactId>
-        <version>1.4.2</version>
-    </dependency>
+        <dependency>
+            <groupId>org.fusesource.hawtbuf</groupId>
+            <artifactId>hawtbuf</artifactId>
+            <version>1.11</version>
+        </dependency>
 
-    <dependency>
-        <groupId>net.java.dev.jna</groupId>
-        <artifactId>jna</artifactId>
-        <version>4.5.1</version>
-    </dependency>
+        <dependency>
+            <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+            <artifactId>concurrentlinkedhashmap-lru</artifactId>
+            <version>1.4.2</version>
+        </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.tinkerpop.blueprints/blueprints-core -->
-    <dependency>
-        <groupId>com.tinkerpop.blueprints</groupId>
-        <artifactId>blueprints-core</artifactId>
-        <version>2.6.0</version>
-    </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>4.5.1</version>
+        </dependency>
 
-    <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.6</version>
-    </dependency>
+        <dependency>
+            <groupId>com.tinkerpop.blueprints</groupId>
+            <artifactId>blueprints-core</artifactId>
+            <version>2.6.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
 
 
-    <!-- OrientDB -->
+        <!-- OrientDB -->
 
-    <!-- Embedded: 1. core 2. graphdb -->
-    <!-- Stand Alone: 1. graphdb 2. core -->
+        <!-- Embedded: 1. core 2. graphdb -->
+        <!-- Stand Alone: 1. graphdb 2. core -->
 
         <dependency>
             <groupId>com.orientechnologies</groupId>
@@ -206,101 +236,128 @@
 
         </dependency>
 
+        <!--
+
+<exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.25</version>
+        </dependency>
 
     <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jul-to-slf4j</artifactId>
-        <version>1.7.25</version>
-    </dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>1.7.25</version>
+        </dependency>
 
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.7.25</version>
 
-    </dependency>
+        -->
 
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>1.7.25</version>
-    </dependency>
-
-    <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.16</version>
-    </dependency>
-
-<!--
-    <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>1.1.1</version>
-    </dependency>
-
+        <!--
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
+            <version>1.10.1</version>
+            <scope>provided</scope>
+        </dependency>
 -->
 
-    <!-- https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j -->
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-        <version>1.7.25</version>
-    </dependency>
+        <!--
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-service</artifactId>
+            <version>1.10.1</version>
+            <scope>provided</scope>
+        </dependency>
+-->
+
+        <!-- https://mvnrepository.com/artifact/org.ops4j.pax.logging/pax-logging-log4j2 -->
+        <!--
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-log4j2</artifactId>
+            <version>1.10.1</version>
+            <scope>provided</scope>
+        </dependency>
+        -->
 
 
-    <!-- for orientdb -->
-    <!-- https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j -->
+        <!-- for orientdb -->
+        <!-- https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j -->
 
 
+    </dependencies>
+
+    <build>
+        <plugins>
 
 
-</dependencies>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <fork>true</fork>
+                    <compilerArgument>-XDignore.symbol.file</compilerArgument>
+                    <source>${jdk}</source>
+                    <target>${jdk}</target>
+                </configuration>
+            </plugin>
 
-<build>
-    <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>3.5.1</version>
+                <extensions>true</extensions>
+                <configuration>
 
+                    <instructions>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>Cresco Controller</Bundle-Name>
+                        <Bundle-Description>Controller for Cresco</Bundle-Description>
+                        <Bundle-Vendor>Cresco.io</Bundle-Vendor>
+                        <Bundle-Version>${project.version}-${maven.build.timestamp}</Bundle-Version>
+                        <Bundle-Activator>io.cresco.agent.core.Activator</Bundle-Activator>
+                        <Import-Package>org.osgi.service.cm.ConfigurationAdmin;*;resolution:=optional</Import-Package>
+                        <Embed-Dependency>!org.osgi.*;!osgi.cmpn.*;!library;*</Embed-Dependency>
+                        <Export-Package>
+                            <!--
+                            org.apache.commons.lang.*;
+                            org.slf4j.*
+                            -->
+                        </Export-Package>
+                        <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
+                    </instructions>
+                </configuration>
+            </plugin>
 
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>${maven.compiler.version}</version>
-            <configuration>
-                <fork>true</fork>
-                <compilerArgument>-XDignore.symbol.file</compilerArgument>
-                <source>${jdk}</source>
-                <target>${jdk}</target>
-            </configuration>
-        </plugin>
-
-        <plugin>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>maven-bundle-plugin</artifactId>
-            <version>3.5.0</version>
-            <extensions>true</extensions>
-            <configuration>
-
-                <instructions>
-                    <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-                    <Bundle-Name>Cresco Controller</Bundle-Name>
-                    <Bundle-Description>Controller for Cresco</Bundle-Description>
-                    <Bundle-Vendor>Cresco.io</Bundle-Vendor>
-                    <Bundle-Version>${project.version}-${maven.build.timestamp}</Bundle-Version>
-                    <Bundle-Activator>io.cresco.agent.core.Activator</Bundle-Activator>
-                    <Import-Package>org.osgi.service.cm.ConfigurationAdmin;*;resolution:=optional</Import-Package>
-                    <Embed-Dependency>!org.osgi.*;!osgi.cmpn.*;!library;*</Embed-Dependency>
-                    <Export-Package>
-                        <!--
-                        org.apache.commons.lang.*;
-                        org.slf4j.*
-                        -->
-                    </Export-Package>
-                    <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
-                </instructions>
-            </configuration>
-        </plugin>
-
-    </plugins>
-</build>
+        </plugins>
+    </build>
 
 </project>

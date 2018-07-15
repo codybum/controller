@@ -88,7 +88,8 @@ public class MeasurementEngine {
         new ProcessorMetrics().bindTo(crescoMeterRegistry);
         new JvmThreadMetrics().bindTo(crescoMeterRegistry);
 
-        initInternal();
+        //todo enable metrics
+        //initInternal();
 
 
         //Queue<String> receivedMessages = crescoMeterRegistry.gauge("unprocessed.messages", new ConcurrentLinkedQueue<>(), ConcurrentLinkedQueue::size);

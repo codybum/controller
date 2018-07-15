@@ -13,7 +13,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.*;
-import org.osgi.service.log.LogService;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -26,10 +25,19 @@ import java.util.Map;
 @Component(
         service = { AgentService.class} ,
         immediate = true,
-        //reference=@Reference(name="ConfigurationAdmin", service=ConfigurationAdmin.class)
+        reference=@Reference(name="ConfigurationAdmin", service=ConfigurationAdmin.class)
+        //reference=@Reference(name="LogService", service=LogService.class)
+
+/*
         reference={ @Reference(name="LogService", service=LogService.class),
                     @Reference(name="ConfigurationAdmin", service=ConfigurationAdmin.class)
         }
+*/
+        /*
+        reference={ @Reference(name="LogReaderService", service=LogReaderService.class),
+                @Reference(name="ConfigurationAdmin", service=ConfigurationAdmin.class)
+        }
+        */
 )
 
 /*
@@ -98,18 +106,19 @@ public class AgentServiceImpl implements AgentService {
             Map<String,Object> map = null;
 
             File configFile  = new File(agentConfig);
+            Config config = null;
             if(configFile.isFile()) {
 
                 //Agent Config
-                Config config = config = new Config(configFile.getAbsolutePath());
-
+                config = new Config(configFile.getAbsolutePath());
                 map = config.getConfigMap();
 
-            } else {
+            }
+
+            if(config == null) {
                 map = new HashMap<>();
                 System.out.println("NO CONFIG FILE " + agentConfig  + " FOUND! ");
             }
-
 
             plugin = new PluginBuilder(this, this.getClass().getName(), context, map);
 
