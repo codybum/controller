@@ -129,6 +129,7 @@ public class ActiveBroker {
 				lbp.setLogTransactionEvents(false);
 				lbp.setPerDestinationLogger(false);
 
+
 				//broker.setPlugins(new BrokerPlugin[]{lbp});
 				//LoggingBrokerPlugin
 				//LoggingBrokerPlugin
