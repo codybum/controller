@@ -427,7 +427,7 @@ public class MsgRoute implements Runnable {
             if (re != null) {
 
                 re.setReturn(); //reverse to-from for return
-                plugin.sendMsgEvent(re);
+                plugin.msgOut(re);
             }
 
         } catch (Exception ex) {

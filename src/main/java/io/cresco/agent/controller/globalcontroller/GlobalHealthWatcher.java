@@ -75,7 +75,7 @@ public class GlobalHealthWatcher implements Runnable {
                 //MsgEvent re = new RPCCall().call(le);
                 //MsgEvent re = agentcontroller.getRPC().call(le);
                 //logger.info("RPC DISABLE: " + re.getMsgBody() + " [" + re.getParams().toString() + "]");
-                plugin.sendMsgEvent(le);
+                plugin.msgOut(le);
             }
         }
 	}
