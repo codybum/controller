@@ -162,7 +162,7 @@ public class PluginAdmin {
 
     }
 
-
+/*
     public String addPlugin(String pluginName, String jarFile, Map<String,Object> map) {
         String returnPluginID = null;
         if(pluginCount() < PLUGINLIMIT) {
@@ -205,9 +205,53 @@ public class PluginAdmin {
         }
         return returnPluginID;
     }
+*/
+    public String addPlugin(String pluginName, String jarFile, Map<String,Object> map) {
+        String returnPluginID = null;
+        if(pluginCount() < PLUGINLIMIT) {
+            try {
+
+                long bundleID = addBundle(jarFile);
+                if (bundleID != -1) {
+
+                    String pluginID = addConfig(pluginName, map);
+
+                    if (startBundle(bundleID)) {
+                        if (pluginID != null) {
+                            PluginNode pluginNode = new PluginNode(pluginID, pluginName, jarFile, map);
+                            synchronized (lockPlugin) {
+                                pluginMap.put(pluginID, pluginNode);
+                            }
+
+                            if (startPlugin(pluginID)) {
+                                returnPluginID = pluginID;
+                            } else {
+                                System.out.println("Could not start agentcontroller " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
+                            }
+
+                        } else {
+                            System.out.println("Could not create config for " + " pluginName " + pluginName + " no bundle " + jarFile);
+                        }
+                    } else {
+                        System.out.println("Could not start bundle Id " + bundleID + " pluginName " + pluginName + " no bundle " + jarFile);
+                        System.out.println("Remove configuration! --  bundle Id " + bundleID + " pluginName " + pluginName + " no bundle " + jarFile);
+
+                    }
+                    //controllerEngine.getPluginAdmin().startBundle(bundleID);
+                    //String pluginID = controllerEngine.getPluginAdmin().addConfig(pluginName,jarFile, map);
+                    //controllerEngine.getPluginAdmin().startPlugin(pluginID);
+                } else {
+                    System.out.println("Can't add " + pluginName + " no bundle " + jarFile);
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return returnPluginID;
+    }
 
     public String addConfig(String pluginName, Map<String,Object> map) {
-
 
         String pluginID = null;
         try {
@@ -243,7 +287,66 @@ public class PluginAdmin {
         return pluginID;
     }
 
+    public boolean startPlugin(String pluginID) {
+        boolean isStarted = false;
 
+        try {
+            ServiceReference<?>[] servRefs = null;
+            int count = 0;
+
+            while ((!isStarted) && (count < TRYCOUNT)) {
+
+                String filterString = "(pluginID=" + pluginID + ")";
+                Filter filter = context.createFilter(filterString);
+
+                //servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
+                servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
+                //System.out.println("REFS : " + servRefs.length);
+                if (servRefs == null || servRefs.length == 0) {
+                    //System.out.println("NULL FOUND NOTHING!");
+
+                } else {
+                    //System.out.println("Running Service Count: " + servRefs.length);
+
+                    for (ServiceReference sr : servRefs) {
+
+                        boolean assign = servRefs[0].isAssignableTo(context.getBundle(), PluginService.class.getName());
+
+                        if(assign) {
+                            PluginService ps = (PluginService) context.getService(sr);
+                            try {
+                                ps.isStarted();
+                            } catch(Exception ex) {
+                                System.out.println("Could not start!");
+                                ex.printStackTrace();
+                            }
+
+                            synchronized (lockPlugin) {
+                                if (pluginMap.containsKey(pluginID)) {
+                                    pluginMap.get(pluginID).setPluginService((PluginService) context.getService(sr));
+                                } else {
+                                    System.out.println("NO PLUGIN IN PLUGIN MAP FOR THIS SERVICE : " + pluginID + " elements " + pluginMap.hashCode() + " thread:" + Thread.currentThread().getName());
+                                }
+                            }
+
+                            isStarted = true;
+                        }
+                    }
+                }
+                count++;
+                Thread.sleep(1000);
+            }
+            if(servRefs == null) {
+                System.out.println("COULD NOT START PLUGIN COULD NOT GET SERVICE");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return isStarted;
+    }
+
+
+    /*
     public boolean startPlugin(String pluginID) {
         boolean isStarted = false;
 
@@ -270,7 +373,7 @@ public class PluginAdmin {
                         boolean assign = servRefs[0].isAssignableTo(context.getBundle(), PluginService.class.getName());
 
                         if(assign) {
-                            PluginService ps = (PluginService) context.getService(sr);
+                            //PluginService ps = (PluginService) context.getService(sr);
 
                             synchronized (lockPlugin) {
                                 if (pluginMap.containsKey(pluginID)) {
@@ -295,7 +398,7 @@ public class PluginAdmin {
         }
         return isStarted;
     }
-
+*/
     public String getPluginExport() {
 
 

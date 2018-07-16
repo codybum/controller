@@ -94,6 +94,16 @@ public class RegionalExecutor implements Executor {
     }
     @Override
     public MsgEvent executeKPI(MsgEvent incoming) {
+
+        logger.info("KPI: " + incoming.printHeader());
+        if(controllerEngine.cstate.isGlobalController()) {
+            return globalExecutor.executeKPI(incoming);
+        } else {
+            if(plugin.getConfig().getBooleanParam("forward_global_kpi",true)){
+                logger.error("BUILD IN KPI FORWARDING!!!");
+            }
+        }
+
         /*
         logger.debug("KPI: " + incoming.printHeader());
 

@@ -14,8 +14,7 @@
         <maven.compiler.version>3.5.1</maven.compiler.version>
         <activemq.version>5.15.4</activemq.version>
         <orientdb.version>2.2.36</orientdb.version>
-        <oshi.version>3.6.2</oshi.version>
-        <scimark.version>2.0</scimark.version>
+
         <gson.version>2.8.5</gson.version>
     </properties>
 
@@ -212,6 +211,87 @@
         <!-- Embedded: 1. core 2. graphdb -->
         <!-- Stand Alone: 1. graphdb 2. core -->
 
+        <!-- https://mvnrepository.com/artifact/com.orientechnologies/orientdb-client -->
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-client</artifactId>
+            <version>${orientdb.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-server</artifactId>
+            <version>${orientdb.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-tools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-client</artifactId>
+                </exclusion>
+            </exclusions>
+
+        </dependency>
+
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-tools</artifactId>
+            <version>${orientdb.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-tools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-graphdb</artifactId>
+            <version>${orientdb.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-tools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.orientechnologies</groupId>
+                    <artifactId>orientdb-core</artifactId>
+                </exclusion>
+            </exclusions>
+
+        </dependency>
         <dependency>
             <groupId>com.orientechnologies</groupId>
             <artifactId>orientdb-core</artifactId>
@@ -230,18 +310,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-graphdb</artifactId>
-            <version>${orientdb.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
-
-        </dependency>
 
         <dependency>
             <groupId>io.cresco</groupId>
@@ -255,39 +323,6 @@
             <artifactId>guava</artifactId>
             <version>18.0</version>
         </dependency>
-
-
-        <!-- KPI -->
-        <dependency>
-            <groupId>gov.nist.math</groupId>
-            <artifactId>scimark</artifactId>
-            <version>${scimark.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.github.oshi/oshi-core -->
-        <dependency>
-            <groupId>com.github.oshi</groupId>
-            <artifactId>oshi-core</artifactId>
-            <version>${oshi.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.java.dev.jna</groupId>
-                    <artifactId>jna-platform</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.threeten/threetenbp -->
-        <dependency>
-            <groupId>org.threeten</groupId>
-            <artifactId>threetenbp</artifactId>
-            <version>1.3.6</version>
-        </dependency>
-
 
 
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->

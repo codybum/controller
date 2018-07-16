@@ -122,6 +122,7 @@ public class PerfMonitorNet {
             //for (MsgEvent me : discoveryList) {
             //    logger.debug(me.getParams().toString());
             //}
+
         }
         catch(Exception ex) {
             logger.error("getNetworkDiscoveryList() " + ex.getMessage());
@@ -145,7 +146,7 @@ public class PerfMonitorNet {
 
             if(!polling) {
 
-                MsgEvent tick = plugin.getGlobalControllerMsgEvent(MsgEvent.Type.KPI);
+                MsgEvent tick = plugin.getKPIMsgEvent();
                 /*
                 MsgEvent tick = new MsgEvent(MsgEvent.Type.KPI, plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), "Performance Monitoring tick.");
                 tick.setParam("src_region", plugin.getRegion());

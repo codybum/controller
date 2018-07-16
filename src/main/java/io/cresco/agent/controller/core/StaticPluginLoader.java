@@ -126,12 +126,21 @@ public class StaticPluginLoader implements Runnable  {
                             logger.error("No plugin config!");
 
                             if(controllerEngine.cstate.isGlobalController()) {
+                                //load global
                                 if(plugin.getConfig().getBooleanParam("enable_web",true)) {
                                     Map<String, Object> map = new HashMap<>();
                                     map.put("pluginname", "io.cresco.dashboard");
                                     map.put("jarfile", "dashboard-1.0-SNAPSHOT.jar");
                                     String pluginID = controllerEngine.getPluginAdmin().addPlugin((String) map.get("pluginname"), (String) map.get("jarfile"), map);
                                 }
+                                //load sysinfo
+                                if(plugin.getConfig().getBooleanParam("enable_sysinfo",true)) {
+                                    Map<String, Object> map = new HashMap<>();
+                                    map.put("pluginname", "io.cresco.sysinfo");
+                                    map.put("jarfile", "sysinfo-1.0-SNAPSHOT.jar");
+                                    String pluginID = controllerEngine.getPluginAdmin().addPlugin((String) map.get("pluginname"), (String) map.get("jarfile"), map);
+                                }
+
                             }
                             isStaticInit = true;
                         }

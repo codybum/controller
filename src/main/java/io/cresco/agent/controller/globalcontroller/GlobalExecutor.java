@@ -158,6 +158,7 @@ public class GlobalExecutor implements Executor {
     }
     @Override
     public MsgEvent executeKPI(MsgEvent incoming) {
+        globalKPI(incoming);
         return null;
     }
 

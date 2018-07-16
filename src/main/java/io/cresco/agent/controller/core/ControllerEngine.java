@@ -7,9 +7,6 @@ import io.cresco.agent.controller.communication.*;
 import io.cresco.agent.controller.db.DBInterface;
 import io.cresco.agent.controller.globalcontroller.GlobalHealthWatcher;
 import io.cresco.agent.controller.measurement.MeasurementEngine;
-import io.cresco.agent.controller.measurement.PerfControllerMonitor;
-import io.cresco.agent.controller.measurement.PerfMonitorNet;
-import io.cresco.agent.controller.measurement.PerfSysMonitor;
 import io.cresco.agent.controller.netdiscovery.*;
 import io.cresco.agent.controller.regionalcontroller.RegionHealthWatcher;
 import io.cresco.agent.controller.agentcontroller.PluginAdmin;
@@ -232,6 +229,7 @@ public class ControllerEngine {
             //populate controller-specific metrics
             //measurementEngine.initControllerMetrics();
 
+            /*
             PerfControllerMonitor perfControllerMonitor = new PerfControllerMonitor(this);
             perfControllerMonitor.start();
             logger.info("Performance Controller monitoring initialized");
@@ -244,7 +242,7 @@ public class ControllerEngine {
             PerfMonitorNet perfMonitorNet = new PerfMonitorNet(this);
             perfMonitorNet.start();
             logger.info("Performance Network monitoring initialized");
-
+            */
 
             /*
             logger.info("Starting Network Discovery Engine...");
