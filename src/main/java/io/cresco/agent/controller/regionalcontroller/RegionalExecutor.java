@@ -95,7 +95,7 @@ public class RegionalExecutor implements Executor {
     @Override
     public MsgEvent executeKPI(MsgEvent incoming) {
 
-        logger.info("KPI: " + incoming.printHeader());
+        logger.debug("KPI: " + incoming.printHeader());
         if(controllerEngine.cstate.isGlobalController()) {
             return globalExecutor.executeKPI(incoming);
         } else {
