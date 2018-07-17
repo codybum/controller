@@ -140,6 +140,13 @@ public class StaticPluginLoader implements Runnable  {
                                     map.put("jarfile", "sysinfo-1.0-SNAPSHOT.jar");
                                     String pluginID = controllerEngine.getPluginAdmin().addPlugin((String) map.get("pluginname"), (String) map.get("jarfile"), map);
                                 }
+                                //load repo
+                                if(plugin.getConfig().getBooleanParam("enable_repo",true)) {
+                                    Map<String, Object> map = new HashMap<>();
+                                    map.put("pluginname", "io.cresco.repo");
+                                    map.put("jarfile", "repo-1.0-SNAPSHOT.jar");
+                                    String pluginID = controllerEngine.getPluginAdmin().addPlugin((String) map.get("pluginname"), (String) map.get("jarfile"), map);
+                                }
 
                             }
                             isStaticInit = true;

@@ -1,10 +1,13 @@
-#cd ..
-#cd dashboard
-#./build.sh
-#cd ..
-#cd controller
+cd ..
+cd dashboard
+./build.sh
+cd ..
+cd controller
 cd ..
 cd sysinfo
+./build.sh
+cd ..
+cd repo
 ./build.sh
 cd ..
 cd controller

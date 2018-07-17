@@ -74,7 +74,7 @@ public class GlobalExecutor implements Executor {
                     return setINodeStatus(ce);
 
                 default:
-                    logger.error("Unknown configtype found: {}", ce.getParam("action"));
+                    logger.error("Unknown configtype found: {} {}", ce.getParam("action"), ce.getMsgType());
                     return null;
             }
         }
@@ -148,7 +148,7 @@ public class GlobalExecutor implements Executor {
                 return getIsAssignment(ce);
 
             default:
-                logger.error("Unknown configtype found: {}", ce.getParam("action"));
+                logger.error("Unknown configtype found: {} {}", ce.getParam("action"), ce.getMsgType());
                 return null;
         }
     }
