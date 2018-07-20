@@ -36,12 +36,16 @@ public class DiscoveryCrypto {
         String encryptedValue = null;
 
         try {
+            //logger.info("dec: [" + valueEnc + "] key:[" + secKey + "]");
+
             final Key key = generateKeyFromString(secKey);
             final Cipher c = Cipher.getInstance(ALGORITHM);
             c.init(Cipher.ENCRYPT_MODE, key);
             final byte[] encValue = c.doFinal(valueEnc.getBytes());
             //encryptedValue = new BASE64Encoder().encode(encValue);
             encryptedValue = Base64.getEncoder().encodeToString(encValue);
+            //logger.info("enc: [" + encryptedValue + "] key:[" + secKey + "]");
+
         } catch(Exception ex) {
             logger.error(ex.getMessage());
             ex.printStackTrace();
@@ -55,7 +59,7 @@ public class DiscoveryCrypto {
         String decryptedValue = null;
 
         try {
-
+            //logger.info("enc: [" + encryptedValue + "] key:[" + secretKey + "]");
             final Key key = generateKeyFromString(secretKey);
             final Cipher c = Cipher.getInstance(ALGORITHM);
             c.init(Cipher.DECRYPT_MODE, key);
@@ -64,12 +68,16 @@ public class DiscoveryCrypto {
             //byte[] valueDecoded= Base64.decodeBase64(bytesEncoded );
             final byte[] decValue = c.doFinal(decorVal);
             decryptedValue = new String(decValue);
+            //logger.info("dec: [" + decryptedValue + "] key:[" + secretKey + "]");
+
         } catch(javax.crypto.BadPaddingException bx) {
             logger.debug(bx.getMessage() + " bad password error");
+            bx.printStackTrace();
+            logger.info("bad!");
         }
         catch(Exception ex) {
             logger.error(ex.getMessage());
-            //ex.printStackTrace();
+            ex.printStackTrace();
         }
 
         return decryptedValue;

@@ -104,16 +104,18 @@ public class TCPDiscoveryStatic {
                 //message out
                 logger.trace("Waiting on return TCPDiscoveryStatic Message from " + hostAddress);
 
-                ois = new ObjectInputStream(socket.getInputStream());
+                InputStream is = socket.getInputStream();
+                if(is != null) {
+                    ois = new ObjectInputStream(socket.getInputStream());
 
-                //message in
-                String message = (String) ois.readObject();
+                    //message in
+                    String message = (String) ois.readObject();
 
-                processIncoming(message,socket.getInetAddress().getHostAddress());
+                    processIncoming(message, socket.getInetAddress().getHostAddress());
 
-                //close resources
-                ois.close();
-
+                    //close resources
+                    ois.close();
+                }
             }
 
             oos.close();
@@ -354,6 +356,7 @@ public class TCPDiscoveryStatic {
                 discoverySecret = plugin.getConfig().getStringParam("discovery_secret_global");
             }
 
+            logger.info("ds sec " + discoverySecret);
             String verifyMessage = "DISCOVERY_MESSAGE_VERIFIED";
             encryptedString = discoveryCrypto.encrypt(verifyMessage,discoverySecret);
 

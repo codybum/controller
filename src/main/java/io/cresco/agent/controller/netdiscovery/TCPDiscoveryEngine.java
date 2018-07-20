@@ -25,7 +25,7 @@ public class TCPDiscoveryEngine implements Runnable {
     public TCPDiscoveryEngine(ControllerEngine controllerEngine) {
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
-        this.logger = plugin.getLogger(TCPDiscoveryEngine.class.getName(),CLogger.Level.Info);
+        this.logger = plugin.getLogger(TCPDiscoveryEngine.class.getName(),CLogger.Level.Debug);
 
         //this.logger = new CLogger(TCPDiscoveryEngine.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Info);
         logger.trace("Initializing");
@@ -65,7 +65,6 @@ public class TCPDiscoveryEngine implements Runnable {
             MsgEvent me = null;
             try {
                 logger.trace("Static Discovery Status = " + rme.getParam("discovery_static_agent"));
-
 
                 if (rme.getParam("discovery_type") != null) {
                     if (rme.getParam("discovery_type").equals(DiscoveryType.NETWORK.name())) {
@@ -125,6 +124,7 @@ public class TCPDiscoveryEngine implements Runnable {
                     oos = new ObjectOutputStream(output);
                     //message out
                     String json = gson.toJson(me);
+
                     oos.writeObject(json);
                     oos.close();
                 }
@@ -180,12 +180,12 @@ public class TCPDiscoveryEngine implements Runnable {
                 //determine if we should respond to request
                 //String validateMsgEvent(rme)
                 //       validatedAuthenication
+
                 if (controllerEngine.reachableAgents().size() < plugin.getConfig().getIntegerParam("max_region_size",250))  {
 
                     String validatedAuthenication = validateMsgEvent(rme); //create auth string
 
-
-                    if ((rme.getParam("src_region") != null) && (validatedAuthenication != null)) {
+                    if (validatedAuthenication != null) {
                         //if (rme.getParam("src_region").equals("init")) {
                         //System.out.println(getClass().getName() + "1 " + Thread.currentThread().getId());
                         me = new MsgEvent(MsgEvent.Type.DISCOVER, plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), "Broadcast discovery response.");
@@ -198,6 +198,7 @@ public class TCPDiscoveryEngine implements Runnable {
                         me.setParam("agent_count", String.valueOf(controllerEngine.reachableAgents().size()));
                         me.setParam("discovery_type", DiscoveryType.AGENT.name());
                         me.setParam("validated_authenication",validatedAuthenication);
+
                         me.setParam("broadcast_ts", rme.getParam("broadcast_ts"));
                         logger.debug("getAgentMsg = " + me.getParams().toString());
                         //return message exist, if cert exist add it and include ours
@@ -327,6 +328,7 @@ public class TCPDiscoveryEngine implements Runnable {
         }
 
         private String validateMsgEvent(MsgEvent rme) {
+
             String validatedAuthenication = null;
             String groupName = null;
             try {
@@ -345,6 +347,7 @@ public class TCPDiscoveryEngine implements Runnable {
                 String verifyMessage = "DISCOVERY_MESSAGE_VERIFIED";
                 String discoveryValidator = rme.getParam("discovery_validator");
                 String decryptedString = discoveryCrypto.decrypt(discoveryValidator,discoverySecret);
+
                 if(decryptedString != null) {
                     if (decryptedString.equals(verifyMessage)) {
                         //agentcontroller.brokerUserNameAgent
