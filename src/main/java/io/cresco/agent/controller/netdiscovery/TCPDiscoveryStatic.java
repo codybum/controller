@@ -356,7 +356,6 @@ public class TCPDiscoveryStatic {
                 discoverySecret = plugin.getConfig().getStringParam("discovery_secret_global");
             }
 
-            logger.info("ds sec " + discoverySecret);
             String verifyMessage = "DISCOVERY_MESSAGE_VERIFIED";
             encryptedString = discoveryCrypto.encrypt(verifyMessage,discoverySecret);
 
