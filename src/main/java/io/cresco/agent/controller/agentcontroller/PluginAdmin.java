@@ -73,6 +73,43 @@ public class PluginAdmin {
 
     }
 
+    public boolean pluginTypeActive(String pluginName) {
+        boolean exists = false;
+        try {
+            synchronized (lockConfig) {
+
+                Iterator it = configMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+
+                    String pluginID = (String) pair.getKey();
+                    Configuration config = (Configuration) pair.getValue();
+
+                    if(config.getFactoryPid().equals(pluginName + ".Plugin")) {
+                        return true;
+                    }
+                } }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return exists;
+    }
+
+    public boolean serviceExist(String serviceName) {
+        boolean exists = false;
+        try {
+
+            ServiceReference sr = context.getServiceReference(serviceName);
+            if(sr != null) {
+                exists = true;
+                context.ungetService(sr);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return exists;
+    }
+
     public long addBundle(String fileLocation) {
         long bundleID = -1;
         try {

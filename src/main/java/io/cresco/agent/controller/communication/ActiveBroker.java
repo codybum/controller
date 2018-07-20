@@ -146,6 +146,8 @@ public class ActiveBroker {
 
 				connector = new TransportConnector();
 
+
+
 				if (plugin.isIPv6())
 					connector.setUri(new URI("ssl://[::]:"+ discoveryPort));
 
