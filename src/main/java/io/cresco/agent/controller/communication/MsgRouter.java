@@ -103,6 +103,10 @@ public class MsgRouter {
 
             rm = getTTL(rm);
 
+
+            //me.setParam("action", "pluginadd");
+
+
             if(rm != null) {
                 int routePath = getRoutePath(rm);
                 rm.setParam("routepath-" + plugin.getAgent(), String.valueOf(routePath));

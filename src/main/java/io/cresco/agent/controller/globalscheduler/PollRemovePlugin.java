@@ -106,15 +106,17 @@ public class PollRemovePlugin implements Runnable {
 
 	public MsgEvent removePlugin(String region, String agent, String pluginId)
 	{
-
+	    MsgEvent me = plugin.getGlobalAgentMsgEvent(MsgEvent.Type.CONFIG,region,agent);
+	    /*
 		MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG,region,null,null,"remove agentcontroller");
 		me.setParam("src_region", plugin.getRegion());
 		me.setParam("src_agent", plugin.getAgent());
         me.setParam("src_plugin", plugin.getPluginID());
+        */
         me.setParam("dst_region", region);
 		me.setParam("dst_agent", agent);
 		me.setParam("action", "pluginremove");
-		me.setParam("agentcontroller", pluginId);
+		me.setParam("pluginid", pluginId);
 		return me;	
 	}
 	

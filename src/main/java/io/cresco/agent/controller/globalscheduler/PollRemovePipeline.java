@@ -57,10 +57,17 @@ public class PollRemovePipeline implements Runnable {
 						    int statusCode = controllerEngine.getGDB().dba.getINodeStatus(gnode.node_id);
 						    if((statusCode >= 10) && (statusCode < 19))  { //running somewhere
 
-                                MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG, null, null, null, "add application node");
+                                MsgEvent me = plugin.getGlobalControllerMsgEvent(MsgEvent.Type.CONFIG);
                                 me.setParam("globalcmd", "removeplugin");
                                 me.setParam("inode_id", gnode.node_id);
                                 me.setParam("resource_id", pipelineId);
+						        /*
+						        MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG, null, null, null, "add application node");
+                                me.setParam("globalcmd", "removeplugin");
+                                me.setParam("inode_id", gnode.node_id);
+                                me.setParam("resource_id", pipelineId);
+                                */
+
                                 //ghw.resourceScheduleQueue.add(me);
                                 controllerEngine.getGDB().dba.setINodeParam(gnode.node_id,"status_code","9");
                                 controllerEngine.getGDB().dba.setINodeParam(gnode.node_id,"status_desc","iNode Pipeline Scheduled for Removal");

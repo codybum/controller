@@ -36,7 +36,7 @@ public class GlobalExecutor implements Executor {
 
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
-        this.logger = plugin.getLogger(GlobalExecutor.class.getName(),CLogger.Level.Trace);
+        this.logger = plugin.getLogger(GlobalExecutor.class.getName(),CLogger.Level.Info);
         removePipelineExecutor = Executors.newFixedThreadPool(100);
     }
 
@@ -110,6 +110,9 @@ public class GlobalExecutor implements Executor {
 
             case "listpluginsrepo":
                 return listPluginsRepo(ce);
+
+            case "listrepoinstances":
+                return listRepoInstances(ce);
 
             case "plugininfo":
                 return pluginInfo(ce);
@@ -267,6 +270,18 @@ public class GlobalExecutor implements Executor {
         return ce;
     }
 
+    private MsgEvent listRepoInstances(MsgEvent ce) {
+        try {
+
+            ce.setCompressedParam("listrepoinstances",controllerEngine.getGDB().getPluginListByType("pluginname","io.cresco.repo"));
+            logger.trace("list repos : " + ce.getParams().toString());
+        }
+        catch(Exception ex) {
+            ce.setParam("error", ex.getMessage());
+        }
+        return ce;
+    }
+
     private MsgEvent listPluginsRepo(MsgEvent ce) {
         try {
 
@@ -277,6 +292,8 @@ public class GlobalExecutor implements Executor {
             ce.setParam("error", ex.getMessage());
         }
 
+        //String repoPluginsJSON = getPluginListByType("pluginname","io.cresco.repo");
+        //
         return ce;
     }
 

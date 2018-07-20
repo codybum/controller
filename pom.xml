@@ -22,7 +22,7 @@
 
         <repository>
             <id>localrepository</id>
-            <url>file:../repo</url>
+            <url>file:../localrepo</url>
         </repository>
     </repositories>
 
