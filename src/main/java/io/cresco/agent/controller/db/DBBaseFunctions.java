@@ -2132,6 +2132,8 @@ public class DBBaseFunctions {
             PrintWriter pw = new PrintWriter(sw);
             ex.printStackTrace(pw);
             logger.error(sw.toString());
+            ex.printStackTrace();
+            logger.info("export data : [" + exportData + "]");
         }
         //export.exportDatabase();
         //export.close();

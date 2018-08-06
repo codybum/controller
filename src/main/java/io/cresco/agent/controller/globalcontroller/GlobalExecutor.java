@@ -684,14 +684,17 @@ public class GlobalExecutor implements Executor {
             paramMap.put("enable_pending", Boolean.TRUE.toString());
             paramMap.put("region", ce.getParam("src_region"));
 
-            String edgeId = controllerEngine.getGDB().gdb.addEdge(ce.getParam("src_region"),null,null, ce.getParam("dst_region"), null,null,"isRegionHealth",paramMap);
 
+            String edgeId = controllerEngine.getGDB().gdb.addEdge(ce.getSrcRegion(),null,null, ce.getDstRegion(), null,null,"isRegionHealth",paramMap);
+
+            ce.setParam("is_registered","true");
         }
         catch(Exception ex) {
             ce.setParam("error", ex.getMessage());
         }
 
-        return null;
+        return ce;
+        //return null;
     }
 
 

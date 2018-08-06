@@ -194,7 +194,11 @@ public class DBInterface {
                     logger.trace("Region : " + region);
                     List<String> agentList = gdb.getNodeList(region, null, null);
                     regionMap.put("name",region);
-                    regionMap.put("agents",String.valueOf(agentList.size()));
+                    if(agentList != null) {
+                        regionMap.put("agents", String.valueOf(agentList.size()));
+                    } else {
+                        regionMap.put("agents", "0");
+                    }
                     regionArray.add(regionMap);
                 }
             }
@@ -1363,9 +1367,12 @@ public class DBInterface {
             String agentcontroller = de.getParam("src_plugin");
             */
 
+
             String region = de.getParam("region_name");
             String agent = de.getParam("agent_name");
             String plugin = de.getParam("plugin_id");
+
+
 
 
             de.setParam("is_active",Boolean.TRUE.toString());

@@ -147,7 +147,7 @@ public class StaticPluginLoader implements Runnable  {
                             }
                             isStaticInit = true;
                         }
-
+                        logger.info("Starting SYSINFO : Status Active: " + controllerEngine.cstate.isActive() + " Status State: " + controllerEngine.cstate.getControllerState());
                         if(!controllerEngine.getPluginAdmin().pluginTypeActive("io.cresco.sysinfo")) {
                             //load sysinfo
                             //required "org.osgi.service.http.HttpService"
@@ -161,7 +161,7 @@ public class StaticPluginLoader implements Runnable  {
                         }
 
                     }
-                    logger.info("Status : " + controllerEngine.cstate.getControllerState());
+                    logger.trace("Status : " + controllerEngine.cstate.getControllerState());
                     Thread.sleep(1000);
                 }
 

@@ -124,9 +124,17 @@ public class AgentServiceImpl implements AgentService {
 
             controllerEngine = new ControllerEngine(controllerState, plugin, pluginAdmin);
 
+            //logger.info("Controller Init");
+            if(controllerEngine.commInit()) {
+                //logger.info("Controller Completed Init");
+            }
 
+            while(!controllerEngine.cstate.isActive()) {
+                System.out.println("Waiting on is active!");
+                Thread.sleep(1000);
+            }
 
-
+            plugin.setIsActive(true);
 
             //MessageSender messageSender = new MessageSender(agentcontroller);
             //new Thread(messageSender).start();
@@ -149,7 +157,14 @@ public class AgentServiceImpl implements AgentService {
 
     @Override
     public void msgOut(String id, MsgEvent msg) {
-        controllerEngine.msgIn(msg);
+        try {
+            controllerEngine.msgIn(msg);
+        } catch(Exception ex) {
+            System.out.println(msg.printHeader());
+            System.out.println(msg.getParams().toString());
+
+            ex.printStackTrace();
+        }
     }
 
 

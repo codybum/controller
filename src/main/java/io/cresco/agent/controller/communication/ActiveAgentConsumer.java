@@ -61,8 +61,26 @@ public class ActiveAgentConsumer implements Runnable {
 						//me = gson.fromJson(msg.getText(), MsgEvent.class);
 						//me = new Gson().fromJson(msg.getText(), MsgEvent.class);
 						if(me != null) {
-							plugin.msgIn(me);
 							logger.debug("Message: {}", me.getParams().toString());
+							//create new thread service for incoming messages
+							boolean isMyRPC = false;
+							if (me.getParams().keySet().contains("is_rpc")) {
+								//pick up self-rpc, unless ttl == 0
+								String callId = me.getParam(("callId-" + plugin.getRegion() + "-" +
+										plugin.getAgent() + "-" + plugin.getPluginID()));
+
+								//if ((callId != null) && (ttl > 0)) {
+								if (callId != null) {
+									isMyRPC = true;
+									plugin.receiveRPC(callId, me);
+								}
+							}
+
+							if(!isMyRPC) {
+								controllerEngine.msgInThreaded(me);
+							}
+
+							//
 						} else {
 							logger.error("non-MsgEvent message found!");
 						}

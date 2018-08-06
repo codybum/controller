@@ -100,12 +100,12 @@ public class ControllerEngine {
         //this.msgInProcessQueue = Executors.newFixedThreadPool(100);
         this.msgInProcessQueue = Executors.newCachedThreadPool();
         //this.msgInProcessQueue = Executors.newSingleThreadExecutor();
-
+        /*
         logger.info("Controller Init");
         if(commInit()) {
             logger.info("Controller Completed Init");
         }
-
+        */
         //new thread required to allow AgentServiceImpl to finish & become service
         StaticPluginLoader staticPluginLoader = new StaticPluginLoader(this);
         new Thread(staticPluginLoader).start();
@@ -1053,6 +1053,8 @@ public class ControllerEngine {
         return DiscoveryActive;
     }
 
+    public ActiveProducer getActiveProducer() { return ap; }
+
     public Thread getActiveBrokerManagerThread() {
         return activeBrokerManagerThread;
     }
@@ -1068,7 +1070,6 @@ public class ControllerEngine {
     public void setRestartOnShutdown(boolean restartOnShutdown) {
         this.restartOnShutdown = restartOnShutdown;
     }
-
 
     public void closeCommunications() {
 
@@ -1138,8 +1139,11 @@ public class ControllerEngine {
 
     public void msgIn(MsgEvent msg) {
 
-            //msgInProcessQueue.submit(new MsgRoute(this, msg));
             msgRouter.route(msg);
+    }
+
+    public void msgInThreaded(MsgEvent msg) {
+        msgInProcessQueue.submit(new MsgEventRunner(this, msg));
     }
 
     public PluginAdmin getPluginAdmin() { return pluginAdmin; }

@@ -56,6 +56,7 @@ public class AgentExecutor implements Executor {
 
             default:
                 logger.error("Unknown configtype found {} for {}:", incoming.getParam("action"), incoming.getMsgType().toString());
+                logger.error(incoming.getParams().toString());
                 break;
         }
 
