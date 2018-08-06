@@ -368,10 +368,28 @@ public class MsgRouter {
                         forwardToRemoteRegionalController(rm);
                         break;
 
+                    case 20943:
+                        logger.debug("remote agent sending message to local regional controller 20943");
+                        logger.trace(rm.getParams().toString());
+                        forwardToLocalRegionalController(rm);
+                        break;
+
+                    case 20975:
+                        logger.debug("remote plugin sending message to local regional controller 20975");
+                        logger.trace(rm.getParams().toString());
+                        forwardToLocalRegionalController(rm);
+                        break;
+
                     case 21135:
                         logger.debug("Local region sending message to remote global controller 21135");
                         logger.trace(rm.getParams().toString());
                         forwardToRemoteRegion(rm);
+                        break;
+
+                    case 21199:
+                        logger.debug("Local region sending message to local regional controller 21199");
+                        logger.trace(rm.getParams().toString());
+                        forwardToLocalRegion(rm);
                         break;
 
                     case 21455:
