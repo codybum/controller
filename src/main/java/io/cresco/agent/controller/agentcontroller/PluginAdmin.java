@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.cresco.library.agent.AgentState;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginService;
+import io.cresco.library.utilities.CLogger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
@@ -16,7 +17,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PluginAdmin {
@@ -33,7 +33,6 @@ public class PluginAdmin {
 
     private AtomicBoolean lockConfig = new AtomicBoolean();
     private AtomicBoolean lockPlugin = new AtomicBoolean();
-
 
     private AgentState agentState;
 
@@ -70,6 +69,27 @@ public class PluginAdmin {
             } else {
                 System.out.println("Admin Does Not Exist!");
             }
+
+    }
+
+    public void setLogLevel(String logId, CLogger.Level level) {
+
+        try {
+            if (level != CLogger.Level.Info) {
+                System.out.println("LOG ID: " + logId + " LEVEL:" + level.name());
+            }
+
+                Configuration logConfig = confAdmin.getConfiguration("org.ops4j.pax.logging", null);
+
+                Dictionary<String, Object> log4jProps = logConfig.getProperties();
+                log4jProps.put("log4j.logger." + logId, level.name().toUpperCase());
+
+                logConfig.updateIfDifferent(log4jProps);
+
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
     }
 

@@ -8,6 +8,7 @@ import io.cresco.library.agent.AgentState;
 import io.cresco.library.agent.ControllerState;
 import io.cresco.library.messaging.MsgEvent;
 import io.cresco.library.plugin.PluginBuilder;
+import io.cresco.library.utilities.CLogger;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
@@ -19,7 +20,6 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-
 
 
 @Component(
@@ -147,6 +147,15 @@ public class AgentServiceImpl implements AgentService {
     @Modified
     void modified(BundleContext context, Map<String,Object> map) {
         System.out.println("Modified Config Map PluginID:" + (String) map.get("pluginID"));
+    }
+
+    @Override
+    public void setLogLevel(String logId, CLogger.Level level) {
+
+        if(pluginAdmin != null) {
+            pluginAdmin.setLogLevel(logId, level);
+        }
+
     }
 
     @Override
