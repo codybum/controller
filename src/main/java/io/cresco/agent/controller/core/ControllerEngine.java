@@ -65,7 +65,7 @@ public class ControllerEngine {
     public String brokerUserNameAgent;
     public String brokerPasswordAgent;
 
-
+    private ActiveAgentConsumer activeAgentConsumer;
     private ActiveBroker broker;
     private KPIBroker kpiBroker;
     private DBInterface gdb;
@@ -79,7 +79,6 @@ public class ControllerEngine {
     private MeasurementEngine measurementEngine;
     private MsgRouter msgRouter;
 
-    private Thread consumerAgentThread;
     private Thread activeBrokerManagerThread;
     private Thread globalControllerManagerThread;
     private Thread discoveryUDPEngineThread;
@@ -532,11 +531,13 @@ public class ControllerEngine {
                     //consumer agent
                     int discoveryPort = plugin.getConfig().getIntegerParam("discovery_port",32010);
                     if(isLocalBroker()) {
-                        this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "vm://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
+                        activeAgentConsumer = new ActiveAgentConsumer(this, cstate.getAgentPath(), "vm://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent);
+                        //this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "vm://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
                     } else {
-                        this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
+                        activeAgentConsumer = new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent);
+                        //this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
                     }
-                    this.consumerAgentThread.start();
+
                     while (!this.ConsumerThreadActive) {
                         Thread.sleep(1000);
                     }
@@ -1043,10 +1044,6 @@ public class ControllerEngine {
 
     public Map<String, Long> getDiscoveryMap() {
         return discoveryMap;
-    }
-
-    public Thread getConsumerAgentThread() {
-        return consumerAgentThread;
     }
 
     public boolean isDiscoveryActive() {

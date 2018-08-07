@@ -122,7 +122,7 @@ public class RegionHealthWatcher {
         public void run() {
             boolean isHealthy = true;
             try {
-                if (!controllerEngine.isConsumerThreadActive() || !controllerEngine.getConsumerAgentThread().isAlive()) {
+                if (!controllerEngine.isConsumerThreadActive()) {
                     isHealthy = false;
                     logger.info("Agent Consumer shutdown detected");
                 }

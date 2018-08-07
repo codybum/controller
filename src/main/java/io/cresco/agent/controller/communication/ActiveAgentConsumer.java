@@ -12,8 +12,9 @@ import javax.jms.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.SecureRandom;
+import java.util.concurrent.TimeUnit;
 
-public class ActiveAgentConsumer implements Runnable {
+public class ActiveAgentConsumer {
 	private PluginBuilder plugin;
 	private CLogger logger;
 	private Queue RXqueue;
@@ -41,25 +42,19 @@ public class ActiveAgentConsumer implements Runnable {
 		conn.start();
 		sess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		RXqueue = sess.createQueue(RXQueueName);
-	}
+		MessageConsumer consumer = sess.createConsumer(RXqueue);
 
-	@Override
-	public void run() {
-		logger.trace("Queue: {}", RXqueue);
 		Gson gson = new Gson();
-		try {
-			controllerEngine.setConsumerThreadActive(true);
-			MessageConsumer consumer = sess.createConsumer(RXqueue);
-			while (controllerEngine.isConsumerThreadActive()) {
-				TextMessage msg = (TextMessage) consumer.receive();
-				if (msg != null) {
-					logger.debug("Incoming Queue: {}", RXqueue);
-					MsgEvent me = null;
-					try {
-						String msgPayload = new String(msg.getText());
-						me = gson.fromJson(msgPayload,MsgEvent.class);
-						//me = gson.fromJson(msg.getText(), MsgEvent.class);
-						//me = new Gson().fromJson(msg.getText(), MsgEvent.class);
+		controllerEngine.setConsumerThreadActive(true);
+
+		consumer.setMessageListener(new MessageListener() {
+			public void onMessage(Message msg) {
+				try {
+
+					if (msg instanceof TextMessage) {
+
+						TextMessage textMessage = (TextMessage) msg;
+						MsgEvent me = gson.fromJson(((TextMessage) msg).getText(),MsgEvent.class);
 						if(me != null) {
 							logger.debug("Message: {}", me.getParams().toString());
 							//create new thread service for incoming messages
@@ -69,7 +64,6 @@ public class ActiveAgentConsumer implements Runnable {
 								String callId = me.getParam(("callId-" + plugin.getRegion() + "-" +
 										plugin.getAgent() + "-" + plugin.getPluginID()));
 
-								//if ((callId != null) && (ttl > 0)) {
 								if (callId != null) {
 									isMyRPC = true;
 									plugin.receiveRPC(callId, me);
@@ -84,53 +78,18 @@ public class ActiveAgentConsumer implements Runnable {
 						} else {
 							logger.error("non-MsgEvent message found!");
 						}
-					} catch(Exception ex) {
-						logger.error("MsgEvent Error  : " +  ex.getMessage());
-						StringWriter errors = new StringWriter();
-						ex.printStackTrace(new PrintWriter(errors));
-						logger.error("MsgEvent Error Stack : " + errors.toString());
 
+					} else {
+						logger.error("non-Text message recieved!");
 					}
-				}
-				else {
-					logger.trace("Queue Details: {}", RXqueue);
-					logger.trace("isStarted=" + conn.isStarted() + " isClosed=" + conn.isClosed() + " ClientId=" + conn.getInitializedClientID());
-					logger.trace("brokerName=" + conn.getBrokerName() + " username=" + conn.getConnectionInfo().getUserName() + " password=" + conn.getConnectionInfo().getPassword());
+				} catch(Exception ex) {
+					logger.error("onMessage Error : " + ex.getMessage());
+					ex.printStackTrace();
 				}
 			}
-			logger.debug("Cleaning up");
-			sess.close();
-			conn.cleanup();
-			conn.close();
-			logger.debug("Shutdown complete");
-		}
-		catch (JMSException e) {
-			//TODO Fix this dirty hack
-			StringWriter errors = new StringWriter();
-			e.printStackTrace(new PrintWriter(errors));
+		});
 
-			if(!e.getMessage().equals("java.lang.InterruptedException")) {
-				controllerEngine.setConsumerThreadActive(false);
-				logger.error("JMS Error : " + e.getMessage());
-				logger.error("JMS Error : ", errors.toString());
-			} else {
-				logger.error("JMS Error java.lang.InterruptedException : ", errors.toString());
-			}
-		} catch (Exception ex) {
-			logger.error("Run: {}", ex.getMessage());
-			StringWriter errors = new StringWriter();
-			ex.printStackTrace(new PrintWriter(errors));
-			logger.error("Run Stack: {}", errors.toString());
-			//return errors.toString();
-			try {
-				//self distruct
-				Thread.sleep(5000);
-				System.exit(0);
-			} catch(Exception exx) {
-
-			}
-			controllerEngine.setConsumerThreadActive(false);
-		}
 
 	}
+
 }
