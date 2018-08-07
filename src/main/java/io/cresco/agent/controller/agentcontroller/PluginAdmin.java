@@ -3,6 +3,7 @@ package io.cresco.agent.controller.agentcontroller;
 import com.google.gson.Gson;
 import io.cresco.library.agent.AgentState;
 import io.cresco.library.messaging.MsgEvent;
+import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.plugin.PluginService;
 import io.cresco.library.utilities.CLogger;
 import org.osgi.framework.Bundle;
@@ -30,6 +31,7 @@ public class PluginAdmin {
     private ConfigurationAdmin confAdmin;
     private Map<String,Configuration> configMap;
     private Map<String,PluginNode> pluginMap;
+    private CLogger logger;
 
     private AtomicBoolean lockConfig = new AtomicBoolean();
     private AtomicBoolean lockPlugin = new AtomicBoolean();
@@ -44,13 +46,15 @@ public class PluginAdmin {
     }
 
 
-    public PluginAdmin(AgentState agentState, BundleContext context) {
+    public PluginAdmin(PluginBuilder pluginBuilder, AgentState agentState, BundleContext context) {
 
         this.gson = new Gson();
         this.configMap = Collections.synchronizedMap(new HashMap<>());
         this.pluginMap = Collections.synchronizedMap(new HashMap<>());
         this.context = context;
         this.agentState = agentState;
+        logger = pluginBuilder.getLogger(PluginAdmin.class.getName(), CLogger.Level.Info);
+
 
         ServiceReference configurationAdminReference = null;
 
@@ -76,6 +80,7 @@ public class PluginAdmin {
 
         try {
 
+            logId = logId.toLowerCase();
             /*
             if (level != CLogger.Level.Info) {
                 System.out.println("LOG ID: " + logId + " LEVEL:" + level.name());
