@@ -123,7 +123,7 @@ public class StaticPluginLoader implements Runnable  {
                             isStaticInit = true;
                         } else {
                             //why not load this sucker here...
-                            logger.error("No plugin config!");
+                            logger.debug("No plugin config!");
 
                             if(controllerEngine.cstate.isGlobalController()) {
 

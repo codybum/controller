@@ -75,9 +75,12 @@ public class PluginAdmin {
     public void setLogLevel(String logId, CLogger.Level level) {
 
         try {
+
+            /*
             if (level != CLogger.Level.Info) {
                 System.out.println("LOG ID: " + logId + " LEVEL:" + level.name());
             }
+            */
 
                 Configuration logConfig = confAdmin.getConfiguration("org.ops4j.pax.logging", null);
 

@@ -25,7 +25,7 @@ public class TCPDiscoveryEngine implements Runnable {
     public TCPDiscoveryEngine(ControllerEngine controllerEngine) {
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
-        this.logger = plugin.getLogger(TCPDiscoveryEngine.class.getName(),CLogger.Level.Debug);
+        this.logger = plugin.getLogger(TCPDiscoveryEngine.class.getName(),CLogger.Level.Info);
 
         //this.logger = new CLogger(TCPDiscoveryEngine.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(),CLogger.Level.Info);
         logger.trace("Initializing");
