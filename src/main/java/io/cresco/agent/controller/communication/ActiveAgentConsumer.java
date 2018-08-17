@@ -53,7 +53,7 @@ public class ActiveAgentConsumer {
 
 					if (msg instanceof TextMessage) {
 
-						TextMessage textMessage = (TextMessage) msg;
+						//TextMessage textMessage = (TextMessage) msg;
 						MsgEvent me = gson.fromJson(((TextMessage) msg).getText(),MsgEvent.class);
 						if(me != null) {
 							logger.debug("Message: {}", me.getParams().toString());
