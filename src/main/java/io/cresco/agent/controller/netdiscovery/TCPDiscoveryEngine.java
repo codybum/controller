@@ -368,6 +368,7 @@ public class TCPDiscoveryEngine implements Runnable {
 
     }
 
+    /*
     public void run(){
         synchronized(this){
             this.runningThread = Thread.currentThread();
@@ -393,6 +394,34 @@ public class TCPDiscoveryEngine implements Runnable {
         }
         System.out.println("Server Stopped.") ;
     }
+*/
+
+    public void run(){
+        synchronized(this){
+            this.runningThread = Thread.currentThread();
+        }
+        openServerSocket();
+        controllerEngine.setTCPDiscoveryActive(true);
+
+        while(! isStopped()){
+            try {
+                new Thread(
+                        new WorkerRunnable(controllerEngine,
+                                serverSocket.accept(), "Multithreaded Server")
+                ).start();
+            } catch (IOException e) {
+                if(isStopped()) {
+                    System.out.println("Server Stopped.") ;
+                    return;
+                }
+                throw new RuntimeException(
+                        "Error accepting client connection", e);
+            }
+
+        }
+        System.out.println("Server Stopped.") ;
+    }
+
 
     public static synchronized void shutdown(){
         isStopped = true;
