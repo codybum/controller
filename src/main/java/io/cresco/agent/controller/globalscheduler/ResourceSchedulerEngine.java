@@ -98,17 +98,18 @@ public class ResourceSchedulerEngine implements Runnable {
 					MsgEvent ce = controllerEngine.getResourceScheduleQueue().take();
 					if(ce != null)
 					{
-
-						logger.debug("me.added");
+                        logger.debug("me.added");
 						//check the pipeline node
 						if(ce.getParam("globalcmd").equals("addplugin"))
 						{
 							//do something to activate a agentcontroller
 							logger.debug("starting precheck...");
 							//String pluginJar = verifyPlugin(ce);
-							pNode pluginNode = verifyPlugin(ce);
+                            pNode pluginNode = verifyPlugin(ce);
+
                             if(pluginNode == null)
 							{
+                                logger.error("pluginnode == null");
 								if((controllerEngine.getGDB().dba.setINodeParam(ce.getParam("inode_id"),"status_code","1")) &&
 										(controllerEngine.getGDB().dba.setINodeParam(ce.getParam("inode_id"),"status_desc","iNode Failed Activation : Plugin not found!")))
 								{
@@ -117,8 +118,7 @@ public class ResourceSchedulerEngine implements Runnable {
 							}
 							else
 							{
-
-								//Here is where scheduling is taking place
+                                //Here is where scheduling is taking place
 								logger.debug("agentcontroller precheck = OK");
 									String region = ce.getParam("location_region");
 									String agent = ce.getParam("location_agent");
@@ -131,7 +131,8 @@ public class ResourceSchedulerEngine implements Runnable {
                                     me.setCompressedParam("pnode",gson.toJson(pluginNode));
 									logger.debug("pluginadd message: " + me.getParams().toString());
 
-									new Thread(new PollAddPlugin(controllerEngine,resource_id, inode_id,region,agent, me)).start();
+
+                                new Thread(new PollAddPlugin(controllerEngine,resource_id, inode_id,region,agent, me)).start();
 
 							}
 						}
@@ -414,12 +415,15 @@ public class ResourceSchedulerEngine implements Runnable {
 
 	    //else if (ce.getParam("configtype").equals("pluginadd"))
 
+        MsgEvent me = plugin.getGlobalAgentMsgEvent(MsgEvent.Type.CONFIG,region,agent);
+        /*
 		MsgEvent me = new MsgEvent(MsgEvent.Type.CONFIG,region,null,null,"add agentcontroller");
 		me.setParam("src_region", plugin.getRegion());
 		me.setParam("src_agent", plugin.getAgent());
         me.setParam("src_plugin", plugin.getPluginID());
         me.setParam("dst_region", region);
 		me.setParam("dst_agent", agent);
+		*/
 		me.setParam("action", "pluginadd");
 		me.setParam("configparams",configParams);
 		return me;

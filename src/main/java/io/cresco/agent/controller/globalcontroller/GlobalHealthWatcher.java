@@ -1,6 +1,7 @@
 package io.cresco.agent.controller.globalcontroller;
 
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.cresco.agent.controller.app.gPayload;
 import io.cresco.agent.controller.core.ControllerEngine;
 import io.cresco.agent.controller.db.NodeStatusType;
@@ -50,6 +51,8 @@ public class GlobalHealthWatcher implements Runnable {
 
         if(!controllerEngine.cstate.isGlobalController()) {
             if (controllerEngine.isReachableAgent(controllerEngine.cstate.getGlobalControllerPath())) {
+                MsgEvent le = plugin.getGlobalControllerMsgEvent(MsgEvent.Type.CONFIG);
+                /*
                 MsgEvent le = new MsgEvent(MsgEvent.Type.CONFIG, controllerEngine.cstate.getGlobalRegion(), controllerEngine.cstate.getGlobalAgent(), null, "disabled");
 
                 le.setParam("src_region", plugin.getRegion());
@@ -62,6 +65,8 @@ public class GlobalHealthWatcher implements Runnable {
 
                 le.setParam("is_regional", Boolean.TRUE.toString());
                 le.setParam("is_global", Boolean.TRUE.toString());
+                */
+
 
                 le.setParam("region_name", controllerEngine.cstate.getRegionalRegion());
 
@@ -75,7 +80,7 @@ public class GlobalHealthWatcher implements Runnable {
                 //MsgEvent re = new RPCCall().call(le);
                 //MsgEvent re = agentcontroller.getRPC().call(le);
                 //logger.info("RPC DISABLE: " + re.getMsgBody() + " [" + re.getParams().toString() + "]");
-                plugin.sendMsgEvent(le);
+                plugin.msgOut(le);
             }
         }
 	}
@@ -91,10 +96,9 @@ public class GlobalHealthWatcher implements Runnable {
             logger.trace("Initial gCheck");
 
                 gCheck(); //do initial check
+
+
                 controllerEngine.setGlobalControllerManagerActive(true);
-                logger.trace("GlobalControllerManager is Active");
-                controllerEngine.cstate.setGlobalSuccess("GlobalControllerManager is Active");
-                logger.info("CSTATE : " + controllerEngine.cstate.getControllerState() + " Region:" + controllerEngine.cstate.getRegion() + " Agent:" + controllerEngine.cstate.getAgent());
 
                 while (controllerEngine.isGlobalControllerManagerActive()) {
                     Thread.sleep(gCheckInterval);
@@ -118,14 +122,16 @@ public class GlobalHealthWatcher implements Runnable {
                 logger.debug("gNotify !Global Controller Message");
                 //is the global controller reachable
                 if(controllerEngine.isReachableAgent(controllerEngine.cstate.getGlobalControllerPath())) {
+
+                    MsgEvent tick = plugin.getGlobalControllerMsgEvent(MsgEvent.Type.WATCHDOG);
+                    /*
                     MsgEvent tick = new MsgEvent(MsgEvent.Type.WATCHDOG, plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), "WatchDog timer tick. 0");
                     tick.setParam("src_region", this.plugin.getRegion());
                     tick.setParam("src_agent", this.plugin.getAgent());
-                    //tick.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
 
                     tick.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
                     tick.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
-                    //tick.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
+                    */
 
                     tick.setParam("region_name",controllerEngine.cstate.getRegionalRegion());
 
@@ -149,17 +155,18 @@ public class GlobalHealthWatcher implements Runnable {
                 //controllerEngine.getGDB().watchDogUpdate()
                 logger.trace("gNotify Global Controller Message");
 
+                MsgEvent tick = plugin.getGlobalControllerMsgEvent(MsgEvent.Type.WATCHDOG);
+                /*
                 MsgEvent tick = new MsgEvent(MsgEvent.Type.WATCHDOG, plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), "WatchDog timer tick. 1");
                 tick.setParam("src_region", this.plugin.getRegion());
                 tick.setParam("src_agent", this.plugin.getAgent());
-                //tick.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
 
                 tick.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
                 tick.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
-                //tick.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
 
                 tick.setParam("is_regional", Boolean.TRUE.toString());
                 tick.setParam("is_global", Boolean.TRUE.toString());
+                */
 
                 tick.setParam("region_name",controllerEngine.cstate.getRegionalRegion());
 
@@ -189,35 +196,45 @@ public class GlobalHealthWatcher implements Runnable {
         logger.trace("gCheck Start");
 
         try{
+            /*
+            logger.trace("GlobalControllerManager is Active");
+                controllerEngine.cstate.setGlobalSuccess("GlobalControllerManager is Active");
+                logger.info("CSTATE : " + controllerEngine.cstate.getControllerState() + " Region:" + controllerEngine.cstate.getRegion() + " Agent:" + controllerEngine.cstate.getAgent());
+
+             */
 
             //Static Remote Global Controller
-            String static_global_controller_host = plugin.getConfig().getStringParam("global_controller_host",null);
-            if(static_global_controller_host != null) {
-                logger.trace("Starting Static Global Controller Check on " + static_global_controller_host);
-                if(global_host_map.containsKey(static_global_controller_host)) {
-                    if(controllerEngine.isReachableAgent(global_host_map.get(static_global_controller_host))) {
-                        logger.trace("Static Global Controller Check " + static_global_controller_host + " Ok.");
+            String global_controller_host = plugin.getConfig().getStringParam("global_controller_host",null);
+            if(global_controller_host != null) {
+                logger.trace("Starting Static Global Controller Check on " + global_controller_host);
+                if(global_host_map.containsKey(global_controller_host)) {
+                    if(controllerEngine.isReachableAgent(global_host_map.get(global_controller_host))) {
+                        logger.trace("Static Global Controller Check " + global_controller_host + " Ok.");
                         //TODO Check if regionalDBexport() is needed
                         regionalDBexport();
                         return;
                     }
                     else {
-                        logger.trace("Static Global Controller Check " + static_global_controller_host + " Failed.");
-                        controllerEngine.cstate.setRegionalGlobalFailed("gCheck : Static Global Host :" + static_global_controller_host + " not reachable.");
-                        global_host_map.remove(static_global_controller_host);
+                        logger.trace("Static Global Controller Check " + global_controller_host + " Failed.");
+                        controllerEngine.cstate.setRegionalGlobalFailed("gCheck : Static Global Host :" + global_controller_host + " not reachable.");
+                        global_host_map.remove(global_controller_host);
                     }
                 }
                 String[] globalController = connectToGlobal(staticGlobalDiscovery());
                 if(globalController == null) {
-                    logger.error("Failed to connect to Global Controller Host :" + static_global_controller_host);
-                    controllerEngine.cstate.setRegionalGlobalFailed("gCheck : Static Global Host :" + static_global_controller_host + " failed to connect.");
+                    logger.error("Failed to connect to Global Controller Host :" + global_controller_host);
+                    controllerEngine.cstate.setRegionalGlobalFailed("gCheck : Static Global Host :" + global_controller_host + " failed to connect.");
                 }
                 else {
-                    controllerEngine.cstate.setRegionalGlobalSuccess(globalController[0],globalController[1], "gCheck : Static Global Host :" + static_global_controller_host + " connected." );
-                    logger.trace("Static Global Controller " + static_global_controller_host + " Connect with path: " + controllerEngine.cstate.getGlobalControllerPath());
-                    global_host_map.put(static_global_controller_host, controllerEngine.cstate.getGlobalControllerPath());
-                    //register with global controller
-                    sendGlobalWatchDogRegister();
+                    if(isGlobalWatchDogRegister(globalController[0],globalController[1])) {
+                        controllerEngine.cstate.setRegionalGlobalSuccess(globalController[0], globalController[1], "gCheck : Static Global Host :" + global_controller_host + " connected.");
+                        logger.info("Static Global Controller Static Host: " + global_controller_host + " Connect with path: " + controllerEngine.cstate.getGlobalControllerPath());
+                        global_host_map.put(global_controller_host, controllerEngine.cstate.getGlobalControllerPath());
+                        //register with global controller
+                        //sendGlobalWatchDogRegister();
+                    } else {
+                        controllerEngine.cstate.setRegionalGlobalFailed("gCheck : Static Global Host : " + this.controllerEngine.cstate.getGlobalControllerPath() + " is not reachable.");
+                    }
                 }
             }
             else if(this.controllerEngine.cstate.isGlobalController()) {
@@ -254,8 +271,11 @@ public class GlobalHealthWatcher implements Runnable {
                         }
                         else {
                             controllerEngine.cstate.setRegionalGlobalSuccess(globalController[0],globalController[1], "gCheck : Dyanmic Global Host :" + globalController[0] + "_" + globalController[1] + " connected." );
+                            logger.info("Static Global Controller Dynamic" + global_controller_host + " Connect with path: " + controllerEngine.cstate.getGlobalControllerPath());
+
                             //register with global controller
-                            sendGlobalWatchDogRegister();
+                            //todo does this need to exist?
+                            //sendGlobalWatchDogRegister();
                         }
                     }
                     else {
@@ -269,8 +289,8 @@ public class GlobalHealthWatcher implements Runnable {
                         //end global start
                         this.controllerEngine.cstate.setGlobalSuccess("gCheck : Creating Global Host");
                         logger.info("Global: " + this.controllerEngine.cstate.getRegionalRegion() + " Agent: " + this.controllerEngine.cstate.getRegionalAgent());
-
-                        sendGlobalWatchDogRegister();
+                        //todo does this need to exist?
+                        //sendGlobalWatchDogRegister();
                     }
                 }
             }
@@ -365,23 +385,60 @@ public class GlobalHealthWatcher implements Runnable {
         return globalController;
     }
 
+    private Boolean isGlobalWatchDogRegister(String globalRegion, String globalAgent) {
+        boolean isGlobalReg = false;
+        try {
+
+            if(controllerEngine.isReachableAgent(globalRegion + "_" + globalAgent)) {
+
+                MsgEvent le  = new MsgEvent(MsgEvent.Type.CONFIG, controllerEngine.cstate.getRegion(),controllerEngine.cstate.getAgent(),null,globalRegion,globalAgent,null,true,true);
+
+
+                le.setParam("region_name",controllerEngine.cstate.getRegion());
+
+                //le.setParam("dst_region", gPath[0]);
+                le.setParam("is_active", Boolean.TRUE.toString());
+                le.setParam("action", "region_enable");
+                //le.setParam("globalcmd", Boolean.TRUE.toString());
+                le.setParam("watchdogtimer", String.valueOf(plugin.getConfig().getLongParam("watchdogtimer", 5000L)));
+                //this should be RPC, but routing needs to be fixed route 16 -> 32 -> regionsend -> 16 -> 32 -> regionsend (goes to region, not rpc)
+                le.setParam("source","sendGlobalWatchDogRegister()");
+                MsgEvent re = plugin.sendRPC(le);
+                if(re != null) {
+                    isGlobalReg = true;
+                }
+            } else {
+                logger.info("Candidate Global Controller not reachable!");
+            }
+        }
+        catch(Exception ex) {
+            logger.info("sendGlobalWatchDogRegister() " + ex.getMessage());
+            ex.printStackTrace();
+        }
+        return isGlobalReg;
+    }
+
     private void sendGlobalWatchDogRegister() {
 
 	    try {
             //if(!controllerEngine.cstate.isGlobalController()) {
                 //is the global controller reachable
+
+            while(!plugin.isActive()) {
+                Thread.sleep(1000);
+            }
+
                 if(controllerEngine.isReachableAgent(controllerEngine.cstate.getGlobalControllerPath())) {
+                    MsgEvent le = plugin.getGlobalControllerMsgEvent(MsgEvent.Type.CONFIG);
+                    /*
                     MsgEvent le = new MsgEvent(MsgEvent.Type.CONFIG, plugin.getRegion(), plugin.getAgent(), plugin.getPluginID(), "enabled");
                     le.setParam("src_region", plugin.getRegion());
                     le.setParam("src_agent", plugin.getAgent());
-                    //le.setParam("src_plugin", controllerEngine.cstate.getControllerId());
-
                     le.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
                     le.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
-                    //le.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
-
                     le.setParam("is_regional", Boolean.TRUE.toString());
                     le.setParam("is_global", Boolean.TRUE.toString());
+                    */
 
                     le.setParam("region_name",controllerEngine.cstate.getRegionalRegion());
 
@@ -392,7 +449,8 @@ public class GlobalHealthWatcher implements Runnable {
                     le.setParam("watchdogtimer", String.valueOf(plugin.getConfig().getLongParam("watchdogtimer", 5000L)));
                     //this should be RPC, but routing needs to be fixed route 16 -> 32 -> regionsend -> 16 -> 32 -> regionsend (goes to region, not rpc)
                     le.setParam("source","sendGlobalWatchDogRegister()");
-                    plugin.msgIn(le);
+
+                    plugin.msgOut(le);
                 }
             //}
         }
@@ -475,25 +533,34 @@ public class GlobalHealthWatcher implements Runnable {
                     logger.info("Exporting Region DB to Global Controller");
 
                     lastDBUpdate = dbexport;
-
+                    me = plugin.getGlobalControllerMsgEvent(MsgEvent.Type.CONFIG);
+                    me.setParam("action", "regionalimport");
+                    /*
                     me = new MsgEvent(MsgEvent.Type.CONFIG, this.plugin.getRegion(), this.plugin.getAgent(), this.plugin.getPluginID(), "regionalimport");
                     me.setParam("action", "regionalimport");
                     me.setParam("src_region", this.plugin.getRegion());
                     me.setParam("src_agent", this.plugin.getAgent());
-                    //me.setParam("src_plugin", this.controllerEngine.cstate.getControllerId());
 
                     me.setParam("dst_region", controllerEngine.cstate.getGlobalRegion());
                     me.setParam("dst_agent", controllerEngine.cstate.getGlobalAgent());
-                    //me.setParam("dst_plugin", controllerEngine.cstate.getControllerId());
 
                     me.setParam("is_regional", Boolean.TRUE.toString());
                     me.setParam("is_global", Boolean.TRUE.toString());
+                    */
 
                     me.setParam("exportdata", dbexport);
 
                     //logger.error("*" + me.getCompressedParam("exportdata")  + "*");
 
-                    this.plugin.msgIn(me);
+                    /*
+                    MsgEvent re = this.plugin.sendRPC(me);
+                    if(re != null) {
+                        logger.info("EXPORT RETURNED!");
+                    } else {
+                        logger.info("RE = NULL");
+                    }
+                    */
+                    this.plugin.msgOut(me);
                 }
             }
 

@@ -49,7 +49,9 @@ public class AppSchedulerEngine implements Runnable {
                 {
                     gPayload gpay = controllerEngine.getAppScheduleQueue().poll();
 
+
                     if(gpay != null) {
+
                         logger.debug("gPayload.added");
 
                         gPayload createdPipeline = controllerEngine.getGDB().dba.createPipelineNodes(gpay);
@@ -61,6 +63,8 @@ public class AppSchedulerEngine implements Runnable {
                             int pipelineStatus = schedulePipeline(gpay.pipeline_id);
 
                             switch (pipelineStatus) {
+
+
                                 //all metrics
                                 case 1: controllerEngine.getGDB().dba.setPipelineStatus(gpay.pipeline_id,"40","Failed to schedule pipeline resources exception.");
                                     break;

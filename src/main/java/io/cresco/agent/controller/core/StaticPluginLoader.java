@@ -123,20 +123,45 @@ public class StaticPluginLoader implements Runnable  {
                             isStaticInit = true;
                         } else {
                             //why not load this sucker here...
-                            logger.error("No plugin config!");
+                            logger.debug("No plugin config!");
 
                             if(controllerEngine.cstate.isGlobalController()) {
-                                if(plugin.getConfig().getBooleanParam("enable_web",true)) {
+
+                                //load repo
+                                if(plugin.getConfig().getBooleanParam("enable_repo",true)) {
                                     Map<String, Object> map = new HashMap<>();
-                                    map.put("pluginname", "io.cresco.dashboard");
-                                    map.put("jarfile", "dashboard-1.0-SNAPSHOT.jar");
+                                    map.put("pluginname", "io.cresco.repo");
+                                    map.put("jarfile", "repo-1.0-SNAPSHOT.jar");
                                     String pluginID = controllerEngine.getPluginAdmin().addPlugin((String) map.get("pluginname"), (String) map.get("jarfile"), map);
+                                }
+                                //load global
+                                if(controllerEngine.getPluginAdmin().serviceExist("org.osgi.service.http.HttpService")) {
+
+                                    if (plugin.getConfig().getBooleanParam("enable_web", true)) {
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("pluginname", "io.cresco.dashboard");
+                                        map.put("jarfile", "dashboard-1.0-SNAPSHOT.jar");
+                                        String pluginID = controllerEngine.getPluginAdmin().addPlugin((String) map.get("pluginname"), (String) map.get("jarfile"), map);
+                                    }
                                 }
                             }
                             isStaticInit = true;
                         }
+                        logger.info("Starting SYSINFO : Status Active: " + controllerEngine.cstate.isActive() + " Status State: " + controllerEngine.cstate.getControllerState());
+                        if(!controllerEngine.getPluginAdmin().pluginTypeActive("io.cresco.sysinfo")) {
+                            //load sysinfo
+                            //required "org.osgi.service.http.HttpService"
+                            if (plugin.getConfig().getBooleanParam("enable_sysinfo", true)) {
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("pluginname", "io.cresco.sysinfo");
+                                map.put("jarfile", "sysinfo-1.0-SNAPSHOT.jar");
+                                String pluginID = controllerEngine.getPluginAdmin().addPlugin((String) map.get("pluginname"), (String) map.get("jarfile"), map);
+                            }
+
+                        }
+
                     }
-                    logger.info("Status : " + controllerEngine.cstate.getControllerState());
+                    logger.trace("Status : " + controllerEngine.cstate.getControllerState());
                     Thread.sleep(1000);
                 }
 

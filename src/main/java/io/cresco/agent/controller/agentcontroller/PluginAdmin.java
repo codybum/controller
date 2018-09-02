@@ -3,7 +3,9 @@ package io.cresco.agent.controller.agentcontroller;
 import com.google.gson.Gson;
 import io.cresco.library.agent.AgentState;
 import io.cresco.library.messaging.MsgEvent;
+import io.cresco.library.plugin.PluginBuilder;
 import io.cresco.library.plugin.PluginService;
+import io.cresco.library.utilities.CLogger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
@@ -16,7 +18,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PluginAdmin {
@@ -30,10 +31,10 @@ public class PluginAdmin {
     private ConfigurationAdmin confAdmin;
     private Map<String,Configuration> configMap;
     private Map<String,PluginNode> pluginMap;
+    private CLogger logger;
 
     private AtomicBoolean lockConfig = new AtomicBoolean();
     private AtomicBoolean lockPlugin = new AtomicBoolean();
-
 
     private AgentState agentState;
 
@@ -44,42 +45,16 @@ public class PluginAdmin {
         }
     }
 
-    /*
-    public void getRepo() {
 
-
-        Repository repo = null;
-        ServiceReference repoReference = null;
-
-        repoReference = context.getServiceReference(Repository.class.getName());
-        if (repoReference != null) {
-
-            boolean assign = repoReference.isAssignableTo(context.getBundle(), Repository.class.getName());
-
-            if (assign) {
-                repo = (Repository) context.getService(repoReference);
-            } else {
-                System.out.println("Could not Assign Configuration Admin!");
-            }
-
-        } else {
-            System.out.println("Admin Does Not Exist!");
-        }
-
-
-    }
-    */
-
-    public PluginAdmin(AgentState agentState, BundleContext context) {
+    public PluginAdmin(PluginBuilder pluginBuilder, AgentState agentState, BundleContext context) {
 
         this.gson = new Gson();
         this.configMap = Collections.synchronizedMap(new HashMap<>());
         this.pluginMap = Collections.synchronizedMap(new HashMap<>());
-        //this.pluginMap = new ConcurrentHashMap<>();
         this.context = context;
         this.agentState = agentState;
+        logger = pluginBuilder.getLogger(PluginAdmin.class.getName(), CLogger.Level.Info);
 
-        
 
         ServiceReference configurationAdminReference = null;
 
@@ -99,6 +74,68 @@ public class PluginAdmin {
                 System.out.println("Admin Does Not Exist!");
             }
 
+    }
+
+    public void setLogLevel(String logId, CLogger.Level level) {
+
+        try {
+
+            logId = logId.toLowerCase();
+            /*
+            if (level != CLogger.Level.Info) {
+                System.out.println("LOG ID: " + logId + " LEVEL:" + level.name());
+            }
+            */
+
+                Configuration logConfig = confAdmin.getConfiguration("org.ops4j.pax.logging", null);
+
+                Dictionary<String, Object> log4jProps = logConfig.getProperties();
+                log4jProps.put("log4j.logger." + logId, level.name().toUpperCase());
+
+                logConfig.updateIfDifferent(log4jProps);
+
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public boolean pluginTypeActive(String pluginName) {
+        boolean exists = false;
+        try {
+            synchronized (lockConfig) {
+
+                Iterator it = configMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+
+                    String pluginID = (String) pair.getKey();
+                    Configuration config = (Configuration) pair.getValue();
+
+                    if(config.getFactoryPid().equals(pluginName + ".Plugin")) {
+                        return true;
+                    }
+                } }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return exists;
+    }
+
+    public boolean serviceExist(String serviceName) {
+        boolean exists = false;
+        try {
+
+            ServiceReference sr = context.getServiceReference(serviceName);
+            if(sr != null) {
+                exists = true;
+                context.ungetService(sr);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return exists;
     }
 
     public long addBundle(String fileLocation) {
@@ -149,6 +186,122 @@ public class PluginAdmin {
         return  isStarted;
     }
 
+    public boolean stopBundle(long bundleID) {
+        boolean isStopped = false;
+        try {
+            context.getBundle(bundleID).stop();
+            isStopped = true;
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return  isStopped;
+    }
+
+    public boolean stopPlugin(String pluginId) {
+        boolean isStopped = false;
+        try {
+
+            String jarFilePath = null;
+            String pid = null;
+            boolean isPluginStopped = false;
+
+            synchronized (lockPlugin) {
+                if (pluginMap.containsKey(pluginId)) {
+                    jarFilePath = pluginMap.get(pluginId).getJarPath();
+                    isPluginStopped = pluginMap.get(pluginId).getPluginService().isStopped();
+                }
+            }
+
+            synchronized (lockConfig) {
+                pid = configMap.get(pluginId).getPid();
+            }
+
+            if(isPluginStopped) {
+
+                if ((jarFilePath != null) && (pid != null)) {
+
+                    Configuration pluginConfig = confAdmin.getConfiguration(pid);
+                    if(pluginConfig != null) {
+
+                        pluginConfig.delete();
+
+                            synchronized (lockPlugin) {
+                                pluginMap.remove(pluginId);
+                            }
+                            synchronized (lockConfig) {
+                                configMap.remove(pluginId);
+                            }
+
+                            isStopped = true;
+                    }
+                }
+            }
+
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return  isStopped;
+    }
+
+
+    public boolean stopBundle(String pluginId) {
+        boolean isStopped = false;
+        try {
+
+            String jarFilePath = null;
+            String pid = null;
+            boolean isPluginStopped = false;
+
+            synchronized (lockPlugin) {
+                if (pluginMap.containsKey(pluginId)) {
+                    jarFilePath = pluginMap.get(pluginId).getJarPath();
+                    isPluginStopped = pluginMap.get(pluginId).getPluginService().isStopped();
+                }
+            }
+
+            synchronized (lockConfig) {
+                pid = configMap.get(pluginId).getPid();
+            }
+
+            System.out.println("jarfilepath:" + jarFilePath + " factorypid:" + pid + " ispluginstopped:" + isPluginStopped);
+
+            if(isPluginStopped) {
+
+                if ((jarFilePath != null) && (pid != null)) {
+
+                    Configuration pluginConfig = confAdmin.getConfiguration(pid);
+                    if(pluginConfig != null) {
+
+                        pluginConfig.delete();
+
+                        long bundleID = addBundle(jarFilePath);
+                        System.out.println("bundleID " + bundleID);
+                        if (bundleID != -1) {
+                            System.out.println("bundleID pre-stop state " + context.getBundle(bundleID).getState());
+                            context.getBundle(bundleID).stop();
+                            //context.getBundle(bundleID).uninstall();
+                            System.out.println("bundleID pre-stop state " + context.getBundle(bundleID).getState());
+                            context.getBundle(bundleID).uninstall();
+
+                            synchronized (lockPlugin) {
+                                pluginMap.remove(pluginId);
+                            }
+                            synchronized (lockConfig) {
+                                configMap.remove(pluginId);
+                            }
+
+                            isStopped = true;
+                        }
+                    }
+                }
+            }
+
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return  isStopped;
+    }
+
     public void msgIn(MsgEvent msg) {
 
         String pluginID = msg.getDstPlugin();
@@ -162,7 +315,6 @@ public class PluginAdmin {
 
     }
 
-
     public String addPlugin(String pluginName, String jarFile, Map<String,Object> map) {
         String returnPluginID = null;
         if(pluginCount() < PLUGINLIMIT) {
@@ -170,14 +322,15 @@ public class PluginAdmin {
 
                 long bundleID = addBundle(jarFile);
                 if (bundleID != -1) {
+
+                    String pluginID = addConfig(pluginName, map);
+
                     if (startBundle(bundleID)) {
-                        String pluginID = addConfig(pluginName, map);
                         if (pluginID != null) {
                             PluginNode pluginNode = new PluginNode(pluginID, pluginName, jarFile, map);
                             synchronized (lockPlugin) {
                                 pluginMap.put(pluginID, pluginNode);
                             }
-
 
                             if (startPlugin(pluginID)) {
                                 returnPluginID = pluginID;
@@ -185,12 +338,13 @@ public class PluginAdmin {
                                 System.out.println("Could not start agentcontroller " + pluginID + " pluginName " + pluginName + " no bundle " + jarFile);
                             }
 
-
                         } else {
                             System.out.println("Could not create config for " + " pluginName " + pluginName + " no bundle " + jarFile);
                         }
                     } else {
                         System.out.println("Could not start bundle Id " + bundleID + " pluginName " + pluginName + " no bundle " + jarFile);
+                        System.out.println("Remove configuration! --  bundle Id " + bundleID + " pluginName " + pluginName + " no bundle " + jarFile);
+
                     }
                     //controllerEngine.getPluginAdmin().startBundle(bundleID);
                     //String pluginID = controllerEngine.getPluginAdmin().addConfig(pluginName,jarFile, map);
@@ -208,7 +362,6 @@ public class PluginAdmin {
 
     public String addConfig(String pluginName, Map<String,Object> map) {
 
-
         String pluginID = null;
         try {
 
@@ -221,6 +374,7 @@ public class PluginAdmin {
                         if (!configMap.containsKey("plugin/" + id)) {
                             pluginID = "plugin/" + id;
                             Configuration configuration = confAdmin.createFactoryConfiguration(pluginName + ".Plugin", null);
+
                             Dictionary properties = new Hashtable();
 
                             ((Hashtable) properties).putAll(map);
@@ -243,7 +397,6 @@ public class PluginAdmin {
         return pluginID;
     }
 
-
     public boolean startPlugin(String pluginID) {
         boolean isStarted = false;
 
@@ -259,6 +412,7 @@ public class PluginAdmin {
                 //servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
                 servRefs = context.getServiceReferences(PluginService.class.getName(), filterString);
 
+                //System.out.println("REFS : " + servRefs.length);
                 if (servRefs == null || servRefs.length == 0) {
                     //System.out.println("NULL FOUND NOTHING!");
 
@@ -271,16 +425,29 @@ public class PluginAdmin {
 
                         if(assign) {
                             PluginService ps = (PluginService) context.getService(sr);
+                            int statusCode = 7;
+                            String statusDesc = "Plugin instance could not be started";
+                            try {
+                                if(ps.isStarted()) {
+                                  statusCode = 10;
+                                  statusDesc = "Plugin Active";
+                                }
+                            } catch(Exception ex) {
+                                System.out.println("Could not start!");
+                                ex.printStackTrace();
+                            }
 
                             synchronized (lockPlugin) {
                                 if (pluginMap.containsKey(pluginID)) {
                                     pluginMap.get(pluginID).setPluginService((PluginService) context.getService(sr));
-                                    isStarted = true;
+                                    pluginMap.get(pluginID).setStatus_code(statusCode);
+                                    pluginMap.get(pluginID).setStatus_desc(statusDesc);
                                 } else {
                                     System.out.println("NO PLUGIN IN PLUGIN MAP FOR THIS SERVICE : " + pluginID + " elements " + pluginMap.hashCode() + " thread:" + Thread.currentThread().getName());
                                 }
                             }
 
+                            isStarted = true;
                         }
                     }
                 }
@@ -294,6 +461,30 @@ public class PluginAdmin {
             ex.printStackTrace();
         }
         return isStarted;
+    }
+
+    public Map<String,String> getPluginStatus(String pluginID) {
+        Map<String,String> statusMap = null;
+        try {
+
+            synchronized (lockPlugin) {
+                if(pluginMap.containsKey(pluginID)) {
+                    statusMap = new HashMap<>();
+                    PluginNode pluginNode = pluginMap.get(pluginID);
+                    int status_code = pluginNode.getStatus_code();
+                    String status_desc = pluginNode.getStatus_desc();
+                    boolean isActive = pluginNode.getActive();
+
+                    statusMap.put("status_code", String.valueOf(status_code));
+                    statusMap.put("status_desc", status_desc);
+                    statusMap.put("isactive", String.valueOf(isActive));
+                }
+            }
+
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return statusMap;
     }
 
     public String getPluginExport() {
@@ -312,12 +503,15 @@ public class PluginAdmin {
                     String pluginID = (String) pair.getKey();
                     PluginNode pluginNode = (PluginNode) pair.getValue();
 
-                    int status = pluginNode.getStatus_code();
+                    int status_code = pluginNode.getStatus_code();
+                    String status_desc = pluginNode.getStatus_desc();
                     boolean isActive = pluginNode.getActive();
 
                     Map<String, String> configMap = new HashMap<>();
 
-                    configMap.put("status", String.valueOf(status));
+
+                    configMap.put("status_code", String.valueOf(status_code));
+                    configMap.put("status_dest", status_desc);
                     configMap.put("isactive", String.valueOf(isActive));
                     configMap.put("pluginid", pluginID);
                     configMap.put("configparams", gson.toJson(pluginNode.exportParamMap()));
@@ -334,7 +528,6 @@ public class PluginAdmin {
 
         return exportString;
     }
-
 
     public Bundle installInternalBundleJars(String bundleName) {
 

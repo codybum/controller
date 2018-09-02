@@ -194,7 +194,11 @@ public class DBInterface {
                     logger.trace("Region : " + region);
                     List<String> agentList = gdb.getNodeList(region, null, null);
                     regionMap.put("name",region);
-                    regionMap.put("agents",String.valueOf(agentList.size()));
+                    if(agentList != null) {
+                        regionMap.put("agents", String.valueOf(agentList.size()));
+                    } else {
+                        regionMap.put("agents", "0");
+                    }
                     regionArray.add(regionMap);
                 }
             }
@@ -291,8 +295,12 @@ public class DBInterface {
 
             for(String repoJSON : repoList) {
                 Map<String,List<Map<String,String>>> myRepoMap = gson.fromJson(repoJSON, type);
-                List<Map<String,String>> tmpPluginsList = myRepoMap.get("plugins");
-                pluginsList.addAll(tmpPluginsList);
+                if(myRepoMap != null) {
+                    if (myRepoMap.containsKey("plugins")) {
+                        List<Map<String, String>> tmpPluginsList = myRepoMap.get("plugins");
+                        pluginsList.addAll(tmpPluginsList);
+                    }
+                }
             }
 
             //Test
@@ -391,14 +399,16 @@ public class DBInterface {
         try
         {
             repoList = new ArrayList<>();
-            String repoPluginsJSON = getPluginListByType("pluginname","cresco-agent-dashboard-agentcontroller");
+            String repoPluginsJSON = getPluginListByType("pluginname","io.cresco.repo");
             Map<String,List<Map<String,String>>> myMap = gson.fromJson(repoPluginsJSON, type);
 
             for(Map<String,String> perfMap : myMap.get("plugins")) {
 
                 String region = perfMap.get("region");
                 String agent = perfMap.get("agent");
+                String pluginID = perfMap.get("pluginid");
 
+                /*
                 MsgEvent request = new MsgEvent(MsgEvent.Type.EXEC, plugin.getRegion(), plugin.getAgent(),
                         plugin.getPluginID(), "Plugin List by Repo");
                 request.setParam("src_region", plugin.getRegion());
@@ -408,6 +418,10 @@ public class DBInterface {
                 request.setParam("dst_agent", agent);
                 request.setParam("dst_plugin", perfMap.get("agentcontroller"));
                 request.setParam("action", "repolist");
+                */
+                MsgEvent request = plugin.getGlobalPluginMsgEvent(MsgEvent.Type.EXEC,region,agent,pluginID);
+                request.setParam("action", "repolist");
+
                 MsgEvent response = plugin.sendRPC(request);
 
                 repoList.add(response.getCompressedParam("repolist"));
@@ -1353,9 +1367,12 @@ public class DBInterface {
             String agentcontroller = de.getParam("src_plugin");
             */
 
+
             String region = de.getParam("region_name");
             String agent = de.getParam("agent_name");
             String plugin = de.getParam("plugin_id");
+
+
 
 
             de.setParam("is_active",Boolean.TRUE.toString());

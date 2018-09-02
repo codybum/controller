@@ -36,7 +36,7 @@ public class GlobalExecutor implements Executor {
 
         this.controllerEngine = controllerEngine;
         this.plugin = controllerEngine.getPluginBuilder();
-        this.logger = plugin.getLogger(GlobalExecutor.class.getName(),CLogger.Level.Trace);
+        this.logger = plugin.getLogger(GlobalExecutor.class.getName(),CLogger.Level.Info);
         removePipelineExecutor = Executors.newFixedThreadPool(100);
     }
 
@@ -74,7 +74,7 @@ public class GlobalExecutor implements Executor {
                     return setINodeStatus(ce);
 
                 default:
-                    logger.error("Unknown configtype found: {}", ce.getParam("action"));
+                    logger.error("Unknown configtype found: {} {}", ce.getParam("action"), ce.getMsgType());
                     return null;
             }
         }
@@ -110,6 +110,9 @@ public class GlobalExecutor implements Executor {
 
             case "listpluginsrepo":
                 return listPluginsRepo(ce);
+
+            case "listrepoinstances":
+                return listRepoInstances(ce);
 
             case "plugininfo":
                 return pluginInfo(ce);
@@ -148,7 +151,7 @@ public class GlobalExecutor implements Executor {
                 return getIsAssignment(ce);
 
             default:
-                logger.error("Unknown configtype found: {}", ce.getParam("action"));
+                logger.error("Unknown configtype found: {} {}", ce.getParam("action"), ce.getMsgType());
                 return null;
         }
     }
@@ -158,6 +161,7 @@ public class GlobalExecutor implements Executor {
     }
     @Override
     public MsgEvent executeKPI(MsgEvent incoming) {
+        globalKPI(incoming);
         return null;
     }
 
@@ -266,6 +270,18 @@ public class GlobalExecutor implements Executor {
         return ce;
     }
 
+    private MsgEvent listRepoInstances(MsgEvent ce) {
+        try {
+
+            ce.setCompressedParam("listrepoinstances",controllerEngine.getGDB().getPluginListByType("pluginname","io.cresco.repo"));
+            logger.trace("list repos : " + ce.getParams().toString());
+        }
+        catch(Exception ex) {
+            ce.setParam("error", ex.getMessage());
+        }
+        return ce;
+    }
+
     private MsgEvent listPluginsRepo(MsgEvent ce) {
         try {
 
@@ -276,6 +292,8 @@ public class GlobalExecutor implements Executor {
             ce.setParam("error", ex.getMessage());
         }
 
+        //String repoPluginsJSON = getPluginListByType("pluginname","io.cresco.repo");
+        //
         return ce;
     }
 
@@ -666,14 +684,17 @@ public class GlobalExecutor implements Executor {
             paramMap.put("enable_pending", Boolean.TRUE.toString());
             paramMap.put("region", ce.getParam("src_region"));
 
-            String edgeId = controllerEngine.getGDB().gdb.addEdge(ce.getParam("src_region"),null,null, ce.getParam("dst_region"), null,null,"isRegionHealth",paramMap);
 
+            String edgeId = controllerEngine.getGDB().gdb.addEdge(ce.getSrcRegion(),null,null, ce.getDstRegion(), null,null,"isRegionHealth",paramMap);
+
+            ce.setParam("is_registered","true");
         }
         catch(Exception ex) {
             ce.setParam("error", ex.getMessage());
         }
 
-        return null;
+        return ce;
+        //return null;
     }
 
 

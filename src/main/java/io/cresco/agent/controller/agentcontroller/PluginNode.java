@@ -29,6 +29,7 @@ public class PluginNode {
     private long watchdogtimer = 0;
     private long runtime = 0;
 
+
     private PluginService pluginService;
     private Map<String,Object> configMap;
 
@@ -37,9 +38,12 @@ public class PluginNode {
 
     /*
     status_code = 3; //agentcontroller init
+    status_code = 7; //Plugin instance could not be started
     status_code = 8; //agentcontroller disabled
+    status_code = 9; //Plugin Bundle could not be installed or started
     status_code = 10; //started and working
     status_code = 40; //WATCHDOG check failed with agent
+    status_code = 41; //Missing status parameter
     status_code = 80; //failed to start
     status_code = 90; //Exception on timeout shutdown
     status_code = 91; //Exception on timeout verification to confirm down
@@ -63,8 +67,8 @@ public class PluginNode {
         }
 
         Attributes mainAttributess = manifest.getMainAttributes();
-        name = mainAttributess.getValue("artifactId");
-        version = mainAttributess.getValue("Implementation-Version");
+        name = mainAttributess.getValue("Bundle-SymbolicName");
+        version = mainAttributess.getValue("Bundle-Version");
 
 
         //URL url = new File(jarPath).toURI().toURL();
@@ -135,10 +139,10 @@ public class PluginNode {
         this.status_desc = status_desc;
     }
 
-    public String getStatus_desc() {return status_desc;}
+    public String getStatus_desc() {return this.status_desc;}
 
     public PluginService getPluginService() {
-        return pluginService;
+        return this.pluginService;
     }
 
     public void setPluginService(PluginService pluginService) {

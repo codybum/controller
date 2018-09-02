@@ -55,7 +55,11 @@ public class RegionHealthWatcher {
         try {
 
             if (incoming.isGlobal()) {
-                regionalExecutor.sendGlobalMsg(incoming);
+                if(controllerEngine.cstate.isGlobalController()) {
+                    regionalExecutor.sendGlobalMsg(incoming);
+                } else {
+                    regionalExecutor.remoteGlobalSend(incoming);
+                }
             } else {
 
             if (incoming.dstIsLocal(plugin.getRegion(), plugin.getAgent(), plugin.getPluginID())) {
@@ -118,7 +122,7 @@ public class RegionHealthWatcher {
         public void run() {
             boolean isHealthy = true;
             try {
-                if (!controllerEngine.isConsumerThreadActive() || !controllerEngine.getConsumerAgentThread().isAlive()) {
+                if (!controllerEngine.isConsumerThreadActive()) {
                     isHealthy = false;
                     logger.info("Agent Consumer shutdown detected");
                 }

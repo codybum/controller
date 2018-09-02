@@ -40,16 +40,19 @@ public class AgentHealthWatcher {
 	      timer.scheduleAtFixedRate(new WatchDogTask(), 500, Long.parseLong(watchDogTimerString));
 	      wdMap = new HashMap<>(); //for sending future WD messages
 
-          if(controllerEngine.cstate.isActive()) {
+          if((controllerEngine.cstate.isActive()) && (plugin.isActive())) {
               isRegistered = enable(true);
           }
-
       }
 
       public boolean enable(boolean register) {
 	      boolean isRegistered = false;
 
 	      try {
+
+	          while(!plugin.isActive()) {
+	              Thread.sleep(1000);
+              }
 
               MsgEvent enableMsg = plugin.getRegionalControllerMsgEvent(MsgEvent.Type.CONFIG);
               enableMsg.setParam("action", "agent_enable");
@@ -172,7 +175,6 @@ public class AgentHealthWatcher {
 	{
 	    public void run() 
 	    {
-
 	    	if(controllerEngine.cstate.isActive())
 	    	{
 	    	    if((!isRegistered) && (controllerEngine.cstate.isActive())) {

@@ -37,6 +37,7 @@ public class RegionalExecutor implements Executor {
 
                 case "agent_enable":
                     logger.debug("CONFIG : AGENT ADD: " + incoming.printHeader());
+
                     if(controllerEngine.getGDB().addNode(incoming)) {
                         incoming.setParam("success",Boolean.TRUE.toString());
                     } else {
@@ -94,6 +95,17 @@ public class RegionalExecutor implements Executor {
     }
     @Override
     public MsgEvent executeKPI(MsgEvent incoming) {
+
+        logger.debug("KPI: " + incoming.printHeader());
+        if(controllerEngine.cstate.isGlobalController()) {
+            return globalExecutor.executeKPI(incoming);
+        } else {
+            if(plugin.getConfig().getBooleanParam("forward_global_kpi",true)){
+                //logger.error("BUILD IN KPI FORWARDING!!!");
+                remoteGlobalSend(incoming);
+            }
+        }
+
         /*
         logger.debug("KPI: " + incoming.printHeader());
 
@@ -110,14 +122,15 @@ public class RegionalExecutor implements Executor {
         return null;
     }
 
-    private void globalSend(MsgEvent ge) {
+    public void remoteGlobalSend(MsgEvent incoming) {
         try {
             if(!controllerEngine.cstate.isGlobalController()) {
-                ge.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
-                ge.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
+                incoming.setForwardDst(controllerEngine.cstate.getGlobalRegion(),controllerEngine.cstate.getGlobalAgent(), null);
+                //ge.setParam("dst_region",controllerEngine.cstate.getGlobalRegion());
+                //ge.setParam("dst_agent",controllerEngine.cstate.getGlobalAgent());
                 //ge.setParam("dst_plugin",controllerEngine.cstate.getControllerId());
-                ge.setParam("globalcmd", Boolean.TRUE.toString());
-                controllerEngine.sendAPMessage(ge);
+                //ge.setParam("globalcmd", Boolean.TRUE.toString());
+                controllerEngine.sendAPMessage(incoming);
             }
         }
         catch (Exception ex) {

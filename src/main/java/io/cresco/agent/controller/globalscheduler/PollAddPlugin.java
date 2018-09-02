@@ -26,8 +26,6 @@ public class PollAddPlugin implements Runnable {
 		this.plugin = controllerEngine.getPluginBuilder();
 		this.logger = plugin.getLogger(PollAddPlugin.class.getName(),CLogger.Level.Info);
 
-		//this.logger = new CLogger(PollAddPlugin.class, agentcontroller.getMsgOutQueue(), agentcontroller.getRegion(), agentcontroller.getAgent(), agentcontroller.getPluginID(), CLogger.Level.Trace);
-		//this.agentcontroller = agentcontroller;
 		this.resource_id = resource_id;
 		this.inode_id = inode_id;
 		this.region = region;
@@ -40,22 +38,29 @@ public class PollAddPlugin implements Runnable {
 	        {
                 int count = 0;
 	        	String edge_id = null;
-				MsgEvent re = plugin.sendRPC(me);
+
+	        	MsgEvent re = plugin.sendRPC(me);
 
 				if(re != null) {
 					//info returned from agent
-					String pluginId = re.getParam("agentcontroller");
-					controllerEngine.getGDB().dba.addIsAttachedEdge(resource_id, inode_id, region, agent, pluginId);
-
+					String pluginId = re.getParam("pluginid");
 					String status_code_plugin = re.getParam("status_code");
 					String status_desc_plugin = re.getParam("status_desc");
 
-					if(Integer.parseInt(status_code_plugin) == 10) {
-						controllerEngine.getGDB().dba.setINodeParam(inode_id,"status_code","10");
-						controllerEngine.getGDB().dba.setINodeParam(inode_id,"status_desc","iNode Active.");
+
+					controllerEngine.getGDB().dba.addIsAttachedEdge(resource_id, inode_id, region, agent, pluginId);
+
+					if((status_code_plugin == null) || (status_desc_plugin == null)) {
+						controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_code", "42");
+						controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_desc", "iNode Missing Status Parameters.");
 					} else {
-						controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_code", status_code_plugin);
-						controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_desc", status_desc_plugin);
+						if (Integer.parseInt(status_code_plugin) == 10) {
+							controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_code", "10");
+							controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_desc", "iNode Active.");
+						} else {
+							controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_code", status_code_plugin);
+							controllerEngine.getGDB().dba.setINodeParam(inode_id, "status_desc", status_desc_plugin);
+						}
 					}
 				} else {
 					logger.debug("pollAddPlugin : unable to verify iNode activation!  inode_id=" + inode_id);

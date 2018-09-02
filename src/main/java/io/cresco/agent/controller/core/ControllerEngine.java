@@ -65,7 +65,7 @@ public class ControllerEngine {
     public String brokerUserNameAgent;
     public String brokerPasswordAgent;
 
-
+    private ActiveAgentConsumer activeAgentConsumer;
     private ActiveBroker broker;
     private KPIBroker kpiBroker;
     private DBInterface gdb;
@@ -79,7 +79,6 @@ public class ControllerEngine {
     private MeasurementEngine measurementEngine;
     private MsgRouter msgRouter;
 
-    private Thread consumerAgentThread;
     private Thread activeBrokerManagerThread;
     private Thread globalControllerManagerThread;
     private Thread discoveryUDPEngineThread;
@@ -100,12 +99,12 @@ public class ControllerEngine {
         //this.msgInProcessQueue = Executors.newFixedThreadPool(100);
         this.msgInProcessQueue = Executors.newCachedThreadPool();
         //this.msgInProcessQueue = Executors.newSingleThreadExecutor();
-
+        /*
         logger.info("Controller Init");
         if(commInit()) {
             logger.info("Controller Completed Init");
         }
-
+        */
         //new thread required to allow AgentServiceImpl to finish & become service
         StaticPluginLoader staticPluginLoader = new StaticPluginLoader(this);
         new Thread(staticPluginLoader).start();
@@ -223,10 +222,13 @@ public class ControllerEngine {
                 initGlobal();
             }
 
-            /*
-            //populate controller-specific metrics
-            measurementEngine.initControllerMetrics();
 
+            //todo enable metrics
+
+            //populate controller-specific metrics
+            //measurementEngine.initControllerMetrics();
+
+            /*
             PerfControllerMonitor perfControllerMonitor = new PerfControllerMonitor(this);
             perfControllerMonitor.start();
             logger.info("Performance Controller monitoring initialized");
@@ -236,11 +238,7 @@ public class ControllerEngine {
             perfSysMonitor.start();
             logger.info("Performance System monitoring initialized");
 
-
-            if(perfMonitorNet == null) {
-                perfMonitorNet = new PerfMonitorNet(this);
-            }
-
+            PerfMonitorNet perfMonitorNet = new PerfMonitorNet(this);
             perfMonitorNet.start();
             logger.info("Performance Network monitoring initialized");
             */
@@ -533,11 +531,13 @@ public class ControllerEngine {
                     //consumer agent
                     int discoveryPort = plugin.getConfig().getIntegerParam("discovery_port",32010);
                     if(isLocalBroker()) {
-                        this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "vm://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
+                        activeAgentConsumer = new ActiveAgentConsumer(this, cstate.getAgentPath(), "vm://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent);
+                        //this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "vm://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
                     } else {
-                        this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
+                        activeAgentConsumer = new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent);
+                        //this.consumerAgentThread = new Thread(new ActiveAgentConsumer(this, cstate.getAgentPath(), "ssl://" + this.brokerAddressAgent + ":" + discoveryPort, brokerUserNameAgent, brokerPasswordAgent));
                     }
-                    this.consumerAgentThread.start();
+
                     while (!this.ConsumerThreadActive) {
                         Thread.sleep(1000);
                     }
@@ -1046,13 +1046,11 @@ public class ControllerEngine {
         return discoveryMap;
     }
 
-    public Thread getConsumerAgentThread() {
-        return consumerAgentThread;
-    }
-
     public boolean isDiscoveryActive() {
         return DiscoveryActive;
     }
+
+    public ActiveProducer getActiveProducer() { return ap; }
 
     public Thread getActiveBrokerManagerThread() {
         return activeBrokerManagerThread;
@@ -1069,7 +1067,6 @@ public class ControllerEngine {
     public void setRestartOnShutdown(boolean restartOnShutdown) {
         this.restartOnShutdown = restartOnShutdown;
     }
-
 
     public void closeCommunications() {
 
@@ -1139,8 +1136,11 @@ public class ControllerEngine {
 
     public void msgIn(MsgEvent msg) {
 
-            //msgInProcessQueue.submit(new MsgRoute(this, msg));
             msgRouter.route(msg);
+    }
+
+    public void msgInThreaded(MsgEvent msg) {
+        msgInProcessQueue.submit(new MsgEventRunner(this, msg));
     }
 
     public PluginAdmin getPluginAdmin() { return pluginAdmin; }
