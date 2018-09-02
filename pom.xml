@@ -28,7 +28,6 @@
 
     <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.core -->
 
-
     <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
