@@ -37,9 +37,10 @@
 
     <dependency>
         <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.annotation</artifactId>
-        <version>6.0.0</version>
+        <artifactId>osgi.annotation</artifactId>
+        <version>6.0.1</version>
     </dependency>
+
 
     <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.component.annotations -->
     <dependency>
@@ -88,88 +89,26 @@
     </dependency>
 
 
-    <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
-    <!--
-    <dependency>
-        <groupId>commons-net</groupId>
-        <artifactId>commons-net</artifactId>
-        <version>3.6</version>
-    </dependency>
-    -->
-
-<!--
-    <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
-    </dependency>
--->
-    <!--
-    <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-all</artifactId>
-        <version>${activemq.version}</version>
-
-    </dependency>
-
--->
-
-    <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-osgi -->
-    <!--
-    <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-osgi</artifactId>
-        <version>5.15.4</version>
-    </dependency>
-    -->
-
 
     <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-broker</artifactId>
         <version>5.15.4</version>
-        <exclusions>
-            <exclusion>
-                <artifactId>commons-logging</artifactId>
-                <groupId>commons-logging</groupId>
-            </exclusion>
-            <exclusion>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-            </exclusion>
-        </exclusions>
+
     </dependency>
 
     <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-client</artifactId>
         <version>5.15.4</version>
-        <exclusions>
-            <exclusion>
-                <artifactId>commons-logging</artifactId>
-                <groupId>commons-logging</groupId>
-            </exclusion>
-            <exclusion>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-            </exclusion>
-        </exclusions>
+
     </dependency>
 
     <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-pool</artifactId>
         <version>5.15.4</version>
-        <exclusions>
-            <exclusion>
-                <artifactId>commons-logging</artifactId>
-                <groupId>commons-logging</groupId>
-            </exclusion>
-            <exclusion>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-            </exclusion>
-        </exclusions>
+
     </dependency>
 
     <dependency>
@@ -207,16 +146,7 @@
         <groupId>com.tinkerpop.blueprints</groupId>
         <artifactId>blueprints-core</artifactId>
         <version>2.6.0</version>
-        <exclusions>
-            <exclusion>
-                <artifactId>commons-logging</artifactId>
-                <groupId>commons-logging</groupId>
-            </exclusion>
-            <exclusion>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-            </exclusion>
-        </exclusions>
+
     </dependency>
 
     <dependency>
