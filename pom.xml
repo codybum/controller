@@ -21,7 +21,6 @@
     <dependencies>
 
         <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.core -->
-
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
@@ -31,8 +30,8 @@
 
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.annotation</artifactId>
-            <version>6.0.0</version>
+            <artifactId>osgi.annotation</artifactId>
+            <version>6.0.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.component.annotations -->
